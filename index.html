@@ -1,0 +1,1856 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>JURNAL GURU - Jurnal & Presensi Kelas</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js & SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- SheetJS (Excel Export & Import) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        dark: { bg: '#000000', card: '#111111', border: '#333333' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Glassmorphism Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .dark .glass {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        .glass-panel { box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
+        
+        /* Transitions */
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* FULLSCREEN / BLOGGER RESPONSIVE LAYOUT */
+        html, body {
+            width: 100% !important;
+            min-width: 100% !important;
+            height: 100% !important;
+            min-height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            background: #ffffff !important;
+        }
+        html.dark, body.dark, .dark body {
+            background: #000000 !important;
+        }
+        #mainApp, #mainApp > main, #mainApp .overflow-y-auto {
+            background: #ffffff;
+        }
+        .dark #mainApp, .dark #mainApp > main, .dark #mainApp .overflow-y-auto {
+            background: #000000 !important;
+        }
+        @media (prefers-color-scheme: dark) {
+            html:not(.light) body { background:#000 !important; }
+        }
+        body {
+            position: relative;
+            max-width: none !important;
+            box-sizing: border-box;
+            overscroll-behavior: none;
+        }
+        body > * { box-sizing: border-box; }
+        
+        .Blog, .blog-posts, .post-outer-container, .post-outer, .post, .post-body,
+        .post-body-container, .entry-content, .page-body, .main-inner, .content-outer,
+        .content-inner, .region-inner {
+            max-width: none !important; width: 100% !important; margin: 0 !important;
+            padding: 0 !important; border: 0 !important; box-shadow: none !important;
+        }
+
+        #loginPage {
+            position: fixed !important; inset: 0 !important; width: 100vw !important;
+            min-height: 100dvh !important; height: 100dvh !important; margin: 0 !important;
+            padding: clamp(16px, 3vw, 32px) !important; z-index: 99990 !important;
+            box-sizing: border-box !important; overflow-y: auto !important;
+        }
+        #loginPage > .glass-panel {
+            width: min(440px, 100%) !important; max-width: 440px !important;
+            margin: auto !important; box-sizing: border-box !important;
+        }
+        #mainApp {
+            position: fixed !important; inset: 0 !important; width: 100vw !important;
+            max-width: none !important; height: 100dvh !important; min-height: 100dvh !important;
+            margin: 0 !important; padding: 0 !important; z-index: 99980 !important;
+            box-sizing: border-box !important; overflow: hidden !important;
+        }
+        #mainApp > main { min-width: 0; width: 100%; }
+        #sidebar {
+            height: 100dvh !important; min-height: 100dvh !important; max-height: 100dvh !important;
+            box-sizing: border-box !important;
+        }
+        #sidebarOverlay { z-index: 99989 !important; }
+
+        @media (min-width: 768px) {
+            #sidebar {
+                position: relative !important; transform: translateX(0) !important;
+                left: 0 !important; flex: 0 0 260px; width: 260px !important;
+            }
+            #mainApp > main { height: 100dvh !important; min-width: 0 !important; }
+        }
+
+        @media (max-width: 767px) {
+            #mainApp { display: flex !important; flex-direction: row !important; }
+            #sidebar {
+                position: fixed !important; top: 0 !important; bottom: 0 !important; left: 0 !important;
+                width: min(86vw, 320px) !important; max-width: 320px !important; height: 100dvh !important;
+                z-index: 99991 !important; transform: translateX(-100%); overflow: hidden;
+            }
+            #mainApp > main {
+                width: 100% !important; max-width: 100% !important; height: 100dvh !important; min-width: 0 !important;
+            }
+            #mainApp .overflow-y-auto { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+            header { padding-left: max(12px, env(safe-area-inset-left)) !important; padding-right: max(12px, env(safe-area-inset-right)) !important; }
+            #loginPage { padding-top: max(16px, env(safe-area-inset-top)) !important; padding-right: max(16px, env(safe-area-inset-right)) !important; padding-bottom: max(16px, env(safe-area-inset-bottom)) !important; padding-left: max(16px, env(safe-area-inset-left)) !important; }
+            #loginPage > .glass-panel { padding: 24px !important; border-radius: 18px !important; }
+            #view-dashboard .grid, #view-presensi .grid, #view-jurnal .grid, #view-kelas .grid, #view-mapel .grid, #view-siswa .grid, #view-profil .grid { gap: 16px !important; }
+        }
+
+        @media (max-width: 420px) {
+            #loginPage > .glass-panel { padding: 20px 16px !important; border-radius: 16px !important; }
+            #loginPage .text-2xl { font-size: 1.35rem !important; }
+            #mainApp .p-4 { padding: 12px !important; }
+            #mainApp .p-6 { padding: 16px !important; }
+        }
+
+        .swal2-container { z-index: 100000 !important; }
+        .swal2-popup { max-width: calc(100vw - 24px) !important; }
+        .swal2-input, .swal2-select, .swal2-textarea { margin: 0.5em 0 !important; }
+    </style>
+</head>
+<body class="bg-white dark:bg-black text-gray-800 dark:text-gray-200 transition-colors duration-300 font-sans antialiased selection:bg-primary-500 selection:text-white">
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="min-h-screen flex items-center justify-center p-4 bg-white dark:bg-black">
+        <div class="glass glass-panel rounded-2xl w-full max-w-md p-8 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+            
+            <div class="text-center mb-8 relative z-10">
+                <div class="w-16 h-16 mx-auto flex items-center justify-center mb-4">
+                    <a href="https://freeimage.host/i/CyJDUKv" target="_blank">
+                        <img src="https://iili.io/CyJDUKv.png" alt="Logo Jurnal Guru" class="w-16 h-16 object-contain">
+                    </a>
+                </div>
+                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400">JURNAL GURU</h1>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sistem Informasi Jurnal & Presensi Kelas</p>
+            </div>
+
+            <form id="loginForm" class="space-y-5 relative z-10" onsubmit="handleLogin(event)">
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-regular fa-envelope text-gray-400"></i>
+                        </div>
+                        <input type="email" id="email" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white placeholder-gray-400" placeholder="admin@gemini.com" value="slamet@gamil.com">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-lock text-gray-400"></i>
+                        </div>
+                        <input type="password" id="password" required class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white" placeholder="••••••••" value="123456">
+                        <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary-500">
+                            <i class="fa-regular fa-eye" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="flex items-center justify-between text-sm">
+                    <label class="flex items-center cursor-pointer">
+                        <input type="checkbox" class="rounded border-gray-300 text-primary-600 shadow-sm focus:border-primary-300 focus:ring focus:ring-primary-200 focus:ring-opacity-50">
+                        <span class="ml-2 text-gray-600 dark:text-gray-400">Remember me</span>
+                    </label>
+                    <a href="#" class="text-primary-600 dark:text-primary-400 hover:underline">Lupa Password?</a>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 text-white rounded-lg font-medium transition-all shadow-lg shadow-primary-500/30 flex justify-center items-center gap-2">
+                    <span>Masuk Dashboard</span>
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION -->
+    <div id="mainApp" class="hidden h-screen flex overflow-hidden">
+        
+        <!-- Sidebar -->
+        <aside id="sidebar" class="glass w-64 flex-shrink-0 border-r border-gray-200 dark:border-dark-border flex flex-col transition-all duration-300 z-20 absolute md:relative h-full -translate-x-full md:translate-x-0">
+            <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-dark-border">
+                <img src="https://iili.io/CyJDUKv.png" alt="Logo Jurnal Guru" class="w-10 h-10 object-contain mr-3">
+                <span class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400 tracking-wide">JURNAL GURU</span>
+            </div>
+            
+            <div class="p-4 flex-1 overflow-y-auto">
+                <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-2">Menu Utama</p>
+                <nav class="space-y-1">
+                    <button onclick="navigate('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
+                    </button>
+                    <button onclick="navigate('presensi')" id="nav-presensi" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-users-viewfinder w-5 text-center"></i> Presensi Kelas
+                    </button>
+                    <button onclick="navigate('jurnal')" id="nav-jurnal" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-book-journal-whills w-5 text-center"></i> Jurnal Mengajar
+                    </button>
+                    <button onclick="navigate('kelas')" id="nav-kelas" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-chalkboard-user w-5 text-center"></i> Kelola Kelas
+                    </button>
+                    <button onclick="navigate('mapel')" id="nav-mapel" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-book-open-reader w-5 text-center"></i> Kelola Mapel
+                    </button>
+                    <button onclick="navigate('siswa')" id="nav-siswa" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-user-graduate w-5 text-center"></i> Kelola Siswa
+                    </button>
+                </nav>
+
+                <p class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 mt-8 px-2">Pengaturan</p>
+                <nav class="space-y-1">
+                    <button onclick="navigate('profil')" id="nav-profil" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-user-gear w-5 text-center"></i> Profil Saya
+                    </button>
+                    <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
+                        <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
+                    </button>
+                </nav>
+            </div>
+            
+            <div class="p-4 border-t border-gray-200 dark:border-dark-border">
+                <div class="flex items-center gap-3">
+                    <img src="https://ui-avatars.com/api/?name=Budi+Santoso&background=3b82f6&color=fff" alt="User" class="w-9 h-9 rounded-full ring-2 ring-primary-200 dark:ring-primary-900">
+                    <div>
+                        <p id="profileName" class="text-sm font-semibold dark:text-white">Guru</p>
+                        <p id="profileRole" class="text-xs text-gray-500">Guru</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Overlay for mobile sidebar -->
+        <div id="sidebarOverlay" onclick="toggleSidebar()" class="fixed inset-0 bg-gray-900/50 z-10 hidden md:hidden backdrop-blur-sm transition-opacity"></div>
+
+        <!-- Content Area -->
+        <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+            
+            <!-- Top Navbar -->
+            <header class="glass h-16 flex-shrink-0 flex items-center justify-between px-4 lg:px-8 border-b border-gray-200 dark:border-dark-border z-10">
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="md:hidden p-2 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-dark-card transition-colors">
+                        <i class="fa-solid fa-bars text-lg"></i>
+                    </button>
+                    <h2 id="pageTitle" class="text-xl font-bold dark:text-white hidden sm:block">Dashboard</h2>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <div class="relative hidden md:block">
+                        <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                        <input type="text" placeholder="Cari siswa atau jurnal..." class="pl-10 pr-4 py-1.5 rounded-full text-sm border border-gray-300 dark:border-dark-border bg-gray-50 dark:bg-dark-card focus:outline-none focus:ring-2 focus:ring-primary-500 dark:text-white w-64 transition-all">
+                    </div>
+                    <button onclick="toggleTheme()" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-dark-border transition-colors">
+                        <i class="fa-solid fa-moon text-lg dark:hidden"></i>
+                        <i class="fa-solid fa-sun text-lg hidden dark:block text-yellow-400"></i>
+                    </button>
+                    <button class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-dark-border transition-colors relative">
+                        <i class="fa-regular fa-bell text-lg"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Scrollable View Container -->
+            <div class="flex-1 overflow-y-auto p-4 lg:p-8 relative z-0">
+                
+                <!-- VIEW: DASHBOARD -->
+                <div id="view-dashboard" class="view-section fade-in">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="glass glass-panel p-6 rounded-2xl border-l-4 border-l-primary-500 flex items-center justify-between group hover:scale-105 transition-transform">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Kelas Diampu</p>
+                                <h3 id="statClasses" class="text-3xl font-bold dark:text-white">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 dark:text-primary-400 group-hover:rotate-12 transition-transform">
+                                <i class="fa-solid fa-chalkboard text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="glass glass-panel p-6 rounded-2xl border-l-4 border-l-green-500 flex items-center justify-between group hover:scale-105 transition-transform">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Total Siswa</p>
+                                <h3 id="statStudents" class="text-3xl font-bold dark:text-white">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 group-hover:rotate-12 transition-transform">
+                                <i class="fa-solid fa-users text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="glass glass-panel p-6 rounded-2xl border-l-4 border-l-purple-500 flex items-center justify-between group hover:scale-105 transition-transform">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Kehadiran (Bulan ini)</p>
+                                <h3 id="statAttendance" class="text-3xl font-bold dark:text-white">0%</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 group-hover:rotate-12 transition-transform">
+                                <i class="fa-solid fa-chart-line text-xl"></i>
+                            </div>
+                        </div>
+                        <div class="glass glass-panel p-6 rounded-2xl border-l-4 border-l-orange-500 flex items-center justify-between group hover:scale-105 transition-transform">
+                            <div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Jurnal Terisi</p>
+                                <h3 id="statJournals" class="text-3xl font-bold dark:text-white">0</h3>
+                            </div>
+                            <div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 group-hover:rotate-12 transition-transform">
+                                <i class="fa-solid fa-book-open text-xl"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl">
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Grafik Kehadiran Mingguan</h3>
+                            <div class="h-72 w-full">
+                                <canvas id="attendanceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass glass-panel p-6 rounded-2xl flex flex-col">
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Aktivitas Terakhir</h3>
+                            <div class="flex-1 space-y-4 text-sm text-gray-500">
+                                <!-- Populated dynamically by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PRESENSI -->
+                <div id="view-presensi" class="view-section hidden fade-in">
+                    <div class="glass glass-panel p-6 rounded-2xl mb-6">
+                        <h3 class="text-lg font-bold mb-4 dark:text-white">Input Presensi Siswa</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium mb-1 dark:text-gray-300">Pilih Kelas</label>
+                                <select id="presensiClass" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white" onchange="loadStudents()">
+                                    <option value="">-- Pilih Kelas --</option>
+                                    </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium mb-1 dark:text-gray-300">Tanggal</label>
+                                <input type="date" id="presensiDate" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="loadStudents()" class="w-full py-2.5 bg-gray-800 hover:bg-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-lg font-medium transition-all">
+                                    Tampilkan Siswa
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="studentListContainer" class="glass glass-panel rounded-2xl overflow-hidden hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-gray-50 dark:bg-dark-card border-b border-gray-200 dark:border-dark-border">
+                                        <th class="p-4 text-sm font-semibold text-gray-600 dark:text-gray-300">No</th>
+                                        <th class="p-4 text-sm font-semibold text-gray-600 dark:text-gray-300">NIS</th>
+                                        <th class="p-4 text-sm font-semibold text-gray-600 dark:text-gray-300">Nama Siswa</th>
+                                        <th class="p-4 text-sm font-semibold text-gray-600 dark:text-gray-300 text-center">Kehadiran</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="studentTableBody" class="divide-y divide-gray-200 dark:divide-dark-border dark:text-gray-300">
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="p-4 border-t border-gray-200 dark:border-dark-border bg-gray-50 dark:bg-dark-card/50 flex justify-end gap-3">
+                            <button onclick="document.getElementById('studentListContainer').classList.add('hidden')" class="px-5 py-2 rounded-lg border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">Batal</button>
+                            <button onclick="savePresensi()" class="px-5 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium shadow-md transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-save"></i> Simpan Presensi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: JURNAL -->
+                <div id="view-jurnal" class="view-section hidden fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 glass glass-panel p-6 rounded-2xl h-fit">
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Tulis Jurnal Baru</h3>
+                            <form id="jurnalForm" onsubmit="saveJurnal(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Tanggal Jurnal</label>
+                                    <input type="date" id="jurnalDateInput" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Kelas</label>
+                                    <select id="jurnalClass" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                        <option value="">-- Pilih Kelas --</option>
+                                    </select>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Mata Pelajaran</label>
+                                        <select id="jurnalMapel" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                            <option value="">-- Pilih Mata Pelajaran --</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Jam Ke-</label>
+                                        <input type="text" id="jurnalJam" placeholder="Contoh: 1-2" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Materi Pembahasan</label>
+                                    <input type="text" id="jurnalMateri" required placeholder="Contoh: Logaritma Dasar" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Catatan / Evaluasi</label>
+                                    <textarea id="jurnalCatatan" rows="3" placeholder="Siswa aktif, 2 orang remedial..." class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white"></textarea>
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-md transition-colors flex justify-center items-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i> Simpan Jurnal
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl flex flex-col">
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold dark:text-white">Riwayat Jurnal</h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pilih bulan jurnal dan tanggal cetak sebelum mencetak.</p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <label for="printMonth" class="text-xs font-medium text-gray-600 dark:text-gray-300">Bulan Jurnal</label>
+                                        <input type="month" id="printMonth" onchange="applyJournalPrintFilter()" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card text-sm dark:text-white focus:ring-2 focus:ring-primary-500 outline-none">
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <label for="printDate" class="text-xs font-medium text-gray-600 dark:text-gray-300">Tanggal Cetak</label>
+                                        <input type="date" id="printDate" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card text-sm dark:text-white focus:ring-2 focus:ring-primary-500 outline-none">
+                                    </div>
+                                    <button onclick="printJurnal()" class="p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 transition-colors flex items-center gap-2 text-sm font-medium"><i class="fa-solid fa-print"></i> Cetak</button>
+                                    <button onclick="exportJurnalExcel()" class="p-2 rounded bg-green-200 dark:bg-green-900/40 text-green-700 dark:text-green-400 hover:bg-green-300 transition-colors flex items-center gap-2 text-sm font-medium"><i class="fa-solid fa-file-excel"></i> Export</button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto flex-1 border border-gray-200 dark:border-dark-border rounded-lg">
+                                <table id="tabelJurnalData" class="w-full text-left border-collapse min-w-max">
+                                    <thead>
+                                        <tr class="bg-gray-100 dark:bg-dark-card/80 border-b border-gray-300 dark:border-gray-600">
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">NO.</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Hari,<br>Tanggal</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Kelas</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Mata<br>Pelajaran</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Ringkasan Materi (Kegiatan Belajar<br>Mengajar)</th>
+                                            <th colspan="4" class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 text-center border-r">Presensi</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 text-center no-print-export">Aksi</th>
+                                        </tr>
+                                        <tr class="bg-gray-50 dark:bg-dark-card/50 border-b border-gray-300 dark:border-gray-600">
+                                            <th class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-12">S</th>
+                                            <th class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-12">I</th>
+                                            <th class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-12">A</th>
+                                            <th class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-20">jmh hadir</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="jurnalTableBody" class="divide-y divide-gray-200 dark:divide-gray-700 dark:text-gray-300">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: KELAS -->
+                <div id="view-kelas" class="view-section hidden fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 glass glass-panel p-6 rounded-2xl h-fit">
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Tambah Kelas Baru</h3>
+                            <form id="kelasForm" onsubmit="saveKelas(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Nama Kelas</label>
+                                    <input type="text" id="inputNamaKelas" required placeholder="Contoh: XII IPA 1" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-md transition-colors flex justify-center items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> Tambah Kelas
+                                </button>
+                            </form>
+                        </div>
+                        <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl flex flex-col">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold dark:text-white">Daftar Kelas</h3>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Kelola kelas Anda di sini</span>
+                            </div>
+                            <div class="overflow-x-auto flex-1">
+                                <table class="w-full text-left border-collapse min-w-max">
+                                    <thead>
+                                        <tr class="bg-gray-50 dark:bg-dark-card border-b border-gray-200 dark:border-dark-border">
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">No</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Nama Kelas</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Jumlah Siswa</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="kelasTableBody" class="divide-y divide-gray-200 dark:divide-dark-border dark:text-gray-300">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: MAPEL -->
+                <div id="view-mapel" class="view-section hidden fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 glass glass-panel p-6 rounded-2xl h-fit">
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Tambah Mata Pelajaran</h3>
+                            <form id="mapelForm" onsubmit="saveMapel(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Nama Mata Pelajaran</label>
+                                    <input type="text" id="inputNamaMapel" required placeholder="Contoh: Informatika" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-md transition-colors flex justify-center items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> Tambah Mapel
+                                </button>
+                            </form>
+                        </div>
+                        <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl flex flex-col">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold dark:text-white">Daftar Mata Pelajaran</h3>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Kelola mata pelajaran Anda di sini</span>
+                            </div>
+                            <div class="overflow-x-auto flex-1">
+                                <table class="w-full text-left border-collapse min-w-max">
+                                    <thead>
+                                        <tr class="bg-gray-50 dark:bg-dark-card border-b border-gray-200 dark:border-dark-border">
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">No</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Nama Mata Pelajaran</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="mapelTableBody" class="divide-y divide-gray-200 dark:divide-dark-border dark:text-gray-300">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: SISWA -->
+                <div id="view-siswa" class="view-section hidden fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 glass glass-panel p-6 rounded-2xl h-fit">
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Tambah Siswa Baru</h3>
+                            <form id="siswaForm" onsubmit="saveSiswa(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">NIS</label>
+                                    <input type="text" id="inputNisSiswa" required placeholder="Contoh: 100123" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Nama Lengkap</label>
+                                    <input type="text" id="inputNamaSiswa" required placeholder="Contoh: Budi Santoso" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Kelas</label>
+                                    <select id="inputKelasSiswa" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                        <option value="">-- Pilih Kelas --</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-md transition-colors flex justify-center items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> Tambah Siswa
+                                </button>
+                            </form>
+                        </div>
+                        <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl flex flex-col">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold dark:text-white">Daftar Siswa</h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Download template Excel lalu upload untuk menambahkan banyak siswa sekaligus.</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    <button type="button" onclick="downloadStudentTemplate()" class="px-3 py-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors flex items-center gap-2 text-sm font-medium">
+                                        <i class="fa-solid fa-download"></i> Download Template
+                                    </button>
+                                    <input type="file" id="studentExcelUpload" accept=".xlsx,.xls" class="hidden" onchange="handleStudentExcelUpload(event)">
+                                    <button type="button" onclick="document.getElementById('studentExcelUpload').click()" class="px-3 py-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors flex items-center gap-2 text-sm font-medium">
+                                        <i class="fa-solid fa-file-arrow-up"></i> Upload Tambah Siswa
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="overflow-x-auto flex-1">
+                                <table class="w-full text-left border-collapse min-w-max">
+                                    <thead>
+                                        <tr class="bg-gray-50 dark:bg-dark-card border-b border-gray-200 dark:border-dark-border">
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">NIS</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Nama Siswa</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Kelas</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="siswaTableBody" class="divide-y divide-gray-200 dark:divide-dark-border dark:text-gray-300">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PROFIL (Settings) -->
+                <div id="view-profil" class="view-section hidden fade-in">
+                    <div class="max-w-2xl mx-auto glass glass-panel p-6 rounded-2xl">
+                        <h3 class="text-lg font-bold mb-4 dark:text-white">Pengaturan Profil & Cetak Jurnal</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Data di bawah ini akan digunakan sebagai tanda tangan pada saat mencetak dokumen Jurnal Mengajar.</p>
+                        <form id="profilForm" onsubmit="saveProfil(event)" class="space-y-5">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Nama Kepala Sekolah</label>
+                                    <input type="text" id="profKepsekNama" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card dark:text-white" placeholder="Contoh: Budi Santoso, S.Pd., M.Pd.">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">NIP Kepala Sekolah</label>
+                                    <input type="text" id="profKepsekNip" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card dark:text-white" placeholder="Contoh: 19700101 200001 1 001">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Nama Guru (Anda)</label>
+                                    <input type="text" id="profGuruNama" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card dark:text-white" placeholder="Contoh: Andi, S.Kom.">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">NIP Guru (Anda)</label>
+                                    <input type="text" id="profGuruNip" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card dark:text-white" placeholder="Contoh: 19850202 201001 1 002">
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-md transition-colors flex justify-center items-center gap-2 mt-4">
+                                <i class="fa-solid fa-save"></i> Simpan Profil
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase Web SDK 12.18.0 -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
+      import {
+        getAuth, setPersistence, browserLocalPersistence, browserSessionPersistence,
+        signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail
+      } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
+      import {
+        getFirestore, collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc,
+        doc, getDocs, query, where, serverTimestamp
+      } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyB1LEepgaUrIha5-bFfyiOEHThB-cmk3to",
+        authDomain: "jurnal-guru-699dd.firebaseapp.com",
+        projectId: "jurnal-guru-699dd",
+        storageBucket: "jurnal-guru-699dd.firebasestorage.app",
+        messagingSenderId: "714059756014",
+        appId: "1:714059756014:web:0c9f51d9cdb183483fdeff",
+        measurementId: "G-1SV57GMKR9"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      window.GEM_FIREBASE = {
+        auth, db, setPersistence, browserLocalPersistence, browserSessionPersistence,
+        signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail,
+        collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp
+      };
+    </script>
+
+    <script>
+        const FB = new Proxy({}, {
+            get(_target, prop) {
+                const firebase = window.GEM_FIREBASE;
+                if (!firebase) {
+                    throw new Error('Firebase belum siap. Silakan tunggu beberapa detik lalu coba lagi.');
+                }
+                return firebase[prop];
+            }
+        });
+
+        let currentUser = null;
+        let allClasses = [];
+        let allMapels = [];
+        let allStudents = [];
+        let allJournals = [];
+        let attendanceCache = {};
+        let myChart = null;
+
+        let userProfileData = {
+            kepsekNama: 'Parwoto, S. Pd., M. Pd.',
+            kepsekNip: '19700109 200801 1 006',
+            guruNama: 'Slamet Mujamil, S. Pd.',
+            guruNip: '19900507 202221 1 008'
+        };
+
+        const $ = (id) => document.getElementById(id);
+        const esc = (value) => String(value ?? '')
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+
+        const todayISO = () => new Date().toISOString().slice(0,10);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            $('presensiDate').value = todayISO();
+            if ($('jurnalDateInput')) $('jurnalDateInput').value = todayISO();
+            if ($('printDate')) $('printDate').value = todayISO();
+            if ($('printMonth')) $('printMonth').value = todayISO().slice(0,7);
+
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            }
+
+            const forgot = document.querySelector('a[href="#"]');
+            if (forgot) {
+                forgot.addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    const email = $('email').value.trim();
+                    if (!email) {
+                        Swal.fire('Email belum diisi', 'Masukkan email pada kolom login terlebih dahulu.', 'info');
+                        return;
+                    }
+                    try {
+                        await FB.sendPasswordResetEmail(FB.auth, email);
+                        Swal.fire('Tautan dikirim', 'Periksa email Anda untuk mengatur ulang password.', 'success');
+                    } catch (err) {
+                        Swal.fire('Gagal', firebaseError(err), 'error');
+                    }
+                });
+            }
+
+            FB.onAuthStateChanged(FB.auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    $('loginPage').classList.add('hidden');
+                    $('mainApp').classList.remove('hidden');
+                    await loadUserProfile();
+                    await refreshAllData();
+                    navigate('dashboard');
+                    renderDashboard();
+                } else {
+                    currentUser = null;
+                    $('mainApp').classList.add('hidden');
+                    $('loginPage').classList.remove('hidden');
+                }
+            });
+        });
+
+        function firebaseError(err) {
+            const code = err?.code || '';
+            const map = {
+                'auth/invalid-credential': 'Email atau password salah.',
+                'auth/invalid-email': 'Format email tidak valid.',
+                'auth/user-disabled': 'Akun ini dinonaktifkan.',
+                'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.',
+                'auth/network-request-failed': 'Jaringan bermasalah. Periksa koneksi internet.',
+                'permission-denied': 'Anda tidak memiliki izin mengakses data ini.'
+            };
+            return map[code] || err?.message || 'Terjadi kesalahan.';
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = $('email').value.trim();
+            const password = $('password').value;
+            const remember = document.querySelector('#loginForm input[type="checkbox"]')?.checked;
+
+            Swal.fire({
+                title: 'Proses Login...',
+                text: 'Menghubungkan ke Firebase',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            try {
+                await FB.setPersistence(
+                    FB.auth,
+                    remember ? FB.browserLocalPersistence : FB.browserSessionPersistence
+                );
+                await FB.signInWithEmailAndPassword(FB.auth, email, password);
+                Swal.close();
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: firebaseError(err) });
+            }
+        }
+
+        async function handleLogout() {
+            const result = await Swal.fire({
+                title: 'Keluar?',
+                text: "Sesi Anda akan diakhiri.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: '#ef4444',
+                confirmButtonText: 'Ya, Keluar',
+                cancelButtonText: 'Batal'
+            });
+            if (!result.isConfirmed) return;
+
+            await FB.signOut(FB.auth);
+            allClasses = []; allMapels = []; allStudents = []; allJournals = []; attendanceCache = {};
+            $('loginForm').reset();
+            Swal.fire({icon:'success', title:'Logout berhasil', showConfirmButton:false, timer:1000});
+        }
+
+        async function loadUserProfile() {
+            if (!currentUser) return;
+            try {
+                const snap = await FB.getDoc(FB.doc(FB.db, 'users', currentUser.uid));
+                const profile = snap.exists() ? snap.data() : {};
+                const name = profile.guruNama || currentUser.displayName || currentUser.email?.split('@')[0] || 'Guru';
+                $('profileName').textContent = name;
+                $('profileRole').textContent = profile.role || 'Guru';
+                
+                userProfileData = {
+                    kepsekNama: profile.kepsekNama || userProfileData.kepsekNama,
+                    kepsekNip: profile.kepsekNip || userProfileData.kepsekNip,
+                    guruNama: profile.guruNama || name,
+                    guruNip: profile.guruNip || userProfileData.guruNip
+                };
+
+                if($('profKepsekNama')) $('profKepsekNama').value = userProfileData.kepsekNama;
+                if($('profKepsekNip')) $('profKepsekNip').value = userProfileData.kepsekNip;
+                if($('profGuruNama')) $('profGuruNama').value = userProfileData.guruNama;
+                if($('profGuruNip')) $('profGuruNip').value = userProfileData.guruNip;
+            } catch (e) {
+                $('profileName').textContent = currentUser.email || 'Guru';
+                $('profileRole').textContent = 'Guru';
+            }
+        }
+
+        async function saveProfil(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const data = {
+                kepsekNama: $('profKepsekNama').value.trim(),
+                kepsekNip: $('profKepsekNip').value.trim(),
+                guruNama: $('profGuruNama').value.trim(),
+                guruNip: $('profGuruNip').value.trim(),
+                updatedAt: FB.serverTimestamp()
+            };
+
+            Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+
+            try {
+                await FB.setDoc(FB.doc(FB.db, 'users', currentUser.uid), data, { merge: true });
+                userProfileData = { ...userProfileData, ...data };
+                $('profileName').textContent = data.guruNama || 'Guru';
+                Swal.close();
+                toast('Profil berhasil disimpan');
+            } catch (err) {
+                Swal.fire('Gagal', firebaseError(err), 'error');
+            }
+        }
+
+        async function refreshAllData() {
+            if (!currentUser) return;
+            await Promise.all([loadClasses(), loadMapels(), fetchStudents(), loadJournals(), loadAttendance()]);
+            populateClassDropdowns();
+            populateMapelDropdowns();
+            renderAllTables();
+        }
+
+        async function loadClasses() {
+            const snap = await FB.getDocs(FB.query(
+                FB.collection(FB.db, 'classes'),
+                FB.where('ownerUid', '==', currentUser.uid)
+            ));
+            allClasses = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            allClasses.sort((a,b) => (a.name||'').localeCompare(b.name||'', 'id'));
+        }
+
+        async function loadMapels() {
+            const snap = await FB.getDocs(FB.query(
+                FB.collection(FB.db, 'mapels'),
+                FB.where('ownerUid', '==', currentUser.uid)
+            ));
+            allMapels = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            allMapels.sort((a,b) => (a.name||'').localeCompare(b.name||'', 'id'));
+        }
+
+        async function fetchStudents() {
+            const snap = await FB.getDocs(FB.query(
+                FB.collection(FB.db, 'students'),
+                FB.where('ownerUid', '==', currentUser.uid)
+            ));
+            allStudents = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            allStudents.sort(compareNis);
+        }
+
+        async function loadJournals() {
+            const snap = await FB.getDocs(FB.query(
+                FB.collection(FB.db, 'journals'),
+                FB.where('ownerUid', '==', currentUser.uid)
+            ));
+            allJournals = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            allJournals.sort((a,b) => (String(b.date||'')).localeCompare(String(a.date||'')));
+        }
+
+        async function loadAttendance() {
+            const snap = await FB.getDocs(FB.query(
+                FB.collection(FB.db, 'attendance'),
+                FB.where('ownerUid', '==', currentUser.uid)
+            ));
+            attendanceCache = {};
+            snap.docs.forEach(d => {
+                const data = d.data();
+                attendanceCache[d.id] = {id:d.id, ...data};
+            });
+        }
+
+        function populateClassDropdowns() {
+            ['presensiClass','jurnalClass','inputKelasSiswa'].forEach(id => {
+                const select = $(id);
+                if (!select) return;
+                const old = select.value;
+                select.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+                allClasses.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.textContent = c.name;
+                    select.appendChild(opt);
+                });
+                if (old && allClasses.some(c => c.id === old)) select.value = old;
+            });
+        }
+
+        function populateMapelDropdowns() {
+            const select = $('jurnalMapel');
+            if (!select) return;
+            const old = select.value;
+            select.innerHTML = '<option value="">-- Pilih Mata Pelajaran --</option>';
+            allMapels.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.name;
+                opt.textContent = m.name;
+                select.appendChild(opt);
+            });
+            if (old && allMapels.some(m => m.name === old)) select.value = old;
+        }
+
+        function renderAllTables() {
+            renderClassTable();
+            renderMapelTable();
+            renderStudentTable();
+            renderJournalTable();
+            updateDashboardStats();
+        }
+
+        function renderClassTable() {
+            const tbody = $('kelasTableBody');
+            tbody.innerHTML = '';
+            allClasses.forEach((c, i) => {
+                const count = allStudents.filter(s => s.classId === c.id).length;
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-dark-card/50 fade-in';
+                tr.innerHTML = `
+                    <td class="p-3 text-sm">${i+1}</td>
+                    <td class="p-3 text-sm font-medium">${esc(c.name)}</td>
+                    <td class="p-3 text-sm">${count}</td>
+                    <td class="p-3 text-sm">
+                        <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editKelas('${c.id}')" title="Edit Kelas">
+                          <i class="fa-solid fa-edit"></i>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700" onclick="deleteKelas('${c.id}')" title="Hapus Kelas">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderMapelTable() {
+            const tbody = $('mapelTableBody');
+            tbody.innerHTML = '';
+            allMapels.forEach((m, i) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-dark-card/50 fade-in';
+                tr.innerHTML = `
+                    <td class="p-3 text-sm">${i+1}</td>
+                    <td class="p-3 text-sm font-medium">${esc(m.name)}</td>
+                    <td class="p-3 text-sm">
+                        <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editMapel('${m.id}')" title="Edit Mapel">
+                          <i class="fa-solid fa-edit"></i>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700" onclick="deleteMapel('${m.id}')" title="Hapus Mapel">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function renderStudentTable() {
+            const tbody = $('siswaTableBody');
+            tbody.innerHTML = '';
+            allStudents.forEach(s => {
+                const cls = allClasses.find(c => c.id === s.classId);
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-dark-card/50 fade-in';
+                tr.innerHTML = `
+                    <td class="p-3 text-sm font-medium">${esc(s.nis)}</td>
+                    <td class="p-3 text-sm">${esc(s.name)}</td>
+                    <td class="p-3 text-sm">${esc(cls?.name || s.className || '-')}</td>
+                    <td class="p-3 text-sm">
+                        <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editSiswa('${s.id}')"><i class="fa-solid fa-edit"></i></button>
+                        <button class="text-red-500 hover:text-red-700" onclick="deleteSiswa('${s.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function getSelectedPrintMonth() { return $('printMonth')?.value || todayISO().slice(0,7); }
+        function getSelectedPrintDate() { return $('printDate')?.value || todayISO(); }
+
+        function compareNis(a, b) {
+            const na = String(a?.nis ?? '').trim();
+            const nb = String(b?.nis ?? '').trim();
+            const aNum = Number(na);
+            const bNum = Number(nb);
+            const aIsNum = na !== '' && Number.isFinite(aNum);
+            const bIsNum = nb !== '' && Number.isFinite(bNum);
+
+            if (aIsNum && bIsNum) return aNum - bNum;
+            if (aIsNum) return -1;
+            if (bIsNum) return 1;
+            return na.localeCompare(nb, 'id', { numeric: true, sensitivity: 'base' });
+        }
+
+        function getJamSortValue(value) {
+            const raw = String(value ?? '').trim();
+            const match = raw.match(/\d+/);
+            return match ? Number(match[0]) : Number.MAX_SAFE_INTEGER;
+        }
+
+        function compareJournals(a, b) {
+            const dateCompare = String(a?.date ?? '').localeCompare(String(b?.date ?? ''));
+            if (dateCompare !== 0) return dateCompare;
+            const jamCompare = getJamSortValue(a?.jam) - getJamSortValue(b?.jam);
+            if (jamCompare !== 0) return jamCompare;
+            return String(a?.jam ?? '').localeCompare(String(b?.jam ?? ''), 'id', { numeric: true, sensitivity: 'base' });
+        }
+
+        function formatMonthLong(value) {
+            if (!value) return '';
+            const d = new Date(`${value}-01T00:00:00`);
+            return d.toLocaleDateString('id-ID', { month:'long', year:'numeric' });
+        }
+
+        function formatDateLong(value) {
+            if (!value) return '';
+            const d = new Date(`${value}T00:00:00`);
+            return d.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+        }
+
+        function applyJournalPrintFilter() { renderJournalTable(); }
+
+        function getFilteredJournalsByPrintMonth() {
+            const month = getSelectedPrintMonth();
+            return allJournals.filter(j => String(j.date || '').slice(0,7) === month).sort(compareJournals);
+        }
+
+        function renderJournalTable() {
+            const tbody = $('jurnalTableBody');
+            tbody.innerHTML = '';
+            const selectedMonth = getSelectedPrintMonth();
+            const filtered = allJournals
+                .filter(j => String(j.date || '').slice(0,7) === selectedMonth)
+                .sort(compareJournals);
+            filtered.forEach((j, i) => {
+                const dateObj = j.date ? new Date(`${j.date}T00:00:00`) : new Date();
+                const hari = dateObj.toLocaleDateString('id-ID',{weekday:'long'});
+                const tgl = dateObj.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+                const cls = allClasses.find(c => c.id === j.classId);
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-dark-card/40 transition-colors';
+                tr.innerHTML = `
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${i+1}</td>
+                    <td class="p-3 text-sm border-r border-gray-200 dark:border-gray-700">${esc(hari)},<br>${esc(tgl)}</td>
+                    <td class="p-3 text-sm font-medium border-r border-gray-200 dark:border-gray-700 text-center">${esc(cls?.name || j.className || '-')}</td>
+                    <td class="p-3 text-sm border-r border-gray-200 dark:border-gray-700">${esc(j.mapel)}</td>
+                    <td class="p-3 text-sm border-r border-gray-200 dark:border-gray-700">${esc(j.materi)}</td>
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${j.sakit || 0}</td>
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${j.izin || 0}</td>
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${j.alpa || 0}</td>
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700 font-bold">${j.hadir || 0}</td>
+                    <td class="p-3 text-sm text-center no-print-export w-20">
+                        <button class="text-blue-500 hover:text-blue-700 mr-3" onclick="editJurnal('${j.id}')" title="Edit Jurnal"><i class="fa-solid fa-edit"></i></button>
+                        <button class="text-red-500 hover:text-red-700" onclick="deleteJurnal('${j.id}')" title="Hapus Jurnal"><i class="fa-solid fa-trash"></i></button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function saveMapel(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const namaMapel = $('inputNamaMapel').value.trim();
+            if (!namaMapel) return;
+
+            if (allMapels.some(m => m.name.toLowerCase() === namaMapel.toLowerCase())) {
+                Swal.fire('Duplikat', 'Nama mata pelajaran sudah ada.', 'warning');
+                return;
+            }
+
+            try {
+                await FB.addDoc(FB.collection(FB.db, 'mapels'), {
+                    name: namaMapel, ownerUid: currentUser.uid, createdAt: FB.serverTimestamp()
+                });
+                $('mapelForm').reset();
+                await loadMapels();
+                populateMapelDropdowns();
+                renderMapelTable();
+                toast(`Mata pelajaran "${namaMapel}" berhasil ditambahkan.`);
+            } catch (err) {
+                Swal.fire('Gagal', firebaseError(err), 'error');
+            }
+        }
+
+        async function editMapel(id) {
+            const m = allMapels.find(x => x.id === id);
+            if (!m) return;
+            const result = await Swal.fire({
+                title: 'Edit Mata Pelajaran',
+                input: 'text',
+                inputValue: m.name,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value.trim()) return 'Nama mata pelajaran tidak boleh kosong!';
+                }
+            });
+            if (!result.isConfirmed) return;
+            const newName = result.value.trim();
+            if (newName.toLowerCase() === m.name.toLowerCase()) return;
+            
+            if (allMapels.some(x => x.id !== id && x.name.toLowerCase() === newName.toLowerCase())) {
+                Swal.fire('Duplikat', 'Nama mata pelajaran sudah ada.', 'warning');
+                return;
+            }
+
+            try {
+                await FB.updateDoc(FB.doc(FB.db, 'mapels', id), { name: newName });
+                await loadMapels();
+                populateMapelDropdowns();
+                renderMapelTable();
+                
+                // Note: We don't strictly cascade update journals' mapel names here
+                // as journals can act as a historical log. If needed, a batch update can be added.
+                toast('Nama mata pelajaran diperbarui');
+            } catch (err) {
+                Swal.fire('Gagal', firebaseError(err), 'error');
+            }
+        }
+
+        async function deleteMapel(id) {
+            const mapel = allMapels.find(m => m.id === id);
+            const result = await Swal.fire({
+                title:'Hapus mata pelajaran?', text:`${mapel?.name || ''} akan dihapus.`,
+                icon:'warning', showCancelButton:true, confirmButtonColor:'#ef4444',
+                confirmButtonText:'Hapus', cancelButtonText:'Batal'
+            });
+            if (!result.isConfirmed) return;
+            try {
+                await FB.deleteDoc(FB.doc(FB.db,'mapels',id));
+                await loadMapels();
+                populateMapelDropdowns();
+                renderMapelTable();
+                toast('Mata pelajaran dihapus');
+            } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
+        }
+
+        async function saveKelas(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const namaKelas = $('inputNamaKelas').value.trim();
+            if (!namaKelas) return;
+
+            if (allClasses.some(c => c.name.toLowerCase() === namaKelas.toLowerCase())) {
+                Swal.fire('Duplikat', 'Nama kelas sudah ada.', 'warning');
+                return;
+            }
+
+            try {
+                await FB.addDoc(FB.collection(FB.db, 'classes'), {
+                    name: namaKelas, ownerUid: currentUser.uid, createdAt: FB.serverTimestamp()
+                });
+                $('kelasForm').reset();
+                await loadClasses();
+                populateClassDropdowns();
+                renderClassTable();
+                updateDashboardStats();
+                toast(`Kelas "${namaKelas}" berhasil ditambahkan.`);
+            } catch (err) {
+                Swal.fire('Gagal', firebaseError(err), 'error');
+            }
+        }
+
+        async function editKelas(id) {
+            const c = allClasses.find(x => x.id === id);
+            if (!c) return;
+            const result = await Swal.fire({
+                title: 'Edit Kelas',
+                input: 'text',
+                inputValue: c.name,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value.trim()) return 'Nama kelas tidak boleh kosong!';
+                }
+            });
+            if (!result.isConfirmed) return;
+            const newName = result.value.trim();
+            if (newName.toLowerCase() === c.name.toLowerCase()) return;
+            
+            if (allClasses.some(x => x.id !== id && x.name.toLowerCase() === newName.toLowerCase())) {
+                Swal.fire('Duplikat', 'Nama kelas sudah ada.', 'warning');
+                return;
+            }
+
+            try {
+                await FB.updateDoc(FB.doc(FB.db, 'classes', id), { name: newName });
+                await loadClasses();
+                populateClassDropdowns();
+                renderClassTable();
+                
+                // Update class names in students and journals collections matching this class id in background
+                allStudents.filter(s => s.classId === id).forEach(s => FB.updateDoc(FB.doc(FB.db, 'students', s.id), { className: newName }));
+                allJournals.filter(j => j.classId === id).forEach(j => FB.updateDoc(FB.doc(FB.db, 'journals', j.id), { className: newName }));
+                
+                toast('Nama kelas diperbarui');
+            } catch (err) {
+                Swal.fire('Gagal', firebaseError(err), 'error');
+            }
+        }
+
+        async function deleteKelas(id) {
+            const cls = allClasses.find(c => c.id === id);
+            const count = allStudents.filter(s => s.classId === id).length;
+            const result = await Swal.fire({
+                title:'Hapus kelas?', text:`${cls?.name || ''} memiliki ${count} siswa.`,
+                icon:'warning', showCancelButton:true, confirmButtonColor:'#ef4444',
+                confirmButtonText:'Hapus', cancelButtonText:'Batal'
+            });
+            if (!result.isConfirmed) return;
+            try {
+                await FB.deleteDoc(FB.doc(FB.db,'classes',id));
+                await loadClasses();
+                populateClassDropdowns();
+                renderClassTable();
+                updateDashboardStats();
+                toast('Kelas dihapus');
+            } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
+        }
+
+        async function saveSiswa(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const nis = $('inputNisSiswa').value.trim();
+            const nama = $('inputNamaSiswa').value.trim();
+            const classId = $('inputKelasSiswa').value;
+            const cls = allClasses.find(c => c.id === classId);
+            if (!nis || !nama || !classId) {
+                Swal.fire('Lengkapi data','NIS, nama, dan kelas wajib diisi.','warning'); return;
+            }
+
+            const duplicate = allStudents.find(s => s.nis === nis);
+            if (duplicate) {
+                Swal.fire('NIS sudah ada','Gunakan NIS yang berbeda.','warning'); return;
+            }
+
+            try {
+                await FB.addDoc(FB.collection(FB.db,'students'), {
+                    nis, name:nama, classId, className:cls?.name || '',
+                    ownerUid:currentUser.uid, createdAt:FB.serverTimestamp()
+                });
+                $('siswaForm').reset();
+                await fetchStudents();
+                renderStudentTable(); renderClassTable(); updateDashboardStats();
+                toast('Siswa berhasil ditambahkan');
+            } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
+        }
+
+        async function editSiswa(id) {
+            const s = allStudents.find(x => x.id === id);
+            if (!s) return;
+            const result = await Swal.fire({
+                title:'Edit Siswa',
+                html: `
+                  <input id="swalNis" class="swal2-input" placeholder="NIS" value="${esc(s.nis)}">
+                  <input id="swalNama" class="swal2-input" placeholder="Nama lengkap" value="${esc(s.name)}">
+                  <select id="swalKelas" class="swal2-select">${allClasses.map(c=>`<option value="${esc(c.id)}" ${c.id===s.classId?'selected':''}>${esc(c.name)}</option>`).join('')}</select>`,
+                showCancelButton:true, confirmButtonText:'Simpan', cancelButtonText:'Batal',
+                preConfirm: () => ({
+                    nis: document.getElementById('swalNis').value.trim(),
+                    name: document.getElementById('swalNama').value.trim(),
+                    classId: document.getElementById('swalKelas').value
+                })
+            });
+            if (!result.isConfirmed) return;
+            const data=result.value, cls=allClasses.find(c=>c.id===data.classId);
+            try {
+                await FB.updateDoc(FB.doc(FB.db,'students',id), {...data, className:cls?.name||'', updatedAt:FB.serverTimestamp()});
+                await fetchStudents(); renderStudentTable(); renderClassTable();
+                toast('Data siswa diperbarui');
+            } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
+        }
+
+        async function deleteSiswa(id) {
+            const s=allStudents.find(x=>x.id===id);
+            const result=await Swal.fire({title:'Hapus siswa?',text:s?.name||'',icon:'warning',showCancelButton:true,confirmButtonColor:'#ef4444',confirmButtonText:'Hapus',cancelButtonText:'Batal'});
+            if(!result.isConfirmed) return;
+            try {
+                await FB.deleteDoc(FB.doc(FB.db,'students',id));
+                await fetchStudents(); renderStudentTable(); renderClassTable(); updateDashboardStats();
+                toast('Siswa dihapus');
+            } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
+        }
+
+        function downloadStudentTemplate() {
+            try {
+                const rows = [
+                    ['NIS', 'Nama Lengkap', 'Kelas'],
+                    ['1001', 'Contoh Nama Siswa', allClasses[0]?.name || 'X IPA 1']
+                ];
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                ws['!cols'] = [{ wch: 15 }, { wch: 32 }, { wch: 22 }];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Data Siswa');
+                XLSX.writeFile(wb, 'Template_Tambah_Siswa.xlsx');
+                toast('Template Excel berhasil diunduh');
+            } catch (err) {
+                Swal.fire('Gagal', 'Template tidak dapat dibuat: ' + (err.message || err), 'error');
+            }
+        }
+
+        async function handleStudentExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!currentUser) {
+                Swal.fire('Belum login', 'Silakan login terlebih dahulu.', 'warning');
+                event.target.value = '';
+                return;
+            }
+            if (!allClasses.length) {
+                Swal.fire('Belum ada kelas', 'Tambahkan minimal satu kelas sebelum upload siswa.', 'warning');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                Swal.fire({ title: 'Mengimpor siswa...', text: 'Mohon tunggu.', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type: 'array' });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+                    if (rows.length < 2) throw new Error('File Excel kosong atau tidak memiliki baris data.');
+
+                    let added = 0, skipped = 0, fallbackClass = allClasses[0];
+                    const duplicateNis = new Set(allStudents.map(s => String(s.nis).trim()));
+
+                    for (let i = 1; i < rows.length; i++) {
+                        const row = rows[i] || [];
+                        const nis = String(row[0] ?? '').trim();
+                        const name = String(row[1] ?? '').trim();
+                        const classText = String(row[2] ?? '').trim();
+                        if (!nis || !name) { skipped++; continue; }
+                        if (duplicateNis.has(nis)) { skipped++; continue; }
+
+                        let cls = allClasses.find(c =>
+                            c.id === classText || c.name.toLowerCase() === classText.toLowerCase()
+                        ) || fallbackClass;
+
+                        await FB.addDoc(FB.collection(FB.db, 'students'), {
+                            nis, name, classId: cls.id, className: cls.name,
+                            ownerUid: currentUser.uid, createdAt: FB.serverTimestamp()
+                        });
+                        duplicateNis.add(nis);
+                        added++;
+                    }
+
+                    await fetchStudents();
+                    renderStudentTable(); renderClassTable(); populateClassDropdowns(); updateDashboardStats();
+                    Swal.fire({
+                        icon: 'success', title: 'Upload Berhasil!',
+                        html: `<b>${added}</b> siswa berhasil ditambahkan${skipped ? `<br><small>${skipped} baris dilewati.</small>` : '.'}`,
+                        confirmButtonText: 'OK', confirmButtonColor: '#2563eb'
+                    });
+                } catch (err) {
+                    Swal.fire('Upload Gagal', err.message || firebaseError(err), 'error');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            if (myChart) initChart();
+        }
+
+        function togglePassword() {
+            const input = $('password'), icon = $('eyeIcon');
+            if (input.type === 'password') {
+                input.type='text'; icon.classList.replace('fa-eye','fa-eye-slash');
+            } else {
+                input.type='password'; icon.classList.replace('fa-eye-slash','fa-eye');
+            }
+        }
+
+        function toggleSidebar() {
+            $('sidebar').classList.toggle('-translate-x-full');
+            $('sidebarOverlay').classList.toggle('hidden');
+        }
+
+        function navigate(viewName) {
+            document.querySelectorAll('.view-section').forEach(el=>el.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(el=>{
+                el.classList.remove('bg-primary-50','dark:bg-dark-card','text-primary-600','dark:text-primary-400');
+                el.classList.add('text-gray-600','dark:text-gray-400');
+            });
+            const target=$(`view-${viewName}`);
+            const btn=$(`nav-${viewName}`);
+            if(target) target.classList.remove('hidden');
+            if(btn){
+                btn.classList.remove('text-gray-600','dark:text-gray-400');
+                btn.classList.add('bg-primary-50','dark:bg-dark-card','text-primary-600','dark:text-primary-400');
+            }
+            const titles={dashboard:'Dashboard',presensi:'Presensi Kelas',jurnal:'Jurnal Mengajar',kelas:'Kelola Data Kelas',mapel:'Kelola Mata Pelajaran',siswa:'Kelola Data Siswa', profil:'Pengaturan Profil'};
+            $('pageTitle').innerText=titles[viewName]||'Dashboard';
+            if(viewName==='presensi') loadStudents();
+            if(viewName==='dashboard') { renderDashboard(); initChart(); }
+            if(window.innerWidth<768 && !$('sidebar').classList.contains('-translate-x-full')) toggleSidebar();
+        }
+
+        function toast(title) {
+            Swal.fire({toast:true,position:'top-end',icon:'success',title,showConfirmButton:false,timer:1800});
+        }
+
+        async function loadStudents() {
+            if(!currentUser) return;
+            const clsId=$('presensiClass').value;
+            const date=$('presensiDate').value || todayISO();
+            if(!clsId || !date) {
+                $('studentListContainer').classList.add('hidden');
+                return;
+            }
+            const students=allStudents.filter(s=>s.classId===clsId);
+            if(!students.length){
+                Swal.fire('Belum ada siswa','Tambahkan siswa pada menu Kelola Siswa.','info');
+                $('studentListContainer').classList.add('hidden');
+                return;
+            }
+            const key=`${date}__${clsId}`;
+            let existing=attendanceCache[key];
+            if(!existing){
+                try {
+                    const snap=await FB.getDoc(FB.doc(FB.db,'attendance',key));
+                    if(snap.exists()) existing={id:key,...snap.data()};
+                    if(existing) attendanceCache[key]=existing;
+                } catch(err) {}
+            }
+            const statuses=existing?.statuses || {};
+            const tbody=$('studentTableBody');
+            tbody.innerHTML='';
+            students.forEach((std,idx)=>{
+                const status=statuses[std.id] || 'Hadir';
+                const tr=document.createElement('tr');
+                tr.innerHTML=`
+                    <td class="p-4 text-sm">${idx+1}</td>
+                    <td class="p-4 text-sm font-medium">${esc(std.nis)}</td>
+                    <td class="p-4 text-sm">${esc(std.name)}</td>
+                    <td class="p-4 text-sm text-center">
+                      <div class="flex items-center justify-center gap-3">
+                        ${attendanceRadio(std,'Hadir',status,'check','green')}
+                        ${attendanceRadio(std,'Sakit',status,'notes-medical','yellow')}
+                        ${attendanceRadio(std,'Izin',status,'envelope','blue')}
+                        ${attendanceRadio(std,'Alpa',status,'xmark','red')}
+                      </div>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+            const button=document.querySelector('#studentListContainer button.bg-primary-600, #studentListContainer button.bg-yellow-500');
+            if(button){
+                const exists=!!existing;
+                button.innerHTML=exists?'<i class="fa-solid fa-edit"></i> Update Presensi':'<i class="fa-solid fa-save"></i> Simpan Presensi';
+                button.className=exists
+                  ? 'px-5 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-medium shadow-md transition-colors flex items-center gap-2'
+                  : 'px-5 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-medium shadow-md transition-colors flex items-center gap-2';
+            }
+            $('studentListContainer').classList.remove('hidden');
+        }
+
+        function attendanceRadio(std,status,current,icon,color){
+            const colors={green:'green',yellow:'yellow',blue:'blue',red:'red'};
+            return `
+              <label class="cursor-pointer group flex flex-col items-center">
+                <input type="radio" name="att_${esc(std.id)}" value="${status}" ${current===status?'checked':''} class="peer sr-only">
+                <div class="w-8 h-8 rounded-full flex items-center justify-center border-2 border-${colors[color]}-500 text-${colors[color]}-500 peer-checked:bg-${colors[color]}-500 peer-checked:text-white transition-all">
+                  <i class="fa-solid fa-${icon} text-xs"></i>
+                </div>
+                <span class="text-[10px] mt-1 opacity-0 group-hover:opacity-100 transition-opacity">${status}</span>
+              </label>`;
+        }
+
+        async function savePresensi() {
+            if(!currentUser) return;
+            const clsId=$('presensiClass').value, date=$('presensiDate').value;
+            if(!clsId || !date) return;
+            const students=allStudents.filter(s=>s.classId===clsId);
+            const statuses={};
+            students.forEach(std=>{
+                const radio=document.querySelector(`input[name="att_${CSS.escape(std.id)}"]:checked`);
+                statuses[std.id]=radio?.value || 'Hadir';
+            });
+            const key=`${date}__${clsId}`;
+            const isUpdate=!!attendanceCache[key];
+
+            try{
+                await FB.setDoc(FB.doc(FB.db,'attendance',key),{
+                    date, classId:clsId, statuses, ownerUid:currentUser.uid, updatedAt:FB.serverTimestamp()
+                },{merge:true});
+                attendanceCache[key]={id:key, date, classId:clsId, statuses, ownerUid:currentUser.uid};
+                const counts=countAttendanceForClass(clsId,statuses);
+                const relatedJournals=allJournals.filter(j =>
+                    String(j.date || '') === String(date) && String(j.classId || '') === String(clsId)
+                );
+                if(relatedJournals.length){
+                    await Promise.all(relatedJournals.map(j =>
+                        FB.updateDoc(FB.doc(FB.db,'journals',j.id),{
+                            sakit:counts.sakit, izin:counts.izin, alpa:counts.alpa, hadir:counts.hadir, updatedAt:FB.serverTimestamp()
+                        })
+                    ));
+                    await loadJournals();
+                    renderJournalTable();
+                }
+                $('studentListContainer').classList.add('hidden');
+                updateDashboardStats();
+                initChart();
+                toast(isUpdate ? 'Presensi diperbarui dan rekap jurnal disinkronkan' : 'Presensi disimpan dan rekap jurnal disinkronkan');
+            }catch(err){
+                Swal.fire('Gagal menyimpan',firebaseError(err),'error');
+            }
+        }
+
+        async function saveJurnal(e) {
+            e.preventDefault();
+            if(!currentUser) return;
+            const date = $('jurnalDateInput').value || todayISO();
+            const classId=$('jurnalClass').value;
+            const cls=allClasses.find(c=>c.id===classId);
+            const mapel=$('jurnalMapel').value;
+            const jam=$('jurnalJam').value.trim();
+            const materi=$('jurnalMateri').value.trim();
+            const catatan=$('jurnalCatatan').value.trim();
+            if(!classId || !mapel || !jam || !materi) return;
+            const pres=attendanceCache[`${date}__${classId}`]?.statuses || {};
+            const counts=countAttendanceForClass(classId,pres);
+
+            try{
+                await FB.addDoc(FB.collection(FB.db,'journals'),{
+                    date,classId,className:cls?.name||'',mapel,jam,materi,catatan,
+                    sakit:counts.sakit,izin:counts.izin,alpa:counts.alpa,hadir:counts.hadir,
+                    ownerUid:currentUser.uid,createdAt:FB.serverTimestamp()
+                });
+                await loadJournals(); renderJournalTable();
+                $('jurnalMateri').value=''; $('jurnalCatatan').value='';
+                updateDashboardStats();
+                toast('Jurnal berhasil disimpan');
+            }catch(err){ Swal.fire('Gagal menyimpan',firebaseError(err),'error'); }
+        }
+
+        async function editJurnal(id) {
+            const j = allJournals.find(x => x.id === id);
+            if (!j) return;
+            
+            const classOptions = allClasses.map(c =>
+                `<option value="${esc(c.id)}" ${c.id === j.classId ? 'selected' : ''}>${esc(c.name)}</option>`
+            ).join('');
+            
+            let mapelOptions = allMapels.map(m =>
+                `<option value="${esc(m.name)}" ${m.name === j.mapel ? 'selected' : ''}>${esc(m.name)}</option>`
+            ).join('');
+
+            // Include mapel if it was manually typed previously and doesn't exist in mapel list
+            if (j.mapel && !allMapels.some(m => m.name === j.mapel)) {
+                mapelOptions += `<option value="${esc(j.mapel)}" selected>${esc(j.mapel)} (Tidak terdaftar)</option>`;
+            }
+
+            const result = await Swal.fire({
+                title: 'Edit Jurnal',
+                html: `
+                  <div class="space-y-4 text-left">
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Tanggal</label><input type="date" id="swalJurnalDate" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white" value="${j.date || todayISO()}"></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Kelas</label><select id="swalJurnalClass" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white">${classOptions}</select></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Mata Pelajaran</label><select id="swalJurnalMapel" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white">${mapelOptions}</select></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Jam Ke-</label><input type="text" id="swalJurnalJam" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white" value="${esc(j.jam)}"></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Materi</label><input type="text" id="swalJurnalMateri" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white" value="${esc(j.materi)}"></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Catatan</label><textarea id="swalJurnalCatatan" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white">${esc(j.catatan || '')}</textarea></div>
+                  </div>`,
+                showCancelButton: true, confirmButtonText: 'Simpan', cancelButtonText: 'Batal',
+                preConfirm: () => {
+                    const date = document.getElementById('swalJurnalDate').value;
+                    const classId = document.getElementById('swalJurnalClass').value;
+                    const mapel = document.getElementById('swalJurnalMapel').value;
+                    const jam = document.getElementById('swalJurnalJam').value.trim();
+                    const materi = document.getElementById('swalJurnalMateri').value.trim();
+                    const catatan = document.getElementById('swalJurnalCatatan').value.trim();
+                    if (!date || !classId || !mapel || !jam || !materi) {
+                        Swal.showValidationMessage('Semua kolom wajib diisi (kecuali catatan)');
+                        return false;
+                    }
+                    return { date, classId, mapel, jam, materi, catatan };
+                }
+            });
+            if (!result.isConfirmed) return;
+            const data = result.value;
+            const cls = allClasses.find(c => c.id === data.classId);
+            const attKey = `${data.date}__${data.classId}`;
+            Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            try {
+                let statuses = {};
+                if (attendanceCache[attKey]) {
+                    statuses = attendanceCache[attKey].statuses || {};
+                } else {
+                    const snap = await FB.getDoc(FB.doc(FB.db, 'attendance', attKey));
+                    if (snap.exists()) {
+                        statuses = snap.data().statuses || {};
+                        attendanceCache[attKey] = {id: attKey, ...snap.data()};
+                    }
+                }
+                const counts = countAttendanceForClass(data.classId, statuses);
+                await FB.updateDoc(FB.doc(FB.db, 'journals', id), {
+                    date: data.date, classId: data.classId, className: cls?.name || '',
+                    mapel: data.mapel, jam: data.jam, materi: data.materi, catatan: data.catatan,
+                    sakit: counts.sakit, izin: counts.izin, alpa: counts.alpa, hadir: counts.hadir, updatedAt: FB.serverTimestamp()
+                });
+                await loadJournals(); renderJournalTable(); updateDashboardStats();
+                Swal.close();
+                toast('Data jurnal diperbarui');
+            } catch (err) { Swal.fire('Gagal', firebaseError(err), 'error'); }
+        }
+
+        function countAttendanceForClass(classId,statuses={}){
+            const students=allStudents.filter(s=>s.classId===classId);
+            let sakit=0,izin=0,alpa=0,hadir=0;
+            students.forEach(s=>{
+                const st=statuses[s.id]||'Hadir';
+                if(st==='Sakit') sakit++; else if(st==='Izin') izin++; else if(st==='Alpa') alpa++; else hadir++;
+            });
+            return {sakit,izin,alpa,hadir};
+        }
+
+        async function deleteJurnal(id){
+            const result=await Swal.fire({title:'Hapus jurnal?',icon:'warning',showCancelButton:true,confirmButtonColor:'#ef4444',confirmButtonText:'Hapus',cancelButtonText:'Batal'});
+            if(!result.isConfirmed) return;
+            try{
+                await FB.deleteDoc(FB.doc(FB.db,'journals',id));
+                await loadJournals(); renderJournalTable(); updateDashboardStats();
+                toast('Jurnal dihapus');
+            }catch(err){ Swal.fire('Gagal',firebaseError(err),'error'); }
+        }
+
+        function printJurnal(){
+            const monthKey = getSelectedPrintMonth();
+            const printDateKey = getSelectedPrintDate();
+            const journalsToPrint = getFilteredJournalsByPrintMonth();
+
+            if (!journalsToPrint.length) {
+                Swal.fire({
+                    icon:'info', title:'Tidak ada jurnal',
+                    text:`Tidak ada data jurnal untuk bulan ${formatMonthLong(monthKey)}.`,
+                    confirmButtonText:'OK', confirmButtonColor:'#2563eb'
+                });
+                return;
+            }
+
+            const clone=$('tabelJurnalData').cloneNode(true);
+            clone.querySelectorAll('.no-print-export').forEach(el=>el.remove());
+            const bulanStr=formatMonthLong(monthKey);
+            const tanggalCetakStr=formatDateLong(printDateKey);
+            const tableContent=clone.innerHTML;
+            
+            const kepsekNama = userProfileData.kepsekNama || '.............................................';
+            const kepsekNip = userProfileData.kepsekNip || '.............................................';
+            const guruNama = userProfileData.guruNama || '.............................................';
+            const guruNip = userProfileData.guruNip || '.............................................';
+
+            const win=window.open('','_blank','height=800,width=1000');
+            win.document.write(`<!doctype html><html><head><title>Cetak Jurnal Tatap Muka - ${esc(bulanStr)}</title>
+            <style>
+              @page{size:A4 portrait;margin:20mm}
+              body{font-family:"Times New Roman",serif;color:#000;margin:0;padding:0;font-size:11px}
+              .header{text-align:center;margin-bottom:10px}
+              .header h2{margin:2px 0;font-size:14px;text-transform:uppercase}
+              .metadata{font-size:12px;font-weight:bold;margin:10px 0 12px;text-align:right}
+              .metadata .month-label{font-weight:bold}
+              table{width:100%;border-collapse:collapse;font-size:9.5px}
+              th,td{border:1px solid #000;padding:5px 3px;text-align:center;vertical-align:middle}
+              td:nth-child(5){text-align:left}
+              table.signature-table{width:82%;margin-left:12%;border-collapse:collapse;margin-top:40px;font-size:11px}
+              table.signature-table td{text-align:left;vertical-align:top;padding:2px 5px;line-height:1.1;border:none}
+              table.signature-table td:first-child{width:65%}
+              table.signature-table td:last-child{width:35%}
+              .signature-table .sign-space{height:70px}
+              .signature-table .sign-name{font-weight:bold;text-decoration:underline}
+            </style></head><body>
+            <div class="header"><h2>JURNAL TATAP MUKA PEMBELAJARAN (CATATAN KBM)</h2>
+            <h2>TAHUN PELAJARAN 2026/2027</h2></div>
+            <div class="metadata"><span class="month-label">Bulan Jurnal: ${esc(bulanStr)}</span></div>
+            <table>${tableContent}</table>
+            <table class="signature-table">
+              <tr><td></td><td>${esc(tanggalCetakStr)}</td></tr>
+              <tr><td>Mengetahui,</td><td></td></tr>
+              <tr><td>Kepala Sekolah,</td><td>Guru Mata Pelajaran,</td></tr>
+              <tr><td class="sign-space"></td><td class="sign-space"></td></tr>
+              <tr><td class="sign-name">${esc(kepsekNama)}</td><td class="sign-name">${esc(guruNama)}</td></tr>
+              <tr><td>NIP. ${esc(kepsekNip)}</td><td>NIP. ${esc(guruNip)}</td></tr>
+            </table>
+            </body></html>`);
+            win.document.close(); win.focus();
+            setTimeout(()=>{win.print();win.close()},500);
+        }
+
+        function exportJurnalExcel(){
+            const table=$('tabelJurnalData');
+            const clone=table.cloneNode(true);
+            clone.querySelectorAll('.no-print-export').forEach(el=>el.remove());
+            clone.querySelectorAll('th,td').forEach(c=>c.innerHTML=c.innerHTML.replace(/<br\s*[\/]?>/gi,' '));
+            const wb=XLSX.utils.table_to_book(clone,{sheet:'Jurnal KBM'});
+            const month=new Date().toLocaleDateString('id-ID',{month:'long'}).toUpperCase();
+            const year=new Date().getFullYear();
+            const safeName=($('profileName').textContent||'Guru').replace(/[^\w\s-]/g,'').replace(/\s+/g,' ');
+            XLSX.writeFile(wb,`BULAN ${month} Jurnal Tatap Muka - Catatan KBM ${year} ${safeName}.xlsx`);
+        }
+
+        function updateDashboardStats(){
+            $('statClasses').textContent=allClasses.length;
+            $('statStudents').textContent=allStudents.length;
+            $('statJournals').textContent=allJournals.length;
+
+            let hadir=0,total=0;
+            Object.values(attendanceCache).forEach(a=>{
+                const statuses=Object.values(a.statuses||{});
+                statuses.forEach(s=>{total++; if(s==='Hadir') hadir++;});
+            });
+            $('statAttendance').textContent=total?`${((hadir/total)*100).toFixed(1)}%`:'0%';
+        }
+
+        function renderDashboard(){
+            updateDashboardStats();
+            const list=document.querySelector('#view-dashboard .space-y-4');
+            if(!list) return;
+            list.innerHTML='';
+            const items=allJournals.slice(0,3);
+            if(!items.length){
+                list.innerHTML='<div class="p-4 text-sm text-gray-500">Belum ada jurnal hari ini.</div>';
+                return;
+            }
+            items.forEach(j=>{
+                const cls=allClasses.find(c=>c.id===j.classId);
+                const d=j.date?new Date(`${j.date}T00:00:00`):new Date();
+                const tgl=d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
+                const div=document.createElement('div');
+                div.className='p-3 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-100 dark:border-gray-700 flex gap-4 items-center';
+                div.innerHTML=`<div class="bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 px-3 py-2 rounded-lg text-center min-w-[70px]">
+                  <p class="text-xs font-bold">${esc(tgl)}</p><p class="text-xs">${esc(j.jam||'-')}</p></div>
+                  <div><p class="font-bold text-sm dark:text-white">${esc(cls?.name||j.className||'-')}</p>
+                  <p class="text-xs text-gray-500">${esc(j.mapel||'')}</p></div>
+                  <div class="ml-auto"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Jurnal</span></div>`;
+                list.appendChild(div);
+            });
+        }
+
+        function initChart(){
+            const ctx=$('attendanceChart');
+            if(!ctx) return;
+            if(myChart) myChart.destroy();
+            const dates=[], days=[];
+            const now=new Date();
+            for(let i=4;i>=0;i--){
+                const d=new Date(now); d.setDate(now.getDate()-i);
+                dates.push(d.toISOString().slice(0,10));
+            }
+            const hadir=dates.map(date=>{
+                let sum=0;
+                Object.values(attendanceCache).forEach(a=>{
+                    if(a.date===date) sum+=Object.values(a.statuses||{}).filter(s=>s==='Hadir').length;
+                });
+                return sum;
+            });
+            const tidak=dates.map((date,i)=>{
+                let total=0;
+                Object.values(attendanceCache).forEach(a=>{
+                    if(a.date===date) total+=Object.keys(a.statuses||{}).length;
+                });
+                return Math.max(total-hadir[i],0);
+            });
+            const labels=dates.map(d=>new Date(`${d}T00:00:00`).toLocaleDateString('id-ID',{weekday:'short'}));
+            const dark=document.documentElement.classList.contains('dark');
+            myChart=new Chart(ctx,{
+                type:'bar',
+                data:{labels,datasets:[
+                    {label:'Hadir',data:hadir,backgroundColor:'#3b82f6',borderRadius:6},
+                    {label:'Tidak Hadir',data:tidak,backgroundColor:'#ef4444',borderRadius:6}
+                ]},
+                options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:dark?'#cbd5e1':'#475569'}}},
+                scales:{y:{stacked:true,beginAtZero:true,grid:{color:dark?'#334155':'#e2e8f0'},ticks:{color:dark?'#cbd5e1':'#475569'}},
+                        x:{stacked:true,grid:{display:false},ticks:{color:dark?'#cbd5e1':'#475569'}}}}
+            });
+        }
+    </script>
+</body>
+</html>
