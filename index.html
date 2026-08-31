@@ -253,6 +253,9 @@
                     <button onclick="navigate('profil')" id="nav-profil" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
                         <i class="fa-solid fa-user-gear w-5 text-center"></i> Profil Saya
                     </button>
+                    <button onclick="navigate('backup')" id="nav-backup" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-database w-5 text-center"></i> Backup & Hapus Data
+                    </button>
                     <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
                         <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
                     </button>
@@ -617,7 +620,8 @@
                                 <table class="w-full text-left border-collapse min-w-max">
                                     <thead>
                                         <tr class="bg-gray-50 dark:bg-dark-card border-b border-gray-200 dark:border-dark-border">
-                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">NIS</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAllStudents(this.checked)"></th>
+                                             <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">NIS</th>
                                             <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Nama Siswa</th>
                                             <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Kelas</th>
                                             <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Aksi</th>
@@ -628,6 +632,22 @@
                                 </table>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: BACKUP & HAPUS DATA -->
+                <div id="view-backup" class="view-section hidden fade-in">
+                    <div class="max-w-5xl mx-auto space-y-6">
+                        <div class="glass glass-panel p-6 rounded-2xl">
+                            <h3 class="text-xl font-bold dark:text-white mb-2"><i class="fa-solid fa-shield-halved text-primary-600 mr-2"></i>Backup & Pengelolaan Data</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Backup dahulu sebelum menghapus data. Semua penghapusan langsung menghapus data milik akun Anda dari Firebase.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-3 dark:text-white">Backup Jurnal Guru</h4><p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh jurnal dalam Excel.</p><div class="flex gap-2"><input type="month" id="backupJournalMonth" class="flex-1 p-2 rounded-lg border"><button onclick="backupJurnalByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup</button></div></div>
+                            <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-3 dark:text-white">Backup Presensi Siswa</h4><p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh seluruh presensi dalam Excel.</p><div class="flex gap-2"><input type="month" id="backupAttendanceMonth" class="flex-1 p-2 rounded-lg border"><button onclick="backupPresensiByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup</button></div></div>
+                        </div>
+                        <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-4 text-red-600"><i class="fa-solid fa-triangle-exclamation"></i> Hapus Data Bulanan</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label class="text-sm font-medium">Hapus Jurnal Guru per Bulan</label><div class="flex gap-2 mt-2"><input type="month" id="deleteJournalMonth" class="flex-1 p-2 rounded-lg border"><button onclick="deleteJournalsByMonth()" class="px-4 py-2 bg-red-600 text-white rounded-lg">Hapus</button></div></div><div><label class="text-sm font-medium">Hapus Presensi Siswa per Bulan</label><div class="flex gap-2 mt-2"><input type="month" id="deleteAttendanceMonth" class="flex-1 p-2 rounded-lg border"><button onclick="deleteAttendanceByMonth()" class="px-4 py-2 bg-red-600 text-white rounded-lg">Hapus</button></div></div></div></div>
+                        <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-2 dark:text-white">Backup Daftar Siswa</h4><p class="text-sm text-gray-500 mb-4">Unduh daftar siswa berdasarkan kelas atau seluruh kelas.</p><div class="flex flex-col sm:flex-row gap-2"><select id="backupStudentClass" class="flex-1 p-2 rounded-lg border"><option value="">Semua Kelas</option></select><button onclick="backupStudentsByClass()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup Siswa</button></div></div>
                     </div>
                 </div>
 
@@ -894,6 +914,7 @@
             await Promise.all([loadClasses(), loadMapels(), fetchStudents(), loadJournals(), loadAttendance()]);
             populateClassDropdowns();
             populateMapelDropdowns();
+            populateDataManagementDropdowns();
             renderAllTables();
         }
 
@@ -930,28 +951,43 @@
             dataLoaded.students = true;
         }
 
-        async function loadJournals(force = false) {
-            if (dataLoaded.journals && !force) return;
-            const snap = await FB.getDocs(FB.query(
-                FB.collection(FB.db, 'journals'),
-                FB.where('ownerUid', '==', currentUser.uid)
+        // FIREBASE HEMAT READ: jurnal/presensi hanya dimuat untuk bulan yang diperlukan.
+        // Query memakai rentang tanggal sehingga data lama tetap kompatibel tanpa migrasi.
+        const monthRange = (month) => ({ start: `${month}-01`, end: (() => { const [y,m]=month.split('-').map(Number); const d=new Date(y,m,1); return d.toISOString().slice(0,10); })() });
+        const currentMonthKey = () => todayISO().slice(0,7);
+
+        async function getMonthRecords(collectionName, month, force=false) {
+            if(!currentUser || !month) return [];
+            const {start,end}=monthRange(month);
+            const local = collectionName==='journals' ? allJournals : Object.values(attendanceCache);
+            const localMonth=local.filter(x=>String(x.date||'')>=start && String(x.date||'')<end);
+            if(localMonth.length && !force) return localMonth;
+            const snap=await FB.getDocs(FB.query(
+                FB.collection(FB.db,collectionName),
+                FB.where('ownerUid','==',currentUser.uid),
+                FB.where('date','>=',start),
+                FB.where('date','<',end)
             ));
-            allJournals = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            allJournals.sort((a,b) => (String(b.date||'')).localeCompare(String(a.date||'')));
+            const rows=snap.docs.map(d=>({id:d.id,...d.data()}));
+            if(collectionName==='journals'){
+                allJournals=[...allJournals.filter(x=>String(x.date||'')<start || String(x.date||'')>=end),...rows];
+                allJournals.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+            }else rows.forEach(x=>attendanceCache[x.id]=x);
+            return rows;
+        }
+
+        async function loadJournals(force = false) {
+            const month=currentMonthKey();
+            if(dataLoaded.journals && !force) return;
+            await getMonthRecords('journals',month,force);
             dataLoaded.journals = true;
         }
 
         async function loadAttendance(force = false) {
-            if (dataLoaded.attendance && !force) return;
-            const snap = await FB.getDocs(FB.query(
-                FB.collection(FB.db, 'attendance'),
-                FB.where('ownerUid', '==', currentUser.uid)
-            ));
-            attendanceCache = {};
-            snap.docs.forEach(d => {
-                const data = d.data();
-                attendanceCache[d.id] = {id:d.id, ...data};
-            });
+            const month=currentMonthKey();
+            if(dataLoaded.attendance && !force) return;
+            if(force) attendanceCache={};
+            await getMonthRecords('attendance',month,force);
             dataLoaded.attendance = true;
         }
 
@@ -969,6 +1005,17 @@
                 });
                 if (old && allClasses.some(c => c.id === old)) select.value = old;
             });
+        }
+
+        function populateDataManagementDropdowns() {
+            ['studentClassFilter','backupStudentClass'].forEach(id=>{
+                const el=$(id); if(!el) return; const old=el.value;
+                el.innerHTML='<option value="">Semua Kelas</option>';
+                allClasses.forEach(c=>el.innerHTML+=`<option value="${c.id}">${esc(c.name)}</option>`);
+                if(old) el.value=old;
+            });
+            const month=todayISO().slice(0,7);
+            ['backupJournalMonth','backupAttendanceMonth','deleteJournalMonth','deleteAttendanceMonth'].forEach(id=>{if($(id)&&!$(id).value) $(id).value=month;});
         }
 
         function populateMapelDropdowns() {
@@ -1039,21 +1086,25 @@
 
         function renderStudentTable() {
             const tbody = $('siswaTableBody');
+            if(!tbody) return;
+            const filter=$('studentClassFilter')?.value||'';
+            const selected=allStudents.filter(s=>!filter||s.classId===filter);
             tbody.innerHTML = '';
-            allStudents.forEach(s => {
+            selected.forEach(s => {
                 const cls = allClasses.find(c => c.id === s.classId);
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-gray-50 dark:hover:bg-dark-card/50 fade-in';
-                tr.innerHTML = `
-                    <td class="p-3 text-sm font-medium">${esc(s.nis)}</td>
-                    <td class="p-3 text-sm">${esc(s.name)}</td>
-                    <td class="p-3 text-sm">${esc(cls?.name || s.className || '-')}</td>
-                    <td class="p-3 text-sm">
-                        <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editSiswa('${s.id}')"><i class="fa-solid fa-edit"></i></button>
-                        <button class="text-red-500 hover:text-red-700" onclick="deleteSiswa('${s.id}')"><i class="fa-solid fa-trash"></i></button>
-                    </td>`;
+                const tr = document.createElement('tr'); tr.className='hover:bg-gray-50 dark:hover:bg-dark-card/50 fade-in';
+                tr.innerHTML=`<td class="p-3 text-sm"><input type="checkbox" class="student-check" value="${s.id}"></td><td class="p-3 text-sm font-medium">${esc(s.nis)}</td><td class="p-3 text-sm">${esc(s.name)}</td><td class="p-3 text-sm">${esc(cls?.name||s.className||'-')}</td><td class="p-3 text-sm"><button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editSiswa('${s.id}')"><i class="fa-solid fa-edit"></i></button><button class="text-red-500 hover:text-red-700" onclick="deleteSiswa('${s.id}')"><i class="fa-solid fa-trash"></i></button></td>`;
                 tbody.appendChild(tr);
             });
+            const all=$('selectAllStudents'); if(all) all.checked=false;
+        }
+        function toggleSelectAllStudents(checked){document.querySelectorAll('.student-check').forEach(x=>x.checked=checked);}
+        async function deleteSelectedStudents(){
+            const ids=[...document.querySelectorAll('.student-check:checked')].map(x=>x.value);
+            if(!ids.length){Swal.fire('Pilih siswa','Centang siswa yang ingin dihapus.','info');return;}
+            const r=await Swal.fire({title:`Hapus ${ids.length} siswa?`,text:'Data siswa terpilih akan dihapus permanen dari Firebase.',icon:'warning',showCancelButton:true,confirmButtonColor:'#ef4444',confirmButtonText:'Ya, Hapus'}); if(!r.isConfirmed)return;
+            Swal.fire({title:'Menghapus...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+            try{const batch=FB.writeBatch(FB.db);ids.forEach(id=>batch.delete(FB.doc(FB.db,'students',id)));await batch.commit();dataLoaded.students=false;await fetchStudents(true);renderStudentTable();renderClassTable();updateDashboardStats();Swal.close();toast(`${ids.length} siswa berhasil dihapus`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
         }
 
         function getSelectedPrintMonth() { return $('printMonth')?.value || todayISO().slice(0,7); }
@@ -1571,7 +1622,7 @@
 
             try{
                 await FB.setDoc(FB.doc(FB.db,'attendance',key),{
-                    date, classId:clsId, statuses, ownerUid:currentUser.uid, updatedAt:FB.serverTimestamp()
+                    date, monthKey:date.slice(0,7), classId:clsId, statuses, ownerUid:currentUser.uid, updatedAt:FB.serverTimestamp()
                 },{merge:true});
                 attendanceCache[key]={id:key, date, classId:clsId, statuses, ownerUid:currentUser.uid};
                 const counts=countAttendanceForClass(clsId,statuses);
@@ -1612,11 +1663,11 @@
 
             try{
                 const ref = await FB.addDoc(FB.collection(FB.db,'journals'),{
-                    date,classId,className:cls?.name||'',mapel,jam,materi,catatan,
+                    date,monthKey:date.slice(0,7),classId,className:cls?.name||'',mapel,jam,materi,catatan,
                     sakit:counts.sakit,izin:counts.izin,alpa:counts.alpa,hadir:counts.hadir,
                     ownerUid:currentUser.uid,createdAt:FB.serverTimestamp()
                 });
-                allJournals.unshift({id:ref.id,date,classId,className:cls?.name||'',mapel,jam,materi,catatan,
+                allJournals.unshift({id:ref.id,date,monthKey:date.slice(0,7),classId,className:cls?.name||'',mapel,jam,materi,catatan,
                     sakit:counts.sakit,izin:counts.izin,alpa:counts.alpa,hadir:counts.hadir,ownerUid:currentUser.uid});
                 renderJournalTable();
                 $('jurnalMateri').value=''; $('jurnalCatatan').value='';
@@ -1789,6 +1840,37 @@
             const safeName=($('profileName').textContent||'Guru').replace(/[^\w\s-]/g,'').replace(/\s+/g,' ');
             XLSX.writeFile(wb,`BULAN ${month} Jurnal Tatap Muka - Catatan KBM ${year} ${safeName}.xlsx`);
         }
+
+        async function monthDataAsync(collectionName, month){
+            return await getMonthRecords(collectionName,month,false);
+        }
+        function downloadWorkbook(sheetName, rows, fileName){
+            if(!rows.length){Swal.fire('Data kosong','Tidak ada data untuk diproses.','info');return;}
+            const ws=XLSX.utils.json_to_sheet(rows); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,sheetName); XLSX.writeFile(wb,fileName);
+        }
+        async function backupJurnalByMonth(){
+            const m=$('backupJournalMonth').value; if(!m)return;
+            Swal.fire({title:'Menyiapkan backup...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+            try{const data=await monthDataAsync('journals',m); const rows=data.map(j=>({Tanggal:j.date,Kelas:allClasses.find(c=>c.id===j.classId)?.name||j.className||'',Mapel:j.mapel||'',Jam:j.jam||'',Materi:j.materi||'',Catatan:j.catatan||'',Sakit:j.sakit||0,Izin:j.izin||0,Alpa:j.alpa||0,Hadir:j.hadir||0})); Swal.close(); downloadWorkbook('Jurnal',rows,`BACKUP_JURNAL_${m}.xlsx`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
+        }
+        async function backupPresensiByMonth(){
+            const m=$('backupAttendanceMonth').value; if(!m)return;
+            Swal.fire({title:'Menyiapkan backup...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+            try{const data=await monthDataAsync('attendance',m); const rows=[];data.forEach(a=>{const cls=allClasses.find(c=>c.id===a.classId)?.name||a.className||'';Object.entries(a.statuses||{}).forEach(([sid,status])=>{const st=allStudents.find(x=>x.id===sid)||{};rows.push({Tanggal:a.date,Kelas:cls,NIS:st.nis||sid,Nama:st.name||'',Status:status});});});Swal.close();downloadWorkbook('Presensi',rows,`BACKUP_PRESENSI_${m}.xlsx`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
+        }
+        function backupStudentsByClass(){const id=$('backupStudentClass').value;const rows=allStudents.filter(s=>!id||s.classId===id).map(s=>({NIS:s.nis,Nama:s.name,Kelas:allClasses.find(c=>c.id===s.classId)?.name||s.className||''}));downloadWorkbook('Daftar Siswa',rows,`BACKUP_SISWA_${id?($('backupStudentClass').selectedOptions[0].textContent):'SEMUA_KELAS'}.xlsx`);}
+        async function deleteByMonth(collectionName,month,label){
+            const items=await monthDataAsync(collectionName,month);
+            if(!items.length){Swal.fire('Data kosong',`Tidak ada ${label} bulan ${formatMonthLong(month)}.`,'info');return;}
+            const r=await Swal.fire({title:`Hapus ${label}?`,html:`Bulan <b>${formatMonthLong(month)}</b><br><b>${items.length}</b> data akan dihapus permanen dari Firebase.`,icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',confirmButtonText:'Ya, Hapus Permanen',cancelButtonText:'Batal'});if(!r.isConfirmed)return;
+            Swal.fire({title:'Menghapus...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+            try{for(let i=0;i<items.length;i+=400){const b=FB.writeBatch(FB.db);items.slice(i,i+400).forEach(x=>b.delete(FB.doc(FB.db,collectionName,x.id)));await b.commit();}
+                if(collectionName==='journals') allJournals=allJournals.filter(x=>!items.some(d=>d.id===x.id)); else items.forEach(x=>delete attendanceCache[x.id]);
+                renderJournalTable(); updateDashboardStats(); Swal.close();toast(`${items.length} ${label} berhasil dihapus`);
+            }catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
+        }
+        function deleteJournalsByMonth(){const m=$('deleteJournalMonth').value;if(m)deleteByMonth('journals',m,'jurnal');}
+        function deleteAttendanceByMonth(){const m=$('deleteAttendanceMonth').value;if(m)deleteByMonth('attendance',m,'data presensi');}
 
         function updateDashboardStats(){
             $('statClasses').textContent=allClasses.length;
