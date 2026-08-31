@@ -2271,14 +2271,6 @@
         });
 
 
-        // Handler eksplisit untuk form Jurnal.
-        document.addEventListener('DOMContentLoaded', () => {
-            const form = $('jurnalForm');
-            if (!form || form.dataset.bound === '1') return;
-            form.dataset.bound = '1';
-            form.addEventListener('submit', (e) => saveJurnal(e));
-        });
-
 </script>
 
 
