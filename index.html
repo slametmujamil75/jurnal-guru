@@ -675,7 +675,7 @@
       } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-auth.js";
       import {
         getFirestore, collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc,
-        doc, getDocs, query, where, serverTimestamp
+        doc, getDocs, query, where, serverTimestamp, writeBatch
       } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -695,7 +695,7 @@
       window.GEM_FIREBASE = {
         auth, db, setPersistence, browserLocalPersistence, browserSessionPersistence,
         signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail,
-        collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp
+        collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, writeBatch, writeBatch
       };
     </script>
 
@@ -717,6 +717,9 @@
         let allJournals = [];
         let attendanceCache = {};
         let myChart = null;
+        // Cache sesi: mencegah pembacaan Firestore yang sama berulang kali saat berpindah menu.
+        const dataLoaded = { classes:false, mapels:false, students:false, journals:false, attendance:false };
+        let lastAttendanceLoad = 0;
 
         let userProfileData = {
             kepsekNama: 'Parwoto, S. Pd., M. Pd.',
@@ -894,43 +897,52 @@
             renderAllTables();
         }
 
-        async function loadClasses() {
+        async function loadClasses(force = false) {
+            if (dataLoaded.classes && !force) return;
             const snap = await FB.getDocs(FB.query(
                 FB.collection(FB.db, 'classes'),
                 FB.where('ownerUid', '==', currentUser.uid)
             ));
             allClasses = snap.docs.map(d => ({id:d.id, ...d.data()}));
             allClasses.sort((a,b) => (a.name||'').localeCompare(b.name||'', 'id'));
+            dataLoaded.classes = true;
         }
 
-        async function loadMapels() {
+        async function loadMapels(force = false) {
+            if (dataLoaded.mapels && !force) return;
             const snap = await FB.getDocs(FB.query(
                 FB.collection(FB.db, 'mapels'),
                 FB.where('ownerUid', '==', currentUser.uid)
             ));
             allMapels = snap.docs.map(d => ({id:d.id, ...d.data()}));
             allMapels.sort((a,b) => (a.name||'').localeCompare(b.name||'', 'id'));
+            dataLoaded.mapels = true;
         }
 
-        async function fetchStudents() {
+        async function fetchStudents(force = false) {
+            if (dataLoaded.students && !force) return;
             const snap = await FB.getDocs(FB.query(
                 FB.collection(FB.db, 'students'),
                 FB.where('ownerUid', '==', currentUser.uid)
             ));
             allStudents = snap.docs.map(d => ({id:d.id, ...d.data()}));
             allStudents.sort(compareNis);
+            dataLoaded.students = true;
         }
 
-        async function loadJournals() {
+        async function loadJournals(force = false) {
+            if (dataLoaded.journals && !force) return;
             const snap = await FB.getDocs(FB.query(
                 FB.collection(FB.db, 'journals'),
                 FB.where('ownerUid', '==', currentUser.uid)
             ));
             allJournals = snap.docs.map(d => ({id:d.id, ...d.data()}));
             allJournals.sort((a,b) => (String(b.date||'')).localeCompare(String(a.date||'')));
+            dataLoaded.journals = true;
         }
 
-        async function loadAttendance() {
+        async function loadAttendance(force = false) {
+            if (dataLoaded.attendance && !force) return;
             const snap = await FB.getDocs(FB.query(
                 FB.collection(FB.db, 'attendance'),
                 FB.where('ownerUid', '==', currentUser.uid)
@@ -940,6 +952,7 @@
                 const data = d.data();
                 attendanceCache[d.id] = {id:d.id, ...data};
             });
+            dataLoaded.attendance = true;
         }
 
         function populateClassDropdowns() {
@@ -1305,12 +1318,13 @@
             }
 
             try {
-                await FB.addDoc(FB.collection(FB.db,'students'), {
+                const ref = await FB.addDoc(FB.collection(FB.db,'students'), {
                     nis, name:nama, classId, className:cls?.name || '',
                     ownerUid:currentUser.uid, createdAt:FB.serverTimestamp()
                 });
+                allStudents.push({ id: ref.id, nis, name:nama, classId, className:cls?.name || '', ownerUid:currentUser.uid });
+                allStudents.sort(compareNis);
                 $('siswaForm').reset();
-                await fetchStudents();
                 renderStudentTable(); renderClassTable(); updateDashboardStats();
                 toast('Siswa berhasil ditambahkan');
             } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
@@ -1570,7 +1584,7 @@
                             sakit:counts.sakit, izin:counts.izin, alpa:counts.alpa, hadir:counts.hadir, updatedAt:FB.serverTimestamp()
                         })
                     ));
-                    await loadJournals();
+                    relatedJournals.forEach(j => Object.assign(j, counts));
                     renderJournalTable();
                 }
                 $('studentListContainer').classList.add('hidden');
@@ -1597,12 +1611,14 @@
             const counts=countAttendanceForClass(classId,pres);
 
             try{
-                await FB.addDoc(FB.collection(FB.db,'journals'),{
+                const ref = await FB.addDoc(FB.collection(FB.db,'journals'),{
                     date,classId,className:cls?.name||'',mapel,jam,materi,catatan,
                     sakit:counts.sakit,izin:counts.izin,alpa:counts.alpa,hadir:counts.hadir,
                     ownerUid:currentUser.uid,createdAt:FB.serverTimestamp()
                 });
-                await loadJournals(); renderJournalTable();
+                allJournals.unshift({id:ref.id,date,classId,className:cls?.name||'',mapel,jam,materi,catatan,
+                    sakit:counts.sakit,izin:counts.izin,alpa:counts.alpa,hadir:counts.hadir,ownerUid:currentUser.uid});
+                renderJournalTable();
                 $('jurnalMateri').value=''; $('jurnalCatatan').value='';
                 updateDashboardStats();
                 toast('Jurnal berhasil disimpan');
