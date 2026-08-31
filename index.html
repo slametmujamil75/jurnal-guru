@@ -178,14 +178,14 @@
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sistem Informasi Jurnal & Presensi Kelas</p>
             </div>
 
-            <form id="loginForm" class="space-y-5 relative z-10" onsubmit="handleLogin(event)">
+            <form id="loginForm" class="space-y-5 relative z-10">
                 <div>
                     <label class="block text-sm font-medium mb-1 dark:text-gray-300">Email Address</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-regular fa-envelope text-gray-400"></i>
                         </div>
-                        <input type="email" id="email" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white placeholder-gray-400" placeholder="admin@gemini.com" value="slamet@gamil.com">
+                        <input type="email" id="email" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white placeholder-gray-400" placeholder="slamet@gamil.com" value="slamet@gamil.com">
                     </div>
                 </div>
                 <div>
@@ -514,6 +514,19 @@
                                     <i class="fa-solid fa-plus"></i> Tambah Kelas
                                 </button>
                             </form>
+
+                            <div class="border-t border-gray-200 dark:border-dark-border my-6"></div>
+                            <h4 class="font-bold mb-2 dark:text-white"><i class="fa-solid fa-file-excel text-green-600 mr-2"></i>Tambah Banyak Kelas</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Download template Excel, isi nama kelas, lalu upload. Kelas yang sama akan otomatis dilewati.</p>
+                            <div class="grid grid-cols-1 gap-2">
+                                <button type="button" onclick="downloadClassTemplate()" class="w-full px-3 py-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors flex items-center justify-center gap-2 text-sm font-medium">
+                                    <i class="fa-solid fa-download"></i> Download Template Kelas
+                                </button>
+                                <input type="file" id="classExcelUpload" accept=".xlsx,.xls" class="hidden" onchange="handleClassExcelUpload(event)">
+                                <button type="button" onclick="document.getElementById('classExcelUpload').click()" class="w-full px-3 py-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors flex items-center justify-center gap-2 text-sm font-medium">
+                                    <i class="fa-solid fa-file-arrow-up"></i> Upload Tambah Kelas
+                                </button>
+                            </div>
                         </div>
                         <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl flex flex-col">
                             <div class="flex justify-between items-center mb-4">
@@ -711,6 +724,7 @@
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
+      window.__FIREBASE_INIT_ERROR__ = null;
 
       window.GEM_FIREBASE = {
         auth, db, setPersistence, browserLocalPersistence, browserSessionPersistence,
@@ -755,7 +769,18 @@
 
         const todayISO = () => new Date().toISOString().slice(0,10);
 
-        document.addEventListener("DOMContentLoaded", () => {
+        async function waitForFirebaseReady(timeoutMs = 15000) {
+            const start = Date.now();
+            while (!window.GEM_FIREBASE) {
+                if (Date.now() - start > timeoutMs) {
+                    throw new Error('Firebase belum siap. Muat ulang halaman lalu coba lagi.');
+                }
+                await new Promise(r => setTimeout(r, 100));
+            }
+            return window.GEM_FIREBASE;
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
             $('presensiDate').value = todayISO();
             if ($('jurnalDateInput')) $('jurnalDateInput').value = todayISO();
             if ($('printDate')) $('printDate').value = todayISO();
@@ -766,50 +791,71 @@
                 document.documentElement.classList.add('dark');
             }
 
-            const forgot = document.querySelector('a[href="#"]');
-            if (forgot) {
-                forgot.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    const email = $('email').value.trim();
-                    if (!email) {
-                        Swal.fire('Email belum diisi', 'Masukkan email pada kolom login terlebih dahulu.', 'info');
+            try {
+                await waitForFirebaseReady();
+
+                const forgot = document.querySelector('a[href="#"]');
+                if (forgot) {
+                    forgot.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const email = $('email').value.trim();
+                        if (!email) {
+                            Swal.fire('Email belum diisi', 'Masukkan email pada kolom login terlebih dahulu.', 'info');
+                            return;
+                        }
+                        try {
+                            await FB.sendPasswordResetEmail(FB.auth, email);
+                            Swal.fire('Tautan dikirim', 'Periksa email Anda untuk mengatur ulang password.', 'success');
+                        } catch (err) {
+                            Swal.fire('Gagal', firebaseError(err), 'error');
+                        }
+                    });
+                }
+
+                FB.onAuthStateChanged(FB.auth, async (user) => {
+                    if (!user) {
+                        currentUser = null;
+                        $('mainApp').classList.add('hidden');
+                        $('loginPage').classList.remove('hidden');
                         return;
                     }
-                    try {
-                        await FB.sendPasswordResetEmail(FB.auth, email);
-                        Swal.fire('Tautan dikirim', 'Periksa email Anda untuk mengatur ulang password.', 'success');
-                    } catch (err) {
-                        Swal.fire('Gagal', firebaseError(err), 'error');
-                    }
-                });
-            }
 
-            FB.onAuthStateChanged(FB.auth, async (user) => {
-                if (user) {
                     currentUser = user;
                     $('loginPage').classList.add('hidden');
                     $('mainApp').classList.remove('hidden');
-                    await loadUserProfile();
-                    await refreshAllData();
                     navigate('dashboard');
                     renderDashboard();
-                } else {
-                    currentUser = null;
-                    $('mainApp').classList.add('hidden');
-                    $('loginPage').classList.remove('hidden');
-                }
-            });
+
+                    // Login berhasil. Kesalahan pemuatan data tidak membatalkan login.
+                    try { await loadUserProfile(); } catch (err) { console.warn('Profil:', err); }
+                    try { await refreshAllData(); } catch (err) { console.error('Data master:', err); }
+                    navigate('dashboard');
+                    renderDashboard();
+                    initChart();
+                });
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    icon:'error',
+                    title:'Firebase belum siap',
+                    text:'Tidak dapat menghubungkan Firebase. Periksa koneksi internet atau muat ulang halaman.'
+                });
+            }
         });
 
         function firebaseError(err) {
             const code = err?.code || '';
             const map = {
-                'auth/invalid-credential': 'Email atau password salah.',
+                'auth/invalid-credential': 'Email atau password salah. Gunakan email akun Firebase yang terdaftar.',
+                'auth/wrong-password': 'Password salah.',
+                'auth/user-not-found': 'Email belum terdaftar di Firebase Authentication.',
+                'auth/operation-not-allowed': 'Login Email/Password belum diaktifkan di Firebase Authentication.',
                 'auth/invalid-email': 'Format email tidak valid.',
                 'auth/user-disabled': 'Akun ini dinonaktifkan.',
                 'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.',
                 'auth/network-request-failed': 'Jaringan bermasalah. Periksa koneksi internet.',
-                'permission-denied': 'Anda tidak memiliki izin mengakses data ini.'
+                'permission-denied': 'Anda tidak memiliki izin mengakses data ini.',
+                'failed-precondition': 'Data sedang menggunakan mode kompatibilitas Firebase. Silakan coba lagi.'
             };
             return map[code] || err?.message || 'Terjadi kesalahan.';
         }
@@ -820,6 +866,11 @@
             const password = $('password').value;
             const remember = document.querySelector('#loginForm input[type="checkbox"]')?.checked;
 
+            if (!email || !password) {
+                Swal.fire({icon:'warning', title:'Data login belum lengkap', text:'Masukkan email dan password.'});
+                return;
+            }
+
             Swal.fire({
                 title: 'Proses Login...',
                 text: 'Menghubungkan ke Firebase',
@@ -828,6 +879,7 @@
             });
 
             try {
+                await waitForFirebaseReady();
                 await FB.setPersistence(
                     FB.auth,
                     remember ? FB.browserLocalPersistence : FB.browserSessionPersistence
@@ -835,9 +887,13 @@
                 await FB.signInWithEmailAndPassword(FB.auth, email, password);
                 Swal.close();
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: firebaseError(err) });
+                console.error('LOGIN ERROR:', err);
+                Swal.fire({ icon: 'error', title: 'Login gagal', text: firebaseError(err) });
             }
         }
+
+        // Pastikan fungsi login benar-benar tersedia dari tombol/form HTML.
+        window.handleLogin = handleLogin;
 
         async function handleLogout() {
             const result = await Swal.fire({
@@ -854,7 +910,7 @@
 
             await FB.signOut(FB.auth);
             allClasses = []; allMapels = []; allStudents = []; allJournals = []; attendanceCache = {};
-            $('loginForm').reset();
+            $('loginForm').reset(); $('email').value='slamet@gamil.com'; $('password').value='123456';
             Swal.fire({icon:'success', title:'Logout berhasil', showConfirmButton:false, timer:1000});
         }
 
@@ -911,11 +967,28 @@
 
         async function refreshAllData() {
             if (!currentUser) return;
-            await Promise.all([loadClasses(), loadMapels(), fetchStudents(), loadJournals(), loadAttendance()]);
+
+            // Saat login, muat hanya data master yang diperlukan Dashboard.
+            // Jurnal dan presensi dimuat saat menunya dibuka (lazy-load)
+            // agar query bulanan tidak membuat login terganggu.
+            const results = await Promise.allSettled([
+                loadClasses(),
+                loadMapels(),
+                fetchStudents()
+            ]);
+
+            const failed = results.filter(r => r.status === 'rejected');
+            if (failed.length) console.error('Gagal memuat data master:', failed.map(r => r.reason));
+
             populateClassDropdowns();
             populateMapelDropdowns();
             populateDataManagementDropdowns();
-            renderAllTables();
+
+            try { renderAllTables(); } catch (e) { console.warn('Render tabel:', e); }
+
+            dataLoaded.journals = false;
+            dataLoaded.attendance = false;
+            return { failed };
         }
 
         async function loadClasses(force = false) {
@@ -957,23 +1030,78 @@
         const currentMonthKey = () => todayISO().slice(0,7);
 
         async function getMonthRecords(collectionName, month, force=false) {
-            if(!currentUser || !month) return [];
-            const {start,end}=monthRange(month);
-            const local = collectionName==='journals' ? allJournals : Object.values(attendanceCache);
-            const localMonth=local.filter(x=>String(x.date||'')>=start && String(x.date||'')<end);
-            if(localMonth.length && !force) return localMonth;
-            const snap=await FB.getDocs(FB.query(
-                FB.collection(FB.db,collectionName),
-                FB.where('ownerUid','==',currentUser.uid),
-                FB.where('date','>=',start),
-                FB.where('date','<',end)
-            ));
-            const rows=snap.docs.map(d=>({id:d.id,...d.data()}));
-            if(collectionName==='journals'){
-                allJournals=[...allJournals.filter(x=>String(x.date||'')<start || String(x.date||'')>=end),...rows];
-                allJournals.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
-            }else rows.forEach(x=>attendanceCache[x.id]=x);
-            return rows;
+            if (!currentUser || !month) return [];
+
+            const { start, end } = monthRange(month);
+            const local = collectionName === 'journals'
+                ? allJournals
+                : Object.values(attendanceCache);
+
+            const localMonth = local.filter(x =>
+                String(x.date || '') >= start && String(x.date || '') < end
+            );
+
+            if (localMonth.length && !force) return localMonth;
+
+            // QUERY UTAMA TANPA COMPOSITE INDEX MANUAL:
+            // ownerUid == currentUser.uid + monthKey == month
+            // Tidak memakai range date >= / < yang memicu error index.
+            try {
+                const snap = await FB.getDocs(FB.query(
+                    FB.collection(FB.db, collectionName),
+                    FB.where('ownerUid', '==', currentUser.uid),
+                    FB.where('monthKey', '==', month)
+                ));
+
+                const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+                if (collectionName === 'journals') {
+                    allJournals = [
+                        ...allJournals.filter(x =>
+                            String(x.date || '') < start || String(x.date || '') >= end
+                        ),
+                        ...rows
+                    ];
+                    allJournals.sort((a,b) =>
+                        String(b.date || '').localeCompare(String(a.date || ''))
+                    );
+                } else {
+                    rows.forEach(x => attendanceCache[x.id] = x);
+                }
+
+                return rows;
+            } catch (err) {
+                // Kompatibilitas untuk data lama yang belum memiliki monthKey.
+                // Query hanya ownerUid sehingga tidak membutuhkan composite index.
+                // Hanya dipakai bila query monthKey gagal.
+                const snap = await FB.getDocs(FB.query(
+                    FB.collection(FB.db, collectionName),
+                    FB.where('ownerUid', '==', currentUser.uid)
+                ));
+
+                const rows = snap.docs
+                    .map(d => ({ id: d.id, ...d.data() }))
+                    .filter(x => {
+                        const date = String(x.date || '');
+                        return date >= start && date < end;
+                    });
+
+                if (collectionName === 'journals') {
+                    allJournals = [
+                        ...allJournals.filter(x =>
+                            String(x.date || '') < start || String(x.date || '') >= end
+                        ),
+                        ...rows
+                    ];
+                    allJournals.sort((a,b) =>
+                        String(b.date || '').localeCompare(String(a.date || ''))
+                    );
+                } else {
+                    rows.forEach(x => attendanceCache[x.id] = x);
+                }
+
+                return rows;
+            }
         }
 
         async function loadJournals(force = false) {
@@ -1268,6 +1396,90 @@
             } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
         }
 
+        function downloadClassTemplate() {
+            try {
+                const rows = [
+                    ['Nama Kelas'],
+                    ['X IPA 1'],
+                    ['X IPA 2'],
+                    ['XI AKL 1']
+                ];
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                ws['!cols'] = [{ wch: 28 }];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Data Kelas');
+                XLSX.writeFile(wb, 'Template_Tambah_Kelas.xlsx');
+                toast('Template kelas berhasil diunduh');
+            } catch (err) {
+                Swal.fire('Gagal', 'Template tidak dapat dibuat: ' + (err.message || err), 'error');
+            }
+        }
+
+        async function handleClassExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!currentUser) {
+                Swal.fire('Belum login', 'Silakan login terlebih dahulu.', 'warning');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                Swal.fire({ title: 'Mengimpor kelas...', text: 'Memproses file Excel.', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type: 'array' });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+                    if (rows.length < 2) throw new Error('File Excel kosong atau tidak memiliki baris data.');
+
+                    const existing = new Set(allClasses.map(c => String(c.name || '').trim().toLowerCase()));
+                    const names = [];
+                    let skipped = 0;
+                    for (let i = 1; i < rows.length; i++) {
+                        const name = String((rows[i] || [])[0] ?? '').trim();
+                        if (!name || existing.has(name.toLowerCase()) || names.some(x => x.toLowerCase() === name.toLowerCase())) {
+                            skipped++;
+                            continue;
+                        }
+                        names.push(name);
+                    }
+                    if (!names.length) {
+                        Swal.fire('Tidak ada kelas baru', `Semua ${Math.max(0, rows.length - 1)} baris kosong atau sudah ada.`, 'info');
+                        return;
+                    }
+
+                    // Hemat Write: gunakan batch, maksimal 400 dokumen per commit.
+                    for (let i = 0; i < names.length; i += 400) {
+                        const batch = FB.writeBatch(FB.db);
+                        names.slice(i, i + 400).forEach(name => {
+                            const ref = FB.doc(FB.collection(FB.db, 'classes'));
+                            batch.set(ref, { name, ownerUid: currentUser.uid, createdAt: FB.serverTimestamp() });
+                        });
+                        await batch.commit();
+                    }
+
+                    await loadClasses(true);
+                    populateClassDropdowns();
+                    populateDataManagementDropdowns();
+                    renderClassTable();
+                    updateDashboardStats();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Upload Kelas Berhasil',
+                        html: `<b>${names.length}</b> kelas berhasil ditambahkan${skipped ? `<br><small>${skipped} baris dilewati.</small>` : '.'}`,
+                        confirmButtonText: 'OK', confirmButtonColor: '#2563eb'
+                    });
+                } catch (err) {
+                    Swal.fire('Upload Gagal', err.message || firebaseError(err), 'error');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
         async function saveKelas(e) {
             e.preventDefault();
             if (!currentUser) return;
@@ -1518,6 +1730,18 @@
         }
 
         function navigate(viewName) {
+            // LAZY LOAD: jurnal/presensi hanya dibaca saat menu dibuka.
+            if (viewName === 'jurnal' && typeof loadJournals === 'function') {
+                loadJournals().then(() => {
+                    try { renderJournalTable(); updateDashboardStats(); } catch (e) {}
+                }).catch(e => console.warn('Load jurnal:', e));
+            }
+            if (viewName === 'presensi' && typeof loadAttendance === 'function') {
+                loadAttendance().then(() => {
+                    try { updateDashboardStats(); initChart(); } catch (e) {}
+                }).catch(e => console.warn('Load presensi:', e));
+            }
+
             document.querySelectorAll('.view-section').forEach(el=>el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(el=>{
                 el.classList.remove('bg-primary-50','dark:bg-dark-card','text-primary-600','dark:text-primary-400');
@@ -1530,7 +1754,7 @@
                 btn.classList.remove('text-gray-600','dark:text-gray-400');
                 btn.classList.add('bg-primary-50','dark:bg-dark-card','text-primary-600','dark:text-primary-400');
             }
-            const titles={dashboard:'Dashboard',presensi:'Presensi Kelas',jurnal:'Jurnal Mengajar',kelas:'Kelola Data Kelas',mapel:'Kelola Mata Pelajaran',siswa:'Kelola Data Siswa', profil:'Pengaturan Profil'};
+            const titles={dashboard:'Dashboard',presensi:'Presensi Kelas',jurnal:'Jurnal Mengajar',kelas:'Kelola Data Kelas',mapel:'Kelola Mata Pelajaran',siswa:'Kelola Data Siswa', profil:'Pengaturan Profil', backup:'Backup & Hapus Data'};
             $('pageTitle').innerText=titles[viewName]||'Dashboard';
             if(viewName==='presensi') loadStudents();
             if(viewName==='dashboard') { renderDashboard(); initChart(); }
@@ -1649,31 +1873,108 @@
 
         async function saveJurnal(e) {
             e.preventDefault();
-            if(!currentUser) return;
-            const date = $('jurnalDateInput').value || todayISO();
-            const classId=$('jurnalClass').value;
-            const cls=allClasses.find(c=>c.id===classId);
-            const mapel=$('jurnalMapel').value;
-            const jam=$('jurnalJam').value.trim();
-            const materi=$('jurnalMateri').value.trim();
-            const catatan=$('jurnalCatatan').value.trim();
-            if(!classId || !mapel || !jam || !materi) return;
-            const pres=attendanceCache[`${date}__${classId}`]?.statuses || {};
-            const counts=countAttendanceForClass(classId,pres);
 
-            try{
-                const ref = await FB.addDoc(FB.collection(FB.db,'journals'),{
-                    date,monthKey:date.slice(0,7),classId,className:cls?.name||'',mapel,jam,materi,catatan,
-                    sakit:counts.sakit,izin:counts.izin,alpa:counts.alpa,hadir:counts.hadir,
-                    ownerUid:currentUser.uid,createdAt:FB.serverTimestamp()
+            if (!currentUser) {
+                Swal.fire('Belum login', 'Sesi login belum tersedia. Silakan login kembali.', 'warning');
+                return;
+            }
+
+            const date = $('jurnalDateInput')?.value || todayISO();
+            const classId = $('jurnalClass')?.value || '';
+            const cls = allClasses.find(c => c.id === classId);
+            const mapel = $('jurnalMapel')?.value?.trim() || '';
+            const jam = $('jurnalJam')?.value?.trim() || '';
+            const materi = $('jurnalMateri')?.value?.trim() || '';
+            const catatan = $('jurnalCatatan')?.value?.trim() || '';
+
+            // Jangan diam-diam gagal ketika ada kolom wajib yang belum diisi.
+            if (!date || !classId || !mapel || !jam || !materi) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Data jurnal belum lengkap',
+                    text: 'Tanggal, kelas, mata pelajaran, jam ke-, dan materi wajib diisi.'
                 });
-                allJournals.unshift({id:ref.id,date,monthKey:date.slice(0,7),classId,className:cls?.name||'',mapel,jam,materi,catatan,
-                    sakit:counts.sakit,izin:counts.izin,alpa:counts.alpa,hadir:counts.hadir,ownerUid:currentUser.uid});
+                return;
+            }
+
+            if (!cls) {
+                Swal.fire('Kelas tidak ditemukan', 'Silakan pilih kembali kelas yang tersedia.', 'warning');
+                return;
+            }
+
+            const saveButton = $('jurnalForm')?.querySelector('button[type="submit"]');
+            const oldButtonHtml = saveButton?.innerHTML || '';
+
+            if (saveButton) {
+                saveButton.disabled = true;
+                saveButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+            }
+
+            try {
+                // Presensi hanya dipakai untuk mengisi rekap jumlah hadir.
+                // Tidak memengaruhi proses penyimpanan jurnal.
+                const pres = attendanceCache[`${date}__${classId}`]?.statuses || {};
+                const counts = countAttendanceForClass(classId, pres);
+
+                // Gunakan setDoc + ID Firestore baru agar proses simpan eksplisit dan stabil.
+                const journalRef = FB.doc(FB.collection(FB.db, 'journals'));
+
+                const journalData = {
+                    date,
+                    monthKey: date.slice(0, 7),
+                    classId,
+                    className: cls.name || '',
+                    mapel,
+                    jam,
+                    materi,
+                    catatan,
+                    sakit: counts.sakit,
+                    izin: counts.izin,
+                    alpa: counts.alpa,
+                    hadir: counts.hadir,
+                    ownerUid: currentUser.uid,
+                    createdAt: FB.serverTimestamp(),
+                    updatedAt: FB.serverTimestamp()
+                };
+
+                await FB.setDoc(journalRef, journalData);
+
+                // Tambahkan ke cache lokal sehingga langsung muncul tanpa read ulang.
+                allJournals.unshift({
+                    id: journalRef.id,
+                    ...journalData,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                });
+
+                allJournals.sort(compareJournals);
                 renderJournalTable();
-                $('jurnalMateri').value=''; $('jurnalCatatan').value='';
                 updateDashboardStats();
-                toast('Jurnal berhasil disimpan');
-            }catch(err){ Swal.fire('Gagal menyimpan',firebaseError(err),'error'); }
+
+                $('jurnalForm').reset();
+                $('jurnalDateInput').value = date;
+                populateClassDropdowns();
+                populateMapelDropdowns();
+
+                toast('Jurnal berhasil disimpan ke Firebase.');
+            } catch (err) {
+                console.error('SAVE JURNAL ERROR:', err);
+                const code = err?.code || '';
+
+                let message = firebaseError(err);
+                if (code === 'permission-denied') {
+                    message = 'Firebase menolak penyimpanan jurnal. Periksa Firestore Security Rules untuk koleksi journals.';
+                } else if (code === 'unavailable') {
+                    message = 'Firebase sedang tidak tersedia. Periksa koneksi internet lalu coba lagi.';
+                }
+
+                Swal.fire('Jurnal gagal disimpan', message, 'error');
+            } finally {
+                if (saveButton) {
+                    saveButton.disabled = false;
+                    saveButton.innerHTML = oldButtonHtml || '<i class="fa-solid fa-paper-plane"></i> Simpan Jurnal';
+                }
+            }
         }
 
         async function editJurnal(id) {
@@ -1817,6 +2118,7 @@
             <div class="metadata"><span class="month-label">Bulan Jurnal: ${esc(bulanStr)}</span></div>
             <table>${tableContent}</table>
             <table class="signature-table">
+              <tr><td></td><td>Nusawungu,</td></tr>
               <tr><td></td><td>${esc(tanggalCetakStr)}</td></tr>
               <tr><td>Mengetahui,</td><td></td></tr>
               <tr><td>Kepala Sekolah,</td><td>Guru Mata Pelajaran,</td></tr>
@@ -1824,7 +2126,9 @@
               <tr><td class="sign-name">${esc(kepsekNama)}</td><td class="sign-name">${esc(guruNama)}</td></tr>
               <tr><td>NIP. ${esc(kepsekNip)}</td><td>NIP. ${esc(guruNip)}</td></tr>
             </table>
-            </body></html>`);
+            
+
+</body></html>`);
             win.document.close(); win.focus();
             setTimeout(()=>{win.print();win.close()},500);
         }
@@ -1873,9 +2177,14 @@
         function deleteAttendanceByMonth(){const m=$('deleteAttendanceMonth').value;if(m)deleteByMonth('attendance',m,'data presensi');}
 
         function updateDashboardStats(){
-            $('statClasses').textContent=allClasses.length;
-            $('statStudents').textContent=allStudents.length;
-            $('statJournals').textContent=allJournals.length;
+            // Jumlah Kelas dan Siswa hanya berasal dari koleksi masing-masing.
+            // Menghapus presensi/jurnal tidak boleh mengubah kedua angka ini.
+            const classCount = Array.isArray(allClasses) ? allClasses.length : 0;
+            const studentCount = Array.isArray(allStudents) ? allStudents.length : 0;
+            const journalCount = Array.isArray(allJournals) ? allJournals.length : 0;
+            $('statClasses').textContent=String(classCount);
+            $('statStudents').textContent=String(studentCount);
+            $('statJournals').textContent=String(journalCount);
 
             let hadir=0,total=0;
             Object.values(attendanceCache).forEach(a=>{
@@ -1947,6 +2256,32 @@
                         x:{stacked:true,grid:{display:false},ticks:{color:dark?'#cbd5e1':'#475569'}}}}
             });
         }
-    </script>
+    
+        // Login handler eksplisit: tidak bergantung pada inline onsubmit.
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = $('loginForm');
+            if (!form || form.dataset.bound === '1') return;
+            form.dataset.bound = '1';
+
+            form.addEventListener('submit', (e) => {
+                handleLogin(e);
+            });
+
+            const button = form.querySelector('button[type="submit"]');
+            if (button) button.disabled = false;
+        });
+
+
+        // Handler eksplisit untuk form Jurnal.
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = $('jurnalForm');
+            if (!form || form.dataset.bound === '1') return;
+            form.dataset.bound = '1';
+            form.addEventListener('submit', (e) => saveJurnal(e));
+        });
+
+</script>
+
+
 </body>
 </html>
