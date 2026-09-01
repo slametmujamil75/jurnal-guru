@@ -147,7 +147,7 @@
             header { padding-left: max(12px, env(safe-area-inset-left)) !important; padding-right: max(12px, env(safe-area-inset-right)) !important; }
             #loginPage { padding-top: max(16px, env(safe-area-inset-top)) !important; padding-right: max(16px, env(safe-area-inset-right)) !important; padding-bottom: max(16px, env(safe-area-inset-bottom)) !important; padding-left: max(16px, env(safe-area-inset-left)) !important; }
             #loginPage > .glass-panel { padding: 24px !important; border-radius: 18px !important; }
-            #view-dashboard .grid, #view-presensi .grid, #view-rekap .grid, #view-kelas .grid, #view-siswa .grid, #view-profil .grid { gap: 16px !important; }
+            #view-dashboard .grid, #view-presensi .grid, #view-jurnal .grid, #view-kelas .grid, #view-mapel .grid, #view-siswa .grid, #view-profil .grid { gap: 16px !important; }
         }
 
         @media (max-width: 420px) {
@@ -160,50 +160,7 @@
         .swal2-container { z-index: 100000 !important; }
         .swal2-popup { max-width: calc(100vw - 24px) !important; }
         .swal2-input, .swal2-select, .swal2-textarea { margin: 0.5em 0 !important; }
-
-        /* Logo tanpa kotak/background */
-        .school-logo-clean {
-            background: transparent !important;
-            border: 0 !important;
-            box-shadow: none !important;
-            outline: none !important;
-        }
-
-        /* Logo tanpa kotak/background/border, termasuk jika Blogger memberi style global */
-        .school-logo-clean, .school-logo-clean img, #loginPage img.school-logo-clean, #sidebar img.school-logo-clean {
-            background: transparent !important;
-            border: none !important;
-            outline: none !important;
-            box-shadow: none !important;
-            padding: 0 !important;
-        }
-        .logo-crop-clean {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            overflow: hidden !important;
-            background: transparent !important;
-            border: 0 !important;
-            box-shadow: none !important;
-        }
-        .logo-crop-clean img { display:block !important; }
-
-
-        /* Blogger compatibility: cegah CSS tema Blogger membuat kotak pada logo */
-        #loginPage a, #loginPage img, #sidebar a, #sidebar img { text-decoration:none !important; }
-        #loginPage .logo-crop-clean, #sidebar .logo-crop-clean { line-height:0 !important; }
-
-    
-        /* PENGAMAN PEMISAH HALAMAN */
-        .view-section { width: 100%; clear: both; }
-        .view-section.hidden { display: none !important; }
-        .view-section:not(.hidden) { display: block; }
-        #view-siswa, #view-profil, #view-backup, #view-hapus-presensi {
-            clear: both;
-            position: relative;
-        }
-
-</style>
+    </style>
 </head>
 <body class="bg-white dark:bg-black text-gray-800 dark:text-gray-200 transition-colors duration-300 font-sans antialiased selection:bg-primary-500 selection:text-white">
 
@@ -215,22 +172,20 @@
             
             <div class="text-center mb-8 relative z-10">
                 <div class="w-16 h-16 mx-auto flex items-center justify-center mb-4">
-                    <a href="https://freeimage.host/" target="_blank">
-                        <img src="https://iili.io/Cyw3xzF.png" alt="Logo Sekolah" class="w-16 h-16 object-contain">
-                    </a>
+                        <img src="https://iili.io/CyJDUKv.png" alt="Logo Jurnal Guru" class="w-16 h-16 object-contain">
                 </div>
                 <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400">JURNAL GURU</h1>
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">Sistem Informasi Jurnal & Presensi Kelas</p>
             </div>
 
-            <form id="loginForm" class="space-y-5 relative z-10" onsubmit="handleLogin(event)">
+            <form id="loginForm" class="space-y-5 relative z-10">
                 <div>
                     <label class="block text-sm font-medium mb-1 dark:text-gray-300">Email Address</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-regular fa-envelope text-gray-400"></i>
                         </div>
-                        <input type="email" id="email" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white placeholder-gray-400" placeholder="admin@gemini.com" value="guru-sman1rowokele@gmail.com">
+                        <input type="email" id="email" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white placeholder-gray-400" placeholder="slamet@gamil.com" value="slamet@gamil.com">
                     </div>
                 </div>
                 <div>
@@ -266,7 +221,7 @@
         <!-- Sidebar -->
         <aside id="sidebar" class="glass w-64 flex-shrink-0 border-r border-gray-200 dark:border-dark-border flex flex-col transition-all duration-300 z-20 absolute md:relative h-full -translate-x-full md:translate-x-0">
             <div class="h-16 flex items-center px-6 border-b border-gray-200 dark:border-dark-border">
-                <div class="logo-crop-clean w-10 h-10 mr-3 flex-shrink-0"><img src="https://iili.io/Cyw3xzF.png" alt="Logo Sekolah" class="school-logo-clean w-12 h-12 max-w-none object-contain" style="transform:scale(1.18);"></div>
+                <img src="https://iili.io/CyJDUKv.png" alt="Logo Jurnal Guru" class="w-10 h-10 object-contain mr-3">
                 <span class="text-lg font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400 tracking-wide">JURNAL GURU</span>
             </div>
             
@@ -279,15 +234,14 @@
                     <button onclick="navigate('presensi')" id="nav-presensi" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
                         <i class="fa-solid fa-users-viewfinder w-5 text-center"></i> Presensi Kelas
                     </button>
-                    <button onclick="navigate('belum-presensi')" id="nav-belum-presensi" class="nav-btn w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-orange-600 dark:text-orange-400 hover:bg-orange-50 dark:hover:bg-dark-card hover:text-orange-700">
-                        <span class="flex items-center gap-3"><i class="fa-solid fa-triangle-exclamation w-5 text-center"></i> Belum Presensi</span>
-                        <span id="sidebarBelumPresensiCount" class="hidden min-w-5 h-5 px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">0</span>
-                    </button>
-                    <button onclick="navigate('rekap')" id="nav-rekap" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
-                        <i class="fa-solid fa-book-journal-whills w-5 text-center"></i> Rekap Bulanan
+                    <button onclick="navigate('jurnal')" id="nav-jurnal" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-book-journal-whills w-5 text-center"></i> Jurnal Mengajar
                     </button>
                     <button onclick="navigate('kelas')" id="nav-kelas" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
                         <i class="fa-solid fa-chalkboard-user w-5 text-center"></i> Kelola Kelas
+                    </button>
+                    <button onclick="navigate('mapel')" id="nav-mapel" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
+                        <i class="fa-solid fa-book-open-reader w-5 text-center"></i> Kelola Mapel
                     </button>
                     <button onclick="navigate('siswa')" id="nav-siswa" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
                         <i class="fa-solid fa-user-graduate w-5 text-center"></i> Kelola Siswa
@@ -299,11 +253,8 @@
                     <button onclick="navigate('profil')" id="nav-profil" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
                         <i class="fa-solid fa-user-gear w-5 text-center"></i> Profil Saya
                     </button>
-                    <button onclick="navigate('hapus-presensi')" id="nav-hapus-presensi" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20">
-                        <i class="fa-solid fa-trash-can w-5 text-center"></i> Hapus Data Presensi
-                    </button>
                     <button onclick="navigate('backup')" id="nav-backup" class="nav-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-gray-600 dark:text-gray-400 hover:bg-primary-50 dark:hover:bg-dark-card hover:text-primary-600 dark:hover:text-primary-400">
-                        <i class="fa-solid fa-file-excel w-5 text-center text-green-600"></i> Backup / Export Excel
+                        <i class="fa-solid fa-database w-5 text-center"></i> Backup & Hapus Data
                     </button>
                     <button onclick="handleLogout()" class="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20">
                         <i class="fa-solid fa-right-from-bracket w-5 text-center"></i> Keluar
@@ -340,7 +291,7 @@
                 <div class="flex items-center gap-4">
                     <div class="relative hidden md:block">
                         <i class="fa-solid fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
-                        <input type="text" placeholder="Cari siswa atau kelas..." class="pl-10 pr-4 py-1.5 rounded-full text-sm border border-gray-300 dark:border-dark-border bg-gray-50 dark:bg-dark-card focus:outline-none focus:ring-2 focus:ring-primary-500 dark:text-white w-64 transition-all">
+                        <input type="text" placeholder="Cari siswa atau jurnal..." class="pl-10 pr-4 py-1.5 rounded-full text-sm border border-gray-300 dark:border-dark-border bg-gray-50 dark:bg-dark-card focus:outline-none focus:ring-2 focus:ring-primary-500 dark:text-white w-64 transition-all">
                     </div>
                     <button onclick="toggleTheme()" class="p-2 rounded-full text-gray-500 hover:bg-gray-200 dark:hover:bg-dark-border transition-colors">
                         <i class="fa-solid fa-moon text-lg dark:hidden"></i>
@@ -389,23 +340,18 @@
                         </div>
                         <div class="glass glass-panel p-6 rounded-2xl border-l-4 border-l-orange-500 flex items-center justify-between group hover:scale-105 transition-transform">
                             <div>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Sesi Presensi Tercatat</p>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-1">Jurnal Terisi</p>
                                 <h3 id="statJournals" class="text-3xl font-bold dark:text-white">0</h3>
                             </div>
                             <div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 group-hover:rotate-12 transition-transform">
-                                <i class="fa-solid fa-clipboard-check text-xl"></i>
+                                <i class="fa-solid fa-book-open text-xl"></i>
                             </div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                         <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl">
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
-                                <div>
-                                    <h3 class="text-lg font-bold dark:text-white">Grafik Kehadiran Mingguan</h3>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Rekap seluruh kelas</p>
-                                </div>
-                            </div>
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Grafik Kehadiran Mingguan</h3>
                             <div class="h-72 w-full">
                                 <canvas id="attendanceChart"></canvas>
                             </div>
@@ -415,29 +361,6 @@
                             <div class="flex-1 space-y-4 text-sm text-gray-500">
                                 <!-- Populated dynamically by JS -->
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- GRAFIK KEHADIRAN PER KELAS -->
-                    <div class="glass glass-panel p-6 rounded-2xl mt-6">
-                        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-4">
-                            <div>
-                                <h3 class="text-lg font-bold dark:text-white">Grafik Kehadiran Mingguan per Kelas</h3>
-                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pilih kelas untuk melihat detail Hadir, Sakit, Izin, dan Alpa.</p>
-                            </div>
-                            <div class="w-full md:w-64">
-                                <label for="attendanceClassChart" class="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1">Pilih Kelas</label>
-                                <select id="attendanceClassChart" onchange="initClassAttendanceChart()" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
-                                    <option value="">-- Pilih Kelas --</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="classChartEmpty" class="hidden py-10 text-center text-sm text-gray-500 dark:text-gray-400">
-                            <i class="fa-solid fa-chart-column text-3xl mb-3 opacity-50"></i>
-                            <p>Belum ada kelas yang dapat ditampilkan.</p>
-                        </div>
-                        <div class="h-80 w-full">
-                            <canvas id="classAttendanceChart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -489,107 +412,88 @@
                     </div>
                 </div>
 
-                <!-- VIEW: KELAS BELUM PRESENSI -->
-                <div id="view-belum-presensi" class="view-section hidden fade-in">
-                    <div class="glass glass-panel p-6 rounded-2xl mb-6">
-                        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-                            <div>
-                                <h3 class="text-lg font-bold dark:text-white">Kelas yang Belum Presensi</h3>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Daftar kelas yang belum melakukan presensi pada tanggal yang dipilih.</p>
-                            </div>
-                            <div class="w-full md:w-64">
-                                <label class="block text-sm font-medium mb-1 dark:text-gray-300">Pilih Tanggal</label>
-                                <input type="date" id="belumPresensiDate" onchange="renderBelumPresensi()" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                        <div class="glass glass-panel p-5 rounded-2xl border-l-4 border-l-primary-500">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Total Kelas</p>
-                            <h3 id="belumPresensiTotalKelas" class="text-3xl font-bold dark:text-white">0</h3>
-                        </div>
-                        <div class="glass glass-panel p-5 rounded-2xl border-l-4 border-l-green-500">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Sudah Presensi</p>
-                            <h3 id="belumPresensiSudah" class="text-3xl font-bold text-green-600">0</h3>
-                        </div>
-                        <div class="glass glass-panel p-5 rounded-2xl border-l-4 border-l-red-500">
-                            <p class="text-sm text-gray-500 dark:text-gray-400">Belum Presensi</p>
-                            <h3 id="belumPresensiJumlah" class="text-3xl font-bold text-red-500">0</h3>
-                        </div>
-                    </div>
-
-                    <div id="belumPresensiList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
-                </div>
-
-                <!-- VIEW: REKAP BULANAN -->
-                <div id="view-rekap" class="view-section hidden fade-in">
-                    <div class="glass glass-panel p-6 rounded-2xl mb-6">
-                        <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
+                <!-- VIEW: JURNAL -->
+                <div id="view-jurnal" class="view-section hidden fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 glass glass-panel p-6 rounded-2xl h-fit">
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Tulis Jurnal Baru</h3>
+                            <form id="jurnalForm" onsubmit="saveJurnal(event)" class="space-y-4">
                                 <div>
-                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Pilih Kelas</label>
-                                    <select id="rekapClass" onchange="renderRekap()" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Tanggal Jurnal</label>
+                                    <input type="date" id="jurnalDateInput" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Kelas</label>
+                                    <select id="jurnalClass" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
                                         <option value="">-- Pilih Kelas --</option>
                                     </select>
                                 </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Mata Pelajaran</label>
+                                        <select id="jurnalMapel" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                            <option value="">-- Pilih Mata Pelajaran --</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1 dark:text-gray-300">Jam Ke-</label>
+                                        <input type="text" id="jurnalJam" placeholder="Contoh: 1-2" required class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                    </div>
+                                </div>
                                 <div>
-                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Bulan</label>
-                                    <input type="month" id="rekapMonth" onchange="renderRekap()" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Materi Pembahasan</label>
+                                    <input type="text" id="jurnalMateri" required placeholder="Contoh: Logaritma Dasar" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Catatan / Evaluasi</label>
+                                    <textarea id="jurnalCatatan" rows="3" placeholder="Siswa aktif, 2 orang remedial..." class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white"></textarea>
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-md transition-colors flex justify-center items-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i> Simpan Jurnal
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl flex flex-col">
+                            <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-3 mb-4">
+                                <div>
+                                    <h3 class="text-lg font-bold dark:text-white">Riwayat Jurnal</h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Pilih bulan jurnal dan tanggal cetak sebelum mencetak.</p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <div class="flex items-center gap-2">
+                                        <label for="printMonth" class="text-xs font-medium text-gray-600 dark:text-gray-300">Bulan Jurnal</label>
+                                        <input type="month" id="printMonth" onchange="applyJournalPrintFilter()" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card text-sm dark:text-white focus:ring-2 focus:ring-primary-500 outline-none">
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <label for="printDate" class="text-xs font-medium text-gray-600 dark:text-gray-300">Tanggal Cetak</label>
+                                        <input type="date" id="printDate" class="px-3 py-2 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card text-sm dark:text-white focus:ring-2 focus:ring-primary-500 outline-none">
+                                    </div>
+                                    <button onclick="printJurnal()" class="p-2 rounded bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 transition-colors flex items-center gap-2 text-sm font-medium"><i class="fa-solid fa-print"></i> Cetak</button>
+                                    <button onclick="exportJurnalExcel()" class="p-2 rounded bg-green-200 dark:bg-green-900/40 text-green-700 dark:text-green-400 hover:bg-green-300 transition-colors flex items-center gap-2 text-sm font-medium"><i class="fa-solid fa-file-excel"></i> Export</button>
                                 </div>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium mb-1 dark:text-gray-300">Tanggal Cetak</label>
-                                <input type="date" id="rekapPrintDate" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="printRekap()" class="px-4 py-2.5 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-300 transition-colors flex items-center gap-2 text-sm font-medium whitespace-nowrap"><i class="fa-solid fa-print"></i> Cetak</button>
-                                <button onclick="exportRekapExcel()" class="px-4 py-2.5 rounded-lg bg-green-200 dark:bg-green-900/40 text-green-700 dark:text-green-400 hover:bg-green-300 transition-colors flex items-center gap-2 text-sm font-medium whitespace-nowrap"><i class="fa-solid fa-file-excel"></i> Export</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="rekapEmptyState" class="glass glass-panel p-10 rounded-2xl text-center text-gray-500 dark:text-gray-400">
-                        <i class="fa-solid fa-chalkboard-user text-4xl mb-3 opacity-50"></i>
-                        <p>Pilih kelas dan bulan untuk melihat rekap presensi.</p>
-                    </div>
-
-                    <div id="rekapContent" class="hidden space-y-6">
-                        <div class="glass glass-panel p-6 rounded-2xl">
-                            <h3 class="text-lg font-bold mb-4 dark:text-white">Rekap Per Tanggal Pertemuan</h3>
-                            <div class="overflow-x-auto border border-gray-200 dark:border-dark-border rounded-lg">
-                                <table id="tabelRekapTanggal" class="w-full text-left border-collapse min-w-max">
+                            <div class="overflow-x-auto flex-1 border border-gray-200 dark:border-dark-border rounded-lg">
+                                <table id="tabelJurnalData" class="w-full text-left border-collapse min-w-max">
                                     <thead>
                                         <tr class="bg-gray-100 dark:bg-dark-card/80 border-b border-gray-300 dark:border-gray-600">
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">No.</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Hari, Tanggal</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-16">S</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-16">I</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-16">A</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 text-center w-24">Hadir</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">NO.</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Hari,<br>Tanggal</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Kelas</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Mata<br>Pelajaran</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">Ringkasan Materi (Kegiatan Belajar<br>Mengajar)</th>
+                                            <th colspan="4" class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-b border-gray-300 dark:border-gray-600 text-center border-r">Presensi</th>
+                                            <th rowspan="2" class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 text-center no-print-export">Aksi</th>
+                                        </tr>
+                                        <tr class="bg-gray-50 dark:bg-dark-card/50 border-b border-gray-300 dark:border-gray-600">
+                                            <th class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-12">S</th>
+                                            <th class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-12">I</th>
+                                            <th class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-12">A</th>
+                                            <th class="p-2 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-20">jmh hadir</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="rekapTanggalBody" class="divide-y divide-gray-200 dark:divide-gray-700 dark:text-gray-300"></tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="glass glass-panel p-6 rounded-2xl">
-                            <h3 class="text-lg font-bold mb-4 dark:text-white">Rekap Per Siswa (Total Sebulan)</h3>
-                            <div class="overflow-x-auto border border-gray-200 dark:border-dark-border rounded-lg">
-                                <table id="tabelRekapSiswa" class="w-full text-left border-collapse min-w-max">
-                                    <thead>
-                                        <tr class="bg-gray-100 dark:bg-dark-card/80 border-b border-gray-300 dark:border-gray-600">
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">No.</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center">NIS</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600">Nama Siswa</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-16">S</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-16">I</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 border-r border-gray-300 dark:border-gray-600 text-center w-16">A</th>
-                                            <th class="p-3 text-sm font-semibold text-gray-700 dark:text-gray-300 text-center w-24">Hadir</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="rekapSiswaBody" class="divide-y divide-gray-200 dark:divide-gray-700 dark:text-gray-300"></tbody>
+                                    <tbody id="jurnalTableBody" class="divide-y divide-gray-200 dark:divide-gray-700 dark:text-gray-300">
+                                    </tbody>
                                 </table>
                             </div>
                         </div>
@@ -610,6 +514,19 @@
                                     <i class="fa-solid fa-plus"></i> Tambah Kelas
                                 </button>
                             </form>
+
+                            <div class="border-t border-gray-200 dark:border-dark-border my-6"></div>
+                            <h4 class="font-bold mb-2 dark:text-white"><i class="fa-solid fa-file-excel text-green-600 mr-2"></i>Tambah Banyak Kelas</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mb-3">Download template Excel, isi nama kelas, lalu upload. Kelas yang sama akan otomatis dilewati.</p>
+                            <div class="grid grid-cols-1 gap-2">
+                                <button type="button" onclick="downloadClassTemplate()" class="w-full px-3 py-2 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors flex items-center justify-center gap-2 text-sm font-medium">
+                                    <i class="fa-solid fa-download"></i> Download Template Kelas
+                                </button>
+                                <input type="file" id="classExcelUpload" accept=".xlsx,.xls" class="hidden" onchange="handleClassExcelUpload(event)">
+                                <button type="button" onclick="document.getElementById('classExcelUpload').click()" class="w-full px-3 py-2 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors flex items-center justify-center gap-2 text-sm font-medium">
+                                    <i class="fa-solid fa-file-arrow-up"></i> Upload Tambah Kelas
+                                </button>
+                            </div>
                         </div>
                         <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl flex flex-col">
                             <div class="flex justify-between items-center mb-4">
@@ -627,6 +544,43 @@
                                         </tr>
                                     </thead>
                                     <tbody id="kelasTableBody" class="divide-y divide-gray-200 dark:divide-dark-border dark:text-gray-300">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW: MAPEL -->
+                <div id="view-mapel" class="view-section hidden fade-in">
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 glass glass-panel p-6 rounded-2xl h-fit">
+                            <h3 class="text-lg font-bold mb-4 dark:text-white">Tambah Mata Pelajaran</h3>
+                            <form id="mapelForm" onsubmit="saveMapel(event)" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-1 dark:text-gray-300">Nama Mata Pelajaran</label>
+                                    <input type="text" id="inputNamaMapel" required placeholder="Contoh: Informatika" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card focus:ring-2 focus:ring-primary-500 outline-none dark:text-white">
+                                </div>
+                                <button type="submit" class="w-full py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium shadow-md transition-colors flex justify-center items-center gap-2">
+                                    <i class="fa-solid fa-plus"></i> Tambah Mapel
+                                </button>
+                            </form>
+                        </div>
+                        <div class="lg:col-span-2 glass glass-panel p-6 rounded-2xl flex flex-col">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-bold dark:text-white">Daftar Mata Pelajaran</h3>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Kelola mata pelajaran Anda di sini</span>
+                            </div>
+                            <div class="overflow-x-auto flex-1">
+                                <table class="w-full text-left border-collapse min-w-max">
+                                    <thead>
+                                        <tr class="bg-gray-50 dark:bg-dark-card border-b border-gray-200 dark:border-dark-border">
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">No</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Nama Mata Pelajaran</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="mapelTableBody" class="divide-y divide-gray-200 dark:divide-dark-border dark:text-gray-300">
                                     </tbody>
                                 </table>
                             </div>
@@ -679,7 +633,8 @@
                                 <table class="w-full text-left border-collapse min-w-max">
                                     <thead>
                                         <tr class="bg-gray-50 dark:bg-dark-card border-b border-gray-200 dark:border-dark-border">
-                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">NIS</th>
+                                            <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300"><input type="checkbox" id="selectAllStudents" onchange="toggleSelectAllStudents(this.checked)"></th>
+                                             <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">NIS</th>
                                             <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Nama Siswa</th>
                                             <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Kelas</th>
                                             <th class="p-3 text-sm font-semibold text-gray-600 dark:text-gray-300">Aksi</th>
@@ -689,40 +644,31 @@
                                     </tbody>
                                 </table>
                             </div>
-                        
-                    </div>
-                </div>
-
-                
-                    <!-- Hapus Siswa Berdasarkan Beberapa Kelas -->
-                    <div class="delete-students-panel glass glass-panel p-6 rounded-2xl mt-6 border-l-4 border-l-red-500">
-                        <div class="flex items-start gap-4">
-                            <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 flex items-center justify-center flex-shrink-0">
-                                <i class="fa-solid fa-users-slash text-xl"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h3 class="text-lg font-bold text-red-600 dark:text-red-400">Hapus Siswa dengan Centang Beberapa Kelas</h3>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-4">Centang satu atau beberapa kelas. Semua siswa pada kelas yang dipilih akan dihapus permanen.</p>
-                                <div class="flex flex-wrap gap-2 mb-3">
-                                    <button type="button" onclick="toggleAllDeleteClasses(true)" class="px-3 py-2 rounded-lg bg-gray-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-200"><i class="fa-solid fa-check-double mr-1"></i> Centang Semua</button>
-                                    <button type="button" onclick="toggleAllDeleteClasses(false)" class="px-3 py-2 rounded-lg bg-gray-100 dark:bg-dark-card text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-200"><i class="fa-solid fa-square mr-1"></i> Hapus Centang</button>
-                                </div>
-                                <div id="deleteStudentsClassChecklist" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-4 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-200 dark:border-dark-border max-h-64 overflow-y-auto">
-                                    <p class="text-sm text-gray-500">Memuat daftar kelas...</p>
-                                </div>
-                                <button type="button" onclick="deleteStudentsBySelectedClasses()" class="w-full mt-4 px-5 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium"><i class="fa-solid fa-trash-can mr-2"></i>Hapus Semua Siswa dari Kelas yang Dicentang</button>
-                                <p class="text-xs text-red-500 mt-3"><i class="fa-solid fa-triangle-exclamation mr-1"></i>Data siswa yang dihapus tidak dapat dikembalikan.</p>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <!-- END VIEW: SISWA -->
 
-<!-- VIEW: PROFIL (Settings) -->
+                <!-- VIEW: BACKUP & HAPUS DATA -->
+                <div id="view-backup" class="view-section hidden fade-in">
+                    <div class="max-w-5xl mx-auto space-y-6">
+                        <div class="glass glass-panel p-6 rounded-2xl">
+                            <h3 class="text-xl font-bold dark:text-white mb-2"><i class="fa-solid fa-shield-halved text-primary-600 mr-2"></i>Backup & Pengelolaan Data</h3>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Backup dahulu sebelum menghapus data. Semua penghapusan langsung menghapus data milik akun Anda dari Firebase.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-3 dark:text-white">Backup Jurnal Guru</h4><p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh jurnal dalam Excel.</p><div class="flex gap-2"><input type="month" id="backupJournalMonth" class="flex-1 p-2 rounded-lg border"><button onclick="backupJurnalByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup</button></div></div>
+                            <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-3 dark:text-white">Backup Presensi Siswa</h4><p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh seluruh presensi dalam Excel.</p><div class="flex gap-2"><input type="month" id="backupAttendanceMonth" class="flex-1 p-2 rounded-lg border"><button onclick="backupPresensiByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup</button></div></div>
+                        </div>
+                        <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-4 text-red-600"><i class="fa-solid fa-triangle-exclamation"></i> Hapus Data Bulanan</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label class="text-sm font-medium">Hapus Jurnal Guru per Bulan</label><div class="flex gap-2 mt-2"><input type="month" id="deleteJournalMonth" class="flex-1 p-2 rounded-lg border"><button onclick="deleteJournalsByMonth()" class="px-4 py-2 bg-red-600 text-white rounded-lg">Hapus</button></div></div><div><label class="text-sm font-medium">Hapus Presensi Siswa per Bulan</label><div class="flex gap-2 mt-2"><input type="month" id="deleteAttendanceMonth" class="flex-1 p-2 rounded-lg border"><button onclick="deleteAttendanceByMonth()" class="px-4 py-2 bg-red-600 text-white rounded-lg">Hapus</button></div></div></div></div>
+                        <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-2 dark:text-white">Backup Daftar Siswa</h4><p class="text-sm text-gray-500 mb-4">Unduh daftar siswa berdasarkan kelas atau seluruh kelas.</p><div class="flex flex-col sm:flex-row gap-2"><select id="backupStudentClass" class="flex-1 p-2 rounded-lg border"><option value="">Semua Kelas</option></select><button onclick="backupStudentsByClass()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup Siswa</button></div></div>
+                    </div>
+                </div>
+
+                <!-- VIEW: PROFIL (Settings) -->
                 <div id="view-profil" class="view-section hidden fade-in">
                     <div class="max-w-2xl mx-auto glass glass-panel p-6 rounded-2xl">
-                        <h3 class="text-lg font-bold mb-4 dark:text-white">Pengaturan Profil & Cetak Rekap</h3>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Data di bawah ini akan digunakan sebagai tanda tangan pada saat mencetak dokumen Rekap Presensi.</p>
+                        <h3 class="text-lg font-bold mb-4 dark:text-white">Pengaturan Profil & Cetak Jurnal</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Data di bawah ini akan digunakan sebagai tanda tangan pada saat mencetak dokumen Jurnal Mengajar.</p>
                         <form id="profilForm" onsubmit="saveProfil(event)" class="space-y-5">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div>
@@ -749,124 +695,11 @@
                     </div>
                 </div>
 
-                <!-- VIEW: BACKUP / EXPORT EXCEL -->
-                <div id="view-backup" class="view-section hidden fade-in">
-                    <div class="max-w-4xl mx-auto space-y-6">
-                        <div class="glass glass-panel p-6 rounded-2xl">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center flex-shrink-0">
-                                    <i class="fa-solid fa-database text-xl"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-xl font-bold dark:text-white">Backup & Export Data Excel</h3>
-                                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
-                                        Simpan data siswa dan presensi sebagai file Excel sebelum melakukan penghapusan data di Firebase.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="glass glass-panel p-6 rounded-2xl">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div>
-                                        <h4 class="font-bold text-lg dark:text-white"><i class="fa-solid fa-users text-blue-500 mr-2"></i>Backup Data Siswa</h4>
-                                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Export seluruh data siswa ke Excel.</p>
-                                    </div>
-                                </div>
-                                <button onclick="exportStudentsExcel()" class="w-full py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium">
-                                    <i class="fa-solid fa-file-excel mr-2"></i>Download Backup Siswa Excel
-                                </button>
-                            </div>
-
-                            <div class="glass glass-panel p-6 rounded-2xl">
-                                <h4 class="font-bold text-lg dark:text-white"><i class="fa-solid fa-calendar-check text-purple-500 mr-2"></i>Backup Data Presensi</h4>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 mb-4">Pilih bulan yang akan dibackup.</p>
-                                <input type="month" id="backupAttendanceMonth" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card dark:text-white mb-3">
-                                <button onclick="exportAttendanceExcel()" class="w-full py-3 rounded-lg bg-green-600 hover:bg-green-700 text-white font-medium">
-                                    <i class="fa-solid fa-file-excel mr-2"></i>Download Backup Presensi Excel
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="glass glass-panel p-6 rounded-2xl">
-                            <h4 class="font-bold dark:text-white mb-2"><i class="fa-solid fa-shield-halved text-orange-500 mr-2"></i>Saran Sebelum Menghapus Data</h4>
-                            <ol class="list-decimal ml-5 text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                                <li>Download backup siswa atau presensi.</li>
-                                <li>Simpan file Excel di komputer atau Google Drive.</li>
-                                <li>Periksa isi file backup.</li>
-                                <li>Baru gunakan menu hapus data.</li>
-                            </ol>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- VIEW: HAPUS DATA PRESENSI (ADMIN ONLY) -->
-                <div id="view-hapus-presensi" class="view-section hidden fade-in">
-                    <div class="max-w-4xl mx-auto space-y-6">
-                        <div class="glass glass-panel p-6 rounded-2xl border-l-4 border-l-red-500">
-                            <div class="flex items-start gap-4">
-                                <div class="w-12 h-12 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 flex items-center justify-center flex-shrink-0">
-                                    <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-                                </div>
-                                <div>
-                                    <h3 class="text-xl font-bold text-red-600 dark:text-red-400">Manajemen & Hapus Data Presensi</h3>
-                                    <p class="text-sm text-gray-600 dark:text-gray-400 mt-2">
-                                        Fitur ini hanya untuk Admin. Data yang dihapus tidak dapat dikembalikan.
-                                        Sistem menggunakan query berdasarkan tanggal agar tidak membaca seluruh collection presensi.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Hapus per tanggal -->
-                            <div class="glass glass-panel p-6 rounded-2xl">
-                                <h4 class="font-bold dark:text-white mb-2"><i class="fa-solid fa-calendar-day text-red-500 mr-2"></i>Hapus Berdasarkan Tanggal</h4>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Menghapus semua presensi pada satu tanggal.</p>
-                                <input type="date" id="deleteAttendanceDate" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card dark:text-white mb-3">
-                                <button onclick="deleteAttendanceByDate()" class="w-full py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium">
-                                    <i class="fa-solid fa-trash-can mr-2"></i>Hapus Presensi Tanggal Ini
-                                </button>
-                            </div>
-
-                            <!-- Hapus per bulan -->
-                            <div class="glass glass-panel p-6 rounded-2xl">
-                                <h4 class="font-bold dark:text-white mb-2"><i class="fa-solid fa-calendar-days text-orange-500 mr-2"></i>Hapus Berdasarkan Bulan</h4>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Menghapus seluruh presensi dalam bulan yang dipilih.</p>
-                                <input type="month" id="deleteAttendanceMonth" class="w-full p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card dark:text-white mb-3">
-                                <button onclick="deleteAttendanceByMonth()" class="w-full py-2.5 rounded-lg bg-orange-600 hover:bg-orange-700 text-white font-medium">
-                                    <i class="fa-solid fa-trash-can mr-2"></i>Hapus Presensi Bulan Ini
-                                </button>
-                            </div>
-
-                            <!-- Hapus data lama -->
-                            <div class="glass glass-panel p-6 rounded-2xl md:col-span-2">
-                                <h4 class="font-bold dark:text-white mb-2"><i class="fa-solid fa-broom text-purple-500 mr-2"></i>Bersihkan Data Presensi Lama</h4>
-                                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">
-                                    Menghapus seluruh data presensi sebelum tanggal yang dipilih. Gunakan dengan hati-hati untuk membersihkan arsip lama.
-                                </p>
-                                <div class="flex flex-col sm:flex-row gap-3">
-                                    <input type="date" id="deleteAttendanceBeforeDate" class="flex-1 p-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white dark:bg-dark-card dark:text-white">
-                                    <button onclick="deleteAttendanceBeforeDate()" class="px-5 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-medium whitespace-nowrap">
-                                        <i class="fa-solid fa-broom mr-2"></i>Hapus Data Lama
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-dark-card p-4 rounded-xl">
-                            <strong>Catatan biaya Firebase:</strong> sistem hanya membaca dokumen yang sesuai filter tanggal untuk proses penghapusan.
-                            Setiap dokumen yang dihapus tetap dihitung sebagai operasi delete/write oleh Firestore, tetapi proses dilakukan dalam batch agar lebih cepat dan stabil.
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </main>
     </div>
 
-    <!-- Firebase Web SDK 12.18.0 | Optimasi read: cache data & query presensi per bulan -->
+    <!-- Firebase Web SDK 12.18.0 -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-app.js";
       import {
@@ -879,23 +712,24 @@
       } from "https://www.gstatic.com/firebasejs/12.18.0/firebase-firestore.js";
 
       const firebaseConfig = {
-        apiKey: "AIzaSyAiGPbcwfMhuctHb9P9tUDIzrbiRP0o2oI",
-        authDomain: "presensi-siswa-6f0e7.firebaseapp.com",
-        projectId: "presensi-siswa-6f0e7",
-        storageBucket: "presensi-siswa-6f0e7.firebasestorage.app",
-        messagingSenderId: "85086145477",
-        appId: "1:85086145477:web:6ecb00cdb2a1abf36899ac",
-        measurementId: "G-GMZFFVH087"
+        apiKey: "AIzaSyB1LEepgaUrIha5-bFfyiOEHThB-cmk3to",
+        authDomain: "jurnal-guru-699dd.firebaseapp.com",
+        projectId: "jurnal-guru-699dd",
+        storageBucket: "jurnal-guru-699dd.firebasestorage.app",
+        messagingSenderId: "714059756014",
+        appId: "1:714059756014:web:0c9f51d9cdb183483fdeff",
+        measurementId: "G-1SV57GMKR9"
       };
 
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
       const db = getFirestore(app);
+      window.__FIREBASE_INIT_ERROR__ = null;
 
       window.GEM_FIREBASE = {
         auth, db, setPersistence, browserLocalPersistence, browserSessionPersistence,
         signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail,
-        collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, writeBatch
+        collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, writeBatch, writeBatch
       };
     </script>
 
@@ -911,15 +745,56 @@
         });
 
         let currentUser = null;
-        let currentUserRole = 'guru';
         let allClasses = [];
+        let allMapels = [];
         let allStudents = [];
+        let allJournals = [];
         let attendanceCache = {};
-        let loadedAttendanceMonths = new Set();
-        let dataLoadedAt = { classes: 0, students: 0 };
-        const DATA_CACHE_TTL = 5 * 60 * 1000; // 5 menit: mengurangi read saat navigasi
         let myChart = null;
-        let classAttendanceChart = null;
+        // Cache sesi: mencegah pembacaan Firestore yang sama berulang kali saat berpindah menu.
+        const dataLoaded = { classes:false, mapels:false, students:false, journals:false, attendance:false };
+        let lastAttendanceLoad = 0;
+
+        // ============================================
+        // FIREBASE SUPER HEMAT READ
+        // Cache RAM + LocalStorage per akun
+        // ============================================
+        const CACHE_VERSION = 'v4';
+        const CACHE_TTL = {
+            profile: 24 * 60 * 60 * 1000,
+            classes: 24 * 60 * 60 * 1000,
+            mapels: 24 * 60 * 60 * 1000,
+            students: 6 * 60 * 60 * 1000,
+            journals: 12 * 60 * 60 * 1000,
+            attendance: 12 * 60 * 60 * 1000
+        };
+
+        function cacheKey(type, extra='') {
+            return currentUser ? `jurnalGuru_${CACHE_VERSION}_${currentUser.uid}_${type}_${extra}` : null;
+        }
+        function cacheSave(type, data, extra='', ttl=null) {
+            try {
+                const key=cacheKey(type,extra); if(!key) return;
+                localStorage.setItem(key, JSON.stringify({savedAt:Date.now(), ttl:ttl || CACHE_TTL[type] || 21600000, data}));
+            } catch(e) { console.warn('Cache penuh/tidak tersedia',e); }
+        }
+        function cacheGet(type, extra='') {
+            try {
+                const key=cacheKey(type,extra); if(!key) return null;
+                const raw=localStorage.getItem(key); if(!raw) return null;
+                const obj=JSON.parse(raw);
+                if(Date.now() - obj.savedAt > (obj.ttl || CACHE_TTL[type] || 21600000)) { localStorage.removeItem(key); return null; }
+                return obj.data;
+            } catch(e) { return null; }
+        }
+        function cacheRemove(type, extra='') {
+            try { const key=cacheKey(type,extra); if(key) localStorage.removeItem(key); } catch(e) {}
+        }
+        function cacheUpdateMonth(type, month, rows) { cacheSave(type, rows, month); }
+        function cacheClearMemory() {
+            allClasses=[]; allMapels=[]; allStudents=[]; allJournals=[]; attendanceCache={};
+            Object.keys(dataLoaded).forEach(k=>dataLoaded[k]=false);
+        }
 
         let userProfileData = {
             kepsekNama: 'Parwoto, S. Pd., M. Pd.',
@@ -935,66 +810,93 @@
 
         const todayISO = () => new Date().toISOString().slice(0,10);
 
-        document.addEventListener("DOMContentLoaded", () => {
+        async function waitForFirebaseReady(timeoutMs = 15000) {
+            const start = Date.now();
+            while (!window.GEM_FIREBASE) {
+                if (Date.now() - start > timeoutMs) {
+                    throw new Error('Firebase belum siap. Muat ulang halaman lalu coba lagi.');
+                }
+                await new Promise(r => setTimeout(r, 100));
+            }
+            return window.GEM_FIREBASE;
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
             $('presensiDate').value = todayISO();
-            if ($('belumPresensiDate')) $('belumPresensiDate').value = todayISO();
-            if ($('rekapPrintDate')) $('rekapPrintDate').value = todayISO();
-            if ($('rekapMonth')) $('rekapMonth').value = todayISO().slice(0,7);
-            if ($('deleteAttendanceDate')) $('deleteAttendanceDate').value = todayISO();
-            if ($('deleteAttendanceMonth')) $('deleteAttendanceMonth').value = todayISO().slice(0,7);
-            if ($('deleteAttendanceBeforeDate')) $('deleteAttendanceBeforeDate').value = todayISO();
-            if ($('backupAttendanceMonth')) $('backupAttendanceMonth').value = todayISO().slice(0,7);
+            if ($('jurnalDateInput')) $('jurnalDateInput').value = todayISO();
+            if ($('printDate')) $('printDate').value = todayISO();
+            if ($('printMonth')) $('printMonth').value = todayISO().slice(0,7);
 
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
             }
 
-            const forgot = document.querySelector('a[href="#"]');
-            if (forgot) {
-                forgot.addEventListener('click', async (e) => {
-                    e.preventDefault();
-                    const email = $('email').value.trim();
-                    if (!email) {
-                        Swal.fire('Email belum diisi', 'Masukkan email pada kolom login terlebih dahulu.', 'info');
+            try {
+                await waitForFirebaseReady();
+
+                const forgot = document.querySelector('a[href="#"]');
+                if (forgot) {
+                    forgot.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const email = $('email').value.trim();
+                        if (!email) {
+                            Swal.fire('Email belum diisi', 'Masukkan email pada kolom login terlebih dahulu.', 'info');
+                            return;
+                        }
+                        try {
+                            await FB.sendPasswordResetEmail(FB.auth, email);
+                            Swal.fire('Tautan dikirim', 'Periksa email Anda untuk mengatur ulang password.', 'success');
+                        } catch (err) {
+                            Swal.fire('Gagal', firebaseError(err), 'error');
+                        }
+                    });
+                }
+
+                FB.onAuthStateChanged(FB.auth, async (user) => {
+                    if (!user) {
+                        currentUser = null;
+                        $('mainApp').classList.add('hidden');
+                        $('loginPage').classList.remove('hidden');
                         return;
                     }
-                    try {
-                        await FB.sendPasswordResetEmail(FB.auth, email);
-                        Swal.fire('Tautan dikirim', 'Periksa email Anda untuk mengatur ulang password.', 'success');
-                    } catch (err) {
-                        Swal.fire('Gagal', firebaseError(err), 'error');
-                    }
-                });
-            }
 
-            FB.onAuthStateChanged(FB.auth, async (user) => {
-                if (user) {
                     currentUser = user;
                     $('loginPage').classList.add('hidden');
                     $('mainApp').classList.remove('hidden');
-                    await loadUserProfile();
-                    applyRoleUI();
-                    await refreshAllData();
-                    navigate(currentUserRole === 'admin' ? 'dashboard' : 'presensi');
+                    navigate('dashboard');
                     renderDashboard();
-                } else {
-                    currentUser = null;
-                    $('mainApp').classList.add('hidden');
-                    $('loginPage').classList.remove('hidden');
-                }
-            });
+
+                    // Login berhasil. Kesalahan pemuatan data tidak membatalkan login.
+                    try { await loadUserProfile(); } catch (err) { console.warn('Profil:', err); }
+                    try { await refreshAllData(); } catch (err) { console.error('Data master:', err); }
+                    navigate('dashboard');
+                    renderDashboard();
+                    initChart();
+                });
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    icon:'error',
+                    title:'Firebase belum siap',
+                    text:'Tidak dapat menghubungkan Firebase. Periksa koneksi internet atau muat ulang halaman.'
+                });
+            }
         });
 
         function firebaseError(err) {
             const code = err?.code || '';
             const map = {
-                'auth/invalid-credential': 'Email atau password salah.',
+                'auth/invalid-credential': 'Email atau password salah. Gunakan email akun Firebase yang terdaftar.',
+                'auth/wrong-password': 'Password salah.',
+                'auth/user-not-found': 'Email belum terdaftar di Firebase Authentication.',
+                'auth/operation-not-allowed': 'Login Email/Password belum diaktifkan di Firebase Authentication.',
                 'auth/invalid-email': 'Format email tidak valid.',
                 'auth/user-disabled': 'Akun ini dinonaktifkan.',
                 'auth/too-many-requests': 'Terlalu banyak percobaan. Coba lagi nanti.',
                 'auth/network-request-failed': 'Jaringan bermasalah. Periksa koneksi internet.',
-                'permission-denied': 'Anda tidak memiliki izin mengakses data ini.'
+                'permission-denied': 'Anda tidak memiliki izin mengakses data ini.',
+                'failed-precondition': 'Data sedang menggunakan mode kompatibilitas Firebase. Silakan coba lagi.'
             };
             return map[code] || err?.message || 'Terjadi kesalahan.';
         }
@@ -1005,6 +907,11 @@
             const password = $('password').value;
             const remember = document.querySelector('#loginForm input[type="checkbox"]')?.checked;
 
+            if (!email || !password) {
+                Swal.fire({icon:'warning', title:'Data login belum lengkap', text:'Masukkan email dan password.'});
+                return;
+            }
+
             Swal.fire({
                 title: 'Proses Login...',
                 text: 'Menghubungkan ke Firebase',
@@ -1013,6 +920,7 @@
             });
 
             try {
+                await waitForFirebaseReady();
                 await FB.setPersistence(
                     FB.auth,
                     remember ? FB.browserLocalPersistence : FB.browserSessionPersistence
@@ -1020,9 +928,13 @@
                 await FB.signInWithEmailAndPassword(FB.auth, email, password);
                 Swal.close();
             } catch (err) {
-                Swal.fire({ icon: 'error', title: 'Akses Ditolak', text: firebaseError(err) });
+                console.error('LOGIN ERROR:', err);
+                Swal.fire({ icon: 'error', title: 'Login gagal', text: firebaseError(err) });
             }
         }
+
+        // Pastikan fungsi login benar-benar tersedia dari tombol/form HTML.
+        window.handleLogin = handleLogin;
 
         async function handleLogout() {
             const result = await Swal.fire({
@@ -1038,22 +950,30 @@
             if (!result.isConfirmed) return;
 
             await FB.signOut(FB.auth);
-            allClasses = []; allStudents = []; attendanceCache = {};
-            loadedAttendanceMonths = new Set();
-            dataLoadedAt = { classes: 0, students: 0 };
-            $('loginForm').reset();
+            cacheClearMemory();
+            $('loginForm').reset(); $('email').value='slamet@gamil.com'; $('password').value='123456';
             Swal.fire({icon:'success', title:'Logout berhasil', showConfirmButton:false, timer:1000});
         }
 
         async function loadUserProfile() {
             if (!currentUser) return;
+            const cachedProfile=cacheGet('profile');
+            if(cachedProfile){
+                userProfileData={...userProfileData,...cachedProfile};
+                const name=userProfileData.guruNama || currentUser.displayName || currentUser.email?.split('@')[0] || 'Guru';
+                $('profileName').textContent=name; $('profileRole').textContent=cachedProfile.role || 'Guru';
+                if($('profKepsekNama')) $('profKepsekNama').value=userProfileData.kepsekNama||'';
+                if($('profKepsekNip')) $('profKepsekNip').value=userProfileData.kepsekNip||'';
+                if($('profGuruNama')) $('profGuruNama').value=userProfileData.guruNama||'';
+                if($('profGuruNip')) $('profGuruNip').value=userProfileData.guruNip||'';
+                return;
+            }
             try {
                 const snap = await FB.getDoc(FB.doc(FB.db, 'users', currentUser.uid));
                 const profile = snap.exists() ? snap.data() : {};
                 const name = profile.guruNama || currentUser.displayName || currentUser.email?.split('@')[0] || 'Guru';
-                currentUserRole = profile.role === 'admin' ? 'admin' : 'guru';
                 $('profileName').textContent = name;
-                $('profileRole').textContent = currentUserRole === 'admin' ? 'Admin' : 'Guru';
+                $('profileRole').textContent = profile.role || 'Guru';
                 
                 userProfileData = {
                     kepsekNama: profile.kepsekNama || userProfileData.kepsekNama,
@@ -1062,24 +982,16 @@
                     guruNip: profile.guruNip || userProfileData.guruNip
                 };
 
+                cacheSave('profile',{...userProfileData, role:profile.role || 'Guru'});
+
                 if($('profKepsekNama')) $('profKepsekNama').value = userProfileData.kepsekNama;
                 if($('profKepsekNip')) $('profKepsekNip').value = userProfileData.kepsekNip;
                 if($('profGuruNama')) $('profGuruNama').value = userProfileData.guruNama;
                 if($('profGuruNip')) $('profGuruNip').value = userProfileData.guruNip;
             } catch (e) {
-                currentUserRole = 'guru';
                 $('profileName').textContent = currentUser.email || 'Guru';
                 $('profileRole').textContent = 'Guru';
             }
-        }
-
-        function applyRoleUI() {
-            const isAdmin = currentUserRole === 'admin';
-            // "Rekap Bulanan" tetap tampil untuk guru maupun admin.
-            ['nav-dashboard','nav-kelas','nav-siswa','nav-profil','nav-hapus-presensi','nav-backup'].forEach(id => {
-                const btn = $(id);
-                if (btn) btn.classList.toggle('hidden', !isAdmin);
-            });
         }
 
         async function saveProfil(e) {
@@ -1099,6 +1011,7 @@
             try {
                 await FB.setDoc(FB.doc(FB.db, 'users', currentUser.uid), data, { merge: true });
                 userProfileData = { ...userProfileData, ...data };
+                cacheSave('profile',userProfileData);
                 $('profileName').textContent = data.guruNama || 'Guru';
                 Swal.close();
                 toast('Profil berhasil disimpan');
@@ -1107,406 +1020,118 @@
             }
         }
 
-        // =========================
-        // BACKUP / EXPORT EXCEL
-        // =========================
-        function downloadExcel(rows, fileName, sheetName) {
-            if (!window.XLSX) {
-                Swal.fire('Library Excel belum siap', 'Silakan tunggu sebentar lalu coba kembali.', 'warning');
-                return;
-            }
-            const ws = XLSX.utils.json_to_sheet(rows);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, sheetName);
-            XLSX.writeFile(wb, fileName);
-        }
-
-        async function exportStudentsExcel() {
-            if (!currentUser || currentUserRole !== 'admin') {
-                Swal.fire('Akses ditolak', 'Hanya Admin yang dapat membuat backup seluruh data siswa.', 'error');
-                return;
-            }
-
-            try {
-                Swal.fire({title:'Menyiapkan backup...',text:'Mengambil data siswa untuk file Excel.',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
-
-                // Gunakan cache jika masih tersedia agar tidak menambah read.
-                if (!allStudents.length) await fetchStudents(false);
-
-                const rows = allStudents.map((st, index) => ({
-                    'No': index + 1,
-                    'NIS': st.nis || '',
-                    'Nama Siswa': st.name || '',
-                    'Kelas': st.className || allClasses.find(c => c.id === st.classId)?.name || '',
-                    'ID Kelas': st.classId || ''
-                }));
-
-                if (!rows.length) {
-                    Swal.fire('Tidak ada data', 'Belum ada data siswa untuk dibackup.', 'info');
-                    return;
-                }
-
-                downloadExcel(rows, `BACKUP_SISWA_${todayISO()}.xlsx`, 'Data Siswa');
-                Swal.fire('Berhasil', `${rows.length} data siswa berhasil diexport ke Excel.`, 'success');
-            } catch(err) {
-                console.error(err);
-                Swal.fire('Gagal membuat backup', firebaseError(err), 'error');
-            }
-        }
-
-        async function exportAttendanceExcel() {
-            if (!currentUser || currentUserRole !== 'admin') {
-                Swal.fire('Akses ditolak', 'Hanya Admin yang dapat membuat backup presensi.', 'error');
-                return;
-            }
-
-            const month = $('backupAttendanceMonth')?.value;
-            if (!month) {
-                Swal.fire('Pilih bulan', 'Silakan pilih bulan presensi yang akan dibackup.', 'info');
-                return;
-            }
-
-            try {
-                Swal.fire({title:'Menyiapkan backup...',text:'Mengambil presensi hanya untuk bulan yang dipilih.',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
-
-                // Query/cache hanya bulan yang dipilih sehingga read tetap hemat.
-                await ensureAttendanceMonth(month);
-
-                const attendanceRows = Object.values(attendanceCache)
-                    .filter(a => String(a.date || '').startsWith(month))
-                    .sort((a,b) => String(a.date).localeCompare(String(b.date)));
-
-                if (!attendanceRows.length) {
-                    Swal.fire('Tidak ada data', `Tidak ada presensi untuk bulan ${month}.`, 'info');
-                    return;
-                }
-
-                const rows = [];
-                attendanceRows.forEach(att => {
-                    const cls = allClasses.find(c => c.id === att.classId);
-                    const statuses = att.statuses || {};
-
-                    Object.entries(statuses).forEach(([studentId, status]) => {
-                        const st = allStudents.find(x => x.id === studentId) || {};
-                        rows.push({
-                            'Tanggal': att.date || '',
-                            'Kelas': cls?.name || att.className || att.classId || '',
-                            'NIS': st.nis || '',
-                            'Nama Siswa': st.name || studentId,
-                            'Status': status || ''
-                        });
-                    });
-                });
-
-                downloadExcel(rows, `BACKUP_PRESENSI_${month}.xlsx`, `Presensi ${month}`);
-                Swal.fire('Berhasil', `${rows.length} baris data presensi berhasil diexport ke Excel.`, 'success');
-            } catch(err) {
-                console.error(err);
-                Swal.fire('Gagal membuat backup', firebaseError(err), 'error');
-            }
-        }
-
-        // =========================
-        // HAPUS SISWA BERDASARKAN KELAS TERPILIH
-        // =========================
-        async function deleteStudentsBySelectedClasses() {
-            if (!currentUser || currentUserRole !== 'admin') {
-                Swal.fire('Akses ditolak', 'Hanya Admin yang dapat menghapus data siswa.', 'error');
-                return;
-            }
-
-            const selectedIds = [...document.querySelectorAll('.delete-class-checkbox:checked')].map(cb => cb.value);
-            if (!selectedIds.length) {
-                Swal.fire('Belum ada kelas', 'Silakan centang minimal satu kelas.', 'info');
-                return;
-            }
-
-            const selectedClasses = allClasses.filter(c => selectedIds.includes(c.id));
-            const classNames = selectedClasses.map(c => c.name || c.id);
-
-            const confirm1 = await Swal.fire({
-                title: 'Hapus Siswa dari Kelas Terpilih?',
-                html: `Kelas yang dipilih:<br><b>${classNames.map(esc).join(', ')}</b><br><br><span class="text-red-600">Semua siswa pada kelas tersebut akan dihapus permanen.</span>`,
-                icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc2626',
-                confirmButtonText: 'Lanjutkan', cancelButtonText: 'Batal'
-            });
-            if (!confirm1.isConfirmed) return;
-
-            try {
-                Swal.fire({title:'Mengecek data siswa...',text:'Mengambil hanya siswa pada kelas yang dicentang.',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
-
-                // Query "in" Firestore maksimal 10 kelas, sehingga kelas diproses per kelompok 10.
-                const docsMap = new Map();
-                for (let i=0; i<selectedIds.length; i+=10) {
-                    const chunk = selectedIds.slice(i,i+10);
-                    const q = FB.query(FB.collection(FB.db,'students'), FB.where('classId','in',chunk));
-                    const snap = await FB.getDocs(q);
-                    snap.docs.forEach(d => docsMap.set(d.id,d));
-                }
-                const docs = [...docsMap.values()];
-
-                if (!docs.length) {
-                    Swal.fire('Tidak ada data','Tidak ditemukan siswa pada kelas yang dicentang.','info');
-                    return;
-                }
-
-                const confirm2 = await Swal.fire({
-                    title:`Ditemukan ${docs.length} siswa`,
-                    html:`Yakin ingin menghapus <b>${docs.length} siswa</b> dari <b>${selectedIds.length} kelas</b>?<br><br>Penghapusan bersifat permanen.`,
-                    icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',
-                    confirmButtonText:'Ya, Hapus Semua',cancelButtonText:'Batal'
-                });
-                if (!confirm2.isConfirmed) return;
-
-                Swal.fire({title:'Menghapus siswa...',html:`Memproses <b>${docs.length}</b> data siswa.`,allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
-
-                let batch=FB.writeBatch(FB.db), batchCount=0, deleted=0;
-                for (const item of docs) {
-                    batch.delete(item.ref); batchCount++; deleted++;
-                    if (batchCount>=450) {
-                        await batch.commit();
-                        batch=FB.writeBatch(FB.db); batchCount=0;
-                    }
-                }
-                if (batchCount>0) await batch.commit();
-
-                allStudents=allStudents.filter(st=>!selectedIds.includes(st.classId));
-                dataLoadedAt.students=Date.now();
-                renderAllTables();
-                populateClassDropdowns();
-                populateAttendanceClassChart();
-
-                Swal.fire('Berhasil',`${deleted} siswa dari ${selectedIds.length} kelas berhasil dihapus.`,'success');
-            } catch(err) {
-                console.error(err);
-                Swal.fire('Gagal menghapus siswa',firebaseError(err),'error');
-            }
-        }
-
-        // =========================
-        // MANAJEMEN HAPUS PRESENSI
-        // =========================
-        function requireAdminForDelete() {
-            if (!currentUser || currentUserRole !== 'admin') {
-                Swal.fire('Akses ditolak', 'Hanya Admin yang dapat menghapus data presensi.', 'error');
-                return false;
-            }
-            return true;
-        }
-
-        async function confirmAndDeleteAttendance(q, description, cachePredicate, affectedMonths = []) {
-            if (!requireAdminForDelete()) return;
-
-            const firstConfirm = await Swal.fire({
-                title: 'Konfirmasi Penghapusan',
-                html: `Anda akan menghapus <b>${esc(description)}</b>.<br><br><span class="text-red-600">Data tidak dapat dikembalikan.</span>`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#dc2626',
-                confirmButtonText: 'Lanjutkan',
-                cancelButtonText: 'Batal'
-            });
-            if (!firstConfirm.isConfirmed) return;
-
-            try {
-                Swal.fire({
-                    title: 'Mengecek data...',
-                    text: 'Mengambil hanya data yang sesuai filter.',
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
-
-                const snap = await FB.getDocs(q);
-
-                if (snap.empty) {
-                    Swal.fire('Tidak ada data', 'Tidak ditemukan data presensi yang sesuai.', 'info');
-                    return;
-                }
-
-                const secondConfirm = await Swal.fire({
-                    title: `Ditemukan ${snap.size} data`,
-                    text: 'Yakin ingin menghapus seluruh data tersebut secara permanen?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#dc2626',
-                    confirmButtonText: 'Ya, Hapus Permanen',
-                    cancelButtonText: 'Batal'
-                });
-                if (!secondConfirm.isConfirmed) return;
-
-                Swal.fire({
-                    title: 'Menghapus...',
-                    html: `Memproses <b>${snap.size}</b> data presensi.`,
-                    allowOutsideClick: false,
-                    didOpen: () => Swal.showLoading()
-                });
-
-                // Maksimal Firestore 500 operasi per batch.
-                // Menggunakan 450 agar aman dan stabil.
-                let batch = FB.writeBatch(FB.db);
-                let countInBatch = 0;
-                let deleted = 0;
-
-                for (const item of snap.docs) {
-                    batch.delete(item.ref);
-                    countInBatch++;
-                    deleted++;
-
-                    if (countInBatch >= 450) {
-                        await batch.commit();
-                        batch = FB.writeBatch(FB.db);
-                        countInBatch = 0;
-                    }
-                }
-                if (countInBatch > 0) await batch.commit();
-
-                // Bersihkan cache lokal tanpa melakukan read ulang seluruh collection.
-                Object.keys(attendanceCache).forEach(key => {
-                    const data = attendanceCache[key];
-                    if (data && cachePredicate(data)) delete attendanceCache[key];
-                });
-
-                affectedMonths.forEach(m => loadedAttendanceMonths.delete(m));
-                if (!affectedMonths.length) {
-                    // Untuk filter rentang besar, cache bulan dibersihkan agar tidak menampilkan data lama.
-                    loadedAttendanceMonths = new Set();
-                }
-
-                renderDashboard();
-                renderAllTables();
-
-                Swal.fire('Berhasil', `${deleted} data presensi berhasil dihapus.`, 'success');
-            } catch (err) {
-                console.error(err);
-                Swal.fire('Gagal menghapus', firebaseError(err), 'error');
-            }
-        }
-
-        async function deleteAttendanceByDate() {
-            const date = $('deleteAttendanceDate')?.value;
-            if (!date) return Swal.fire('Pilih tanggal', 'Silakan pilih tanggal yang akan dihapus.', 'info');
-
-            const q = FB.query(
-                FB.collection(FB.db, 'attendance'),
-                FB.where('date', '==', date)
-            );
-            await confirmAndDeleteAttendance(
-                q,
-                `semua presensi tanggal ${date}`,
-                data => data.date === date,
-                [date.slice(0,7)]
-            );
-        }
-
-        async function deleteAttendanceByMonth() {
-            const month = $('deleteAttendanceMonth')?.value;
-            if (!month) return Swal.fire('Pilih bulan', 'Silakan pilih bulan yang akan dihapus.', 'info');
-
-            const { start, end } = monthRange(month);
-            const q = FB.query(
-                FB.collection(FB.db, 'attendance'),
-                FB.where('date', '>=', start),
-                FB.where('date', '<=', end)
-            );
-            await confirmAndDeleteAttendance(
-                q,
-                `seluruh presensi bulan ${month}`,
-                data => String(data.date || '').startsWith(month),
-                [month]
-            );
-        }
-
-        async function deleteAttendanceBeforeDate() {
-            const cutoff = $('deleteAttendanceBeforeDate')?.value;
-            if (!cutoff) return Swal.fire('Pilih tanggal', 'Pilih batas tanggal terlebih dahulu.', 'info');
-
-            const q = FB.query(
-                FB.collection(FB.db, 'attendance'),
-                FB.where('date', '<', cutoff)
-            );
-            await confirmAndDeleteAttendance(
-                q,
-                `semua presensi sebelum ${cutoff}`,
-                data => String(data.date || '') < cutoff,
-                []
-            );
-        }
-
-        async function refreshAllData(force = false) {
+        async function refreshAllData() {
             if (!currentUser) return;
-            await Promise.all([loadClasses(force), fetchStudents(force), loadAttendanceCurrentMonth(force)]);
+
+            // Saat login, muat hanya data master yang diperlukan Dashboard.
+            // Jurnal dan presensi dimuat saat menunya dibuka (lazy-load)
+            // agar query bulanan tidak membuat login terganggu.
+            const results = await Promise.allSettled([
+                loadClasses(),
+                loadMapels(),
+                fetchStudents()
+            ]);
+
+            const failed = results.filter(r => r.status === 'rejected');
+            if (failed.length) console.error('Gagal memuat data master:', failed.map(r => r.reason));
+
             populateClassDropdowns();
-            populateAttendanceClassChart();
-            renderAllTables();
-            initChart();
-            initClassAttendanceChart();
+            populateMapelDropdowns();
+            populateDataManagementDropdowns();
+
+            try { renderAllTables(); } catch (e) { console.warn('Render tabel:', e); }
+
+            dataLoaded.journals = false;
+            dataLoaded.attendance = false;
+            return { failed };
         }
 
-        // Cache kelas di memori. Navigasi halaman tidak melakukan read ulang.
         async function loadClasses(force = false) {
-            const now = Date.now();
-            if (!force && allClasses.length && (now - dataLoadedAt.classes < DATA_CACHE_TTL)) return allClasses;
-
-            const snap = await FB.getDocs(FB.collection(FB.db, 'classes'));
-            allClasses = snap.docs.map(d => ({id:d.id, ...d.data()}));
-            allClasses.sort((a,b) => (a.name||'').localeCompare(b.name||'', 'id'));
-            dataLoadedAt.classes = now;
-            return allClasses;
+            if (dataLoaded.classes && !force) return;
+            const cached = !force ? cacheGet('classes') : null;
+            if (cached) { allClasses=cached; dataLoaded.classes=true; return; }
+            const snap = await FB.getDocs(FB.query(FB.collection(FB.db,'classes'), FB.where('ownerUid','==',currentUser.uid)));
+            allClasses=snap.docs.map(d=>({id:d.id,...d.data()}));
+            allClasses.sort((a,b)=>(a.name||'').localeCompare(b.name||'','id'));
+            cacheSave('classes',allClasses); dataLoaded.classes=true;
         }
 
-        // Cache siswa di memori. Read hanya saat login/refresh eksplisit/perubahan data.
+        async function loadMapels(force = false) {
+            if (dataLoaded.mapels && !force) return;
+            const cached = !force ? cacheGet('mapels') : null;
+            if (cached) { allMapels=cached; dataLoaded.mapels=true; return; }
+            const snap = await FB.getDocs(FB.query(FB.collection(FB.db,'mapels'), FB.where('ownerUid','==',currentUser.uid)));
+            allMapels=snap.docs.map(d=>({id:d.id,...d.data()}));
+            allMapels.sort((a,b)=>(a.name||'').localeCompare(b.name||'','id'));
+            cacheSave('mapels',allMapels); dataLoaded.mapels=true;
+        }
+
         async function fetchStudents(force = false) {
-            const now = Date.now();
-            if (!force && allStudents.length && (now - dataLoadedAt.students < DATA_CACHE_TTL)) return allStudents;
-
-            const snap = await FB.getDocs(FB.collection(FB.db, 'students'));
-            allStudents = snap.docs.map(d => ({id:d.id, ...d.data()}));
+            if (dataLoaded.students && !force) return;
+            const cached = !force ? cacheGet('students') : null;
+            if (cached) { allStudents=cached; dataLoaded.students=true; return; }
+            const snap = await FB.getDocs(FB.query(FB.collection(FB.db,'students'), FB.where('ownerUid','==',currentUser.uid)));
+            allStudents=snap.docs.map(d=>({id:d.id,...d.data()}));
             allStudents.sort(compareNis);
-            dataLoadedAt.students = now;
-            return allStudents;
+            cacheSave('students',allStudents); dataLoaded.students=true;
         }
 
-        function monthRange(month) {
-            const [y, m] = month.split('-').map(Number);
-            const start = `${month}-01`;
-            const end = `${y}-${String(m).padStart(2,'0')}-${String(new Date(y, m, 0).getDate()).padStart(2,'0')}`;
-            return { start, end };
+        // FIREBASE HEMAT READ: jurnal/presensi hanya dimuat untuk bulan yang diperlukan.
+        // Query memakai rentang tanggal sehingga data lama tetap kompatibel tanpa migrasi.
+        const monthRange = (month) => ({ start: `${month}-01`, end: (() => { const [y,m]=month.split('-').map(Number); const d=new Date(y,m,1); return d.toISOString().slice(0,10); })() });
+        const currentMonthKey = () => todayISO().slice(0,7);
+
+        async function getMonthRecords(collectionName, month, force=false) {
+            if (!currentUser || !month) return [];
+            const cacheType = collectionName === 'journals' ? 'journals' : 'attendance';
+            if(!force){
+                const cached=cacheGet(cacheType,month);
+                if(cached){
+                    if(collectionName==='journals'){
+                        allJournals=[...allJournals.filter(x=>String(x.monthKey||x.date?.slice(0,7)||'')!==month),...cached];
+                        allJournals.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+                    } else cached.forEach(x=>attendanceCache[x.id]=x);
+                    return cached;
+                }
+            }
+            try {
+                const snap=await FB.getDocs(FB.query(FB.collection(FB.db,collectionName), FB.where('ownerUid','==',currentUser.uid), FB.where('monthKey','==',month)));
+                const rows=snap.docs.map(d=>({id:d.id,...d.data()}));
+                if(collectionName==='journals'){
+                    allJournals=[...allJournals.filter(x=>String(x.monthKey||x.date?.slice(0,7)||'')!==month),...rows];
+                    allJournals.sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+                } else rows.forEach(x=>attendanceCache[x.id]=x);
+                cacheSave(cacheType,rows,month);
+                return rows;
+            } catch(err) {
+                // Data lama tanpa monthKey: fallback sekali lalu langsung cache hasilnya.
+                const {start,end}=monthRange(month);
+                const snap=await FB.getDocs(FB.query(FB.collection(FB.db,collectionName), FB.where('ownerUid','==',currentUser.uid)));
+                const rows=snap.docs.map(d=>({id:d.id,...d.data()})).filter(x=>String(x.date||'')>=start && String(x.date||'')<end);
+                if(collectionName==='journals') allJournals=[...allJournals.filter(x=>String(x.date||'')<start||String(x.date||'')>=end),...rows];
+                else rows.forEach(x=>attendanceCache[x.id]=x);
+                cacheSave(cacheType,rows,month);
+                return rows;
+            }
         }
 
-        // Presensi TIDAK lagi membaca seluruh collection.
-        // Hanya bulan yang sedang dibutuhkan yang diambil dari Firebase.
-        async function ensureAttendanceMonth(month, force = false) {
-            if (!month) return;
-            if (!force && loadedAttendanceMonths.has(month)) return;
-
-            const { start, end } = monthRange(month);
-            const q = FB.query(
-                FB.collection(FB.db, 'attendance'),
-                FB.where('date', '>=', start),
-                FB.where('date', '<=', end)
-            );
-            const snap = await FB.getDocs(q);
-
-            // Hapus cache bulan tersebut sebelum mengisi ulang.
-            Object.keys(attendanceCache).forEach(key => {
-                if (String(attendanceCache[key]?.date || '').startsWith(month)) delete attendanceCache[key];
-            });
-
-            snap.docs.forEach(d => {
-                const data = d.data();
-                attendanceCache[d.id] = {id:d.id, ...data};
-            });
-            loadedAttendanceMonths.add(month);
+        async function loadJournals(force = false) {
+            const month=currentMonthKey();
+            if(dataLoaded.journals && !force) return;
+            await getMonthRecords('journals',month,force);
+            dataLoaded.journals = true;
         }
 
-        async function loadAttendanceCurrentMonth(force = false) {
-            await ensureAttendanceMonth(todayISO().slice(0,7), force);
-            if (myChart) initChart();
-            if (classAttendanceChart) initClassAttendanceChart();
+        async function loadAttendance(force = false) {
+            const month=currentMonthKey();
+            if(dataLoaded.attendance && !force) return;
+            if(force) attendanceCache={};
+            await getMonthRecords('attendance',month,force);
+            dataLoaded.attendance = true;
         }
 
         function populateClassDropdowns() {
-            ['presensiClass','rekapClass','inputKelasSiswa','attendanceClassChart'].forEach(id => {
+            ['presensiClass','jurnalClass','inputKelasSiswa'].forEach(id => {
                 const select = $(id);
                 if (!select) return;
                 const old = select.value;
@@ -1519,109 +1144,39 @@
                 });
                 if (old && allClasses.some(c => c.id === old)) select.value = old;
             });
-            renderDeleteStudentsClassChecklist();
         }
 
-        function renderDeleteStudentsClassChecklist() {
-            const box = $('deleteStudentsClassChecklist');
-            if (!box) return;
-            if (!allClasses.length) {
-                box.innerHTML = '<p class="text-sm text-gray-500">Belum ada data kelas.</p>';
-                return;
-            }
-            box.innerHTML = allClasses.map(cls => `
-                <label class="flex items-center gap-3 p-3 rounded-lg bg-white dark:bg-dark-bg border border-gray-200 dark:border-dark-border cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/10">
-                    <input type="checkbox" class="delete-class-checkbox w-4 h-4 accent-red-600" value="${esc(cls.id)}">
-                    <span class="text-sm font-medium dark:text-white">${esc(cls.name || cls.id)}</span>
-                </label>
-            `).join('');
+        function populateDataManagementDropdowns() {
+            ['studentClassFilter','backupStudentClass'].forEach(id=>{
+                const el=$(id); if(!el) return; const old=el.value;
+                el.innerHTML='<option value="">Semua Kelas</option>';
+                allClasses.forEach(c=>el.innerHTML+=`<option value="${c.id}">${esc(c.name)}</option>`);
+                if(old) el.value=old;
+            });
+            const month=todayISO().slice(0,7);
+            ['backupJournalMonth','backupAttendanceMonth','deleteJournalMonth','deleteAttendanceMonth'].forEach(id=>{if($(id)&&!$(id).value) $(id).value=month;});
         }
 
-        function toggleAllDeleteClasses(checked) {
-            document.querySelectorAll('.delete-class-checkbox').forEach(cb => cb.checked = checked);
+        function populateMapelDropdowns() {
+            const select = $('jurnalMapel');
+            if (!select) return;
+            const old = select.value;
+            select.innerHTML = '<option value="">-- Pilih Mata Pelajaran --</option>';
+            allMapels.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m.name;
+                opt.textContent = m.name;
+                select.appendChild(opt);
+            });
+            if (old && allMapels.some(m => m.name === old)) select.value = old;
         }
 
         function renderAllTables() {
             renderClassTable();
+            renderMapelTable();
             renderStudentTable();
-            renderBelumPresensi();
+            renderJournalTable();
             updateDashboardStats();
-            renderRekap();
-        }
-
-        function getBelumPresensiClasses(date = $('belumPresensiDate')?.value || todayISO()) {
-            return allClasses.filter(cls => !attendanceCache[`${date}__${cls.id}`]);
-        }
-
-        function updateSidebarBelumPresensi() {
-            const badge = $('sidebarBelumPresensiCount');
-            if (!badge) return;
-            const count = getBelumPresensiClasses(todayISO()).length;
-            badge.textContent = count;
-            badge.classList.toggle('hidden', count === 0);
-        }
-
-        function renderBelumPresensi() {
-            const date = $('belumPresensiDate')?.value || todayISO();
-            const container = $('belumPresensiList');
-            if (!container) return;
-
-            const belum = getBelumPresensiClasses(date);
-            const sudah = allClasses.length - belum.length;
-
-            if ($('belumPresensiTotalKelas')) $('belumPresensiTotalKelas').textContent = allClasses.length;
-            if ($('belumPresensiSudah')) $('belumPresensiSudah').textContent = sudah;
-            if ($('belumPresensiJumlah')) $('belumPresensiJumlah').textContent = belum.length;
-
-            container.innerHTML = '';
-            if (!allClasses.length) {
-                container.innerHTML = `<div class="md:col-span-2 xl:col-span-3 glass glass-panel p-8 rounded-2xl text-center text-gray-500">Belum ada data kelas.</div>`;
-                updateSidebarBelumPresensi();
-                return;
-            }
-
-            if (!belum.length) {
-                container.innerHTML = `<div class="md:col-span-2 xl:col-span-3 glass glass-panel p-8 rounded-2xl text-center">
-                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 dark:bg-green-900/30 text-green-600 flex items-center justify-center">
-                        <i class="fa-solid fa-circle-check text-3xl"></i>
-                    </div>
-                    <h4 class="font-bold text-lg dark:text-white">Semua kelas sudah presensi</h4>
-                    <p class="text-sm text-gray-500 mt-1">Tidak ada kelas yang tertinggal pada tanggal ${esc(formatDateLong(date))}.</p>
-                </div>`;
-            } else {
-                belum.forEach((cls, index) => {
-                    const studentCount = allStudents.filter(s => s.classId === cls.id).length;
-                    const card = document.createElement('div');
-                    card.className = 'glass glass-panel p-5 rounded-2xl border border-orange-200 dark:border-orange-900/40 fade-in';
-                    card.innerHTML = `
-                        <div class="flex items-start justify-between gap-3">
-                            <div class="flex items-center gap-3">
-                                <div class="w-11 h-11 rounded-xl bg-orange-100 dark:bg-orange-900/30 text-orange-600 flex items-center justify-center">
-                                    <i class="fa-solid fa-chalkboard-user"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold dark:text-white">${esc(cls.name)}</h4>
-                                    <p class="text-xs text-gray-500">${studentCount} siswa</p>
-                                </div>
-                            </div>
-                            <span class="px-2.5 py-1 rounded-full bg-red-100 dark:bg-red-900/30 text-red-600 text-xs font-semibold">Belum</span>
-                        </div>
-                        <div class="mt-4 pt-4 border-t border-gray-200 dark:border-dark-border">
-                            <button onclick="openPresensiForClass('${cls.id}', '${date}')" class="w-full py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium transition-colors">
-                                <i class="fa-solid fa-clipboard-check mr-1"></i> Isi Presensi
-                            </button>
-                        </div>`;
-                    container.appendChild(card);
-                });
-            }
-            updateSidebarBelumPresensi();
-        }
-
-        function openPresensiForClass(classId, date) {
-            $('presensiClass').value = classId;
-            $('presensiDate').value = date || todayISO();
-            navigate('presensi');
-            loadStudents();
         }
 
         function renderClassTable() {
@@ -1647,24 +1202,52 @@
             });
         }
 
-        function renderStudentTable() {
-            const tbody = $('siswaTableBody');
+        function renderMapelTable() {
+            const tbody = $('mapelTableBody');
             tbody.innerHTML = '';
-            allStudents.forEach(s => {
-                const cls = allClasses.find(c => c.id === s.classId);
+            allMapels.forEach((m, i) => {
                 const tr = document.createElement('tr');
                 tr.className = 'hover:bg-gray-50 dark:hover:bg-dark-card/50 fade-in';
                 tr.innerHTML = `
-                    <td class="p-3 text-sm font-medium">${esc(s.nis)}</td>
-                    <td class="p-3 text-sm">${esc(s.name)}</td>
-                    <td class="p-3 text-sm">${esc(cls?.name || s.className || '-')}</td>
+                    <td class="p-3 text-sm">${i+1}</td>
+                    <td class="p-3 text-sm font-medium">${esc(m.name)}</td>
                     <td class="p-3 text-sm">
-                        <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editSiswa('${s.id}')"><i class="fa-solid fa-edit"></i></button>
-                        <button class="text-red-500 hover:text-red-700" onclick="deleteSiswa('${s.id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editMapel('${m.id}')" title="Edit Mapel">
+                          <i class="fa-solid fa-edit"></i>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700" onclick="deleteMapel('${m.id}')" title="Hapus Mapel">
+                          <i class="fa-solid fa-trash"></i>
+                        </button>
                     </td>`;
                 tbody.appendChild(tr);
             });
         }
+
+        function renderStudentTable() {
+            const tbody = $('siswaTableBody');
+            if(!tbody) return;
+            const filter=$('studentClassFilter')?.value||'';
+            const selected=allStudents.filter(s=>!filter||s.classId===filter);
+            tbody.innerHTML = '';
+            selected.forEach(s => {
+                const cls = allClasses.find(c => c.id === s.classId);
+                const tr = document.createElement('tr'); tr.className='hover:bg-gray-50 dark:hover:bg-dark-card/50 fade-in';
+                tr.innerHTML=`<td class="p-3 text-sm"><input type="checkbox" class="student-check" value="${s.id}"></td><td class="p-3 text-sm font-medium">${esc(s.nis)}</td><td class="p-3 text-sm">${esc(s.name)}</td><td class="p-3 text-sm">${esc(cls?.name||s.className||'-')}</td><td class="p-3 text-sm"><button class="text-blue-500 hover:text-blue-700 mr-2" onclick="editSiswa('${s.id}')"><i class="fa-solid fa-edit"></i></button><button class="text-red-500 hover:text-red-700" onclick="deleteSiswa('${s.id}')"><i class="fa-solid fa-trash"></i></button></td>`;
+                tbody.appendChild(tr);
+            });
+            const all=$('selectAllStudents'); if(all) all.checked=false;
+        }
+        function toggleSelectAllStudents(checked){document.querySelectorAll('.student-check').forEach(x=>x.checked=checked);}
+        async function deleteSelectedStudents(){
+            const ids=[...document.querySelectorAll('.student-check:checked')].map(x=>x.value);
+            if(!ids.length){Swal.fire('Pilih siswa','Centang siswa yang ingin dihapus.','info');return;}
+            const r=await Swal.fire({title:`Hapus ${ids.length} siswa?`,text:'Data siswa terpilih akan dihapus permanen dari Firebase.',icon:'warning',showCancelButton:true,confirmButtonColor:'#ef4444',confirmButtonText:'Ya, Hapus'}); if(!r.isConfirmed)return;
+            Swal.fire({title:'Menghapus...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+            try{const batch=FB.writeBatch(FB.db);ids.forEach(id=>batch.delete(FB.doc(FB.db,'students',id)));await batch.commit();dataLoaded.students=false;await fetchStudents(true);renderStudentTable();renderClassTable();updateDashboardStats();Swal.close();toast(`${ids.length} siswa berhasil dihapus`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
+        }
+
+        function getSelectedPrintMonth() { return $('printMonth')?.value || todayISO().slice(0,7); }
+        function getSelectedPrintDate() { return $('printDate')?.value || todayISO(); }
 
         function compareNis(a, b) {
             const na = String(a?.nis ?? '').trim();
@@ -1680,6 +1263,20 @@
             return na.localeCompare(nb, 'id', { numeric: true, sensitivity: 'base' });
         }
 
+        function getJamSortValue(value) {
+            const raw = String(value ?? '').trim();
+            const match = raw.match(/\d+/);
+            return match ? Number(match[0]) : Number.MAX_SAFE_INTEGER;
+        }
+
+        function compareJournals(a, b) {
+            const dateCompare = String(a?.date ?? '').localeCompare(String(b?.date ?? ''));
+            if (dateCompare !== 0) return dateCompare;
+            const jamCompare = getJamSortValue(a?.jam) - getJamSortValue(b?.jam);
+            if (jamCompare !== 0) return jamCompare;
+            return String(a?.jam ?? '').localeCompare(String(b?.jam ?? ''), 'id', { numeric: true, sensitivity: 'base' });
+        }
+
         function formatMonthLong(value) {
             if (!value) return '';
             const d = new Date(`${value}-01T00:00:00`);
@@ -1692,180 +1289,206 @@
             return d.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
         }
 
-        function getSelectedRekapMonth() { return $('rekapMonth')?.value || todayISO().slice(0,7); }
-        function getSelectedRekapPrintDate() { return $('rekapPrintDate')?.value || todayISO(); }
+        function applyJournalPrintFilter() { renderJournalTable(); }
 
-        function getRekapAttendanceEntries(classId, month) {
-            return Object.values(attendanceCache)
-                .filter(a => a.classId === classId && String(a.date || '').slice(0,7) === month)
-                .sort((a,b) => String(a.date||'').localeCompare(String(b.date||'')));
+        function getFilteredJournalsByPrintMonth() {
+            const month = getSelectedPrintMonth();
+            return allJournals.filter(j => String(j.date || '').slice(0,7) === month).sort(compareJournals);
         }
 
-        async function renderRekap() {
-            const classId = $('rekapClass')?.value || '';
-            const month = getSelectedRekapMonth();
-            // Read hanya bulan rekap yang sedang dibuka, lalu gunakan cache.
-            await ensureAttendanceMonth(month);
-            const emptyState = $('rekapEmptyState');
-            const content = $('rekapContent');
-            if (!classId) {
-                emptyState.classList.remove('hidden');
-                content.classList.add('hidden');
+        function renderJournalTable() {
+            const tbody = $('jurnalTableBody');
+            tbody.innerHTML = '';
+            const selectedMonth = getSelectedPrintMonth();
+            const filtered = allJournals
+                .filter(j => String(j.date || '').slice(0,7) === selectedMonth)
+                .sort(compareJournals);
+            filtered.forEach((j, i) => {
+                const dateObj = j.date ? new Date(`${j.date}T00:00:00`) : new Date();
+                const hari = dateObj.toLocaleDateString('id-ID',{weekday:'long'});
+                const tgl = dateObj.toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+                const cls = allClasses.find(c => c.id === j.classId);
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-gray-50 dark:hover:bg-dark-card/40 transition-colors';
+                tr.innerHTML = `
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${i+1}</td>
+                    <td class="p-3 text-sm border-r border-gray-200 dark:border-gray-700">${esc(hari)},<br>${esc(tgl)}</td>
+                    <td class="p-3 text-sm font-medium border-r border-gray-200 dark:border-gray-700 text-center">${esc(cls?.name || j.className || '-')}</td>
+                    <td class="p-3 text-sm border-r border-gray-200 dark:border-gray-700">${esc(j.mapel)}</td>
+                    <td class="p-3 text-sm border-r border-gray-200 dark:border-gray-700">${esc(j.materi)}</td>
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${j.sakit || 0}</td>
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${j.izin || 0}</td>
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${j.alpa || 0}</td>
+                    <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700 font-bold">${j.hadir || 0}</td>
+                    <td class="p-3 text-sm text-center no-print-export w-20">
+                        <button class="text-blue-500 hover:text-blue-700 mr-3" onclick="editJurnal('${j.id}')" title="Edit Jurnal"><i class="fa-solid fa-edit"></i></button>
+                        <button class="text-red-500 hover:text-red-700" onclick="deleteJurnal('${j.id}')" title="Hapus Jurnal"><i class="fa-solid fa-trash"></i></button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function saveMapel(e) {
+            e.preventDefault();
+            if (!currentUser) return;
+            const namaMapel = $('inputNamaMapel').value.trim();
+            if (!namaMapel) return;
+
+            if (allMapels.some(m => m.name.toLowerCase() === namaMapel.toLowerCase())) {
+                Swal.fire('Duplikat', 'Nama mata pelajaran sudah ada.', 'warning');
                 return;
             }
-            emptyState.classList.add('hidden');
-            content.classList.remove('hidden');
 
-            const entries = getRekapAttendanceEntries(classId, month);
-            const students = allStudents.filter(s => s.classId === classId);
-
-            // Per tanggal
-            const tanggalBody = $('rekapTanggalBody');
-            tanggalBody.innerHTML = '';
-            if (!entries.length) {
-                tanggalBody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-sm text-gray-500">Belum ada data presensi bulan ini.</td></tr>`;
-            } else {
-                entries.forEach((entry, i) => {
-                    const counts = countAttendanceForClass(classId, entry.statuses || {});
-                    const dateObj = entry.date ? new Date(`${entry.date}T00:00:00`) : new Date();
-                    const hari = dateObj.toLocaleDateString('id-ID', {weekday:'long'});
-                    const tgl = dateObj.toLocaleDateString('id-ID', {day:'numeric', month:'short', year:'numeric'});
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${i+1}</td>
-                        <td class="p-3 text-sm border-r border-gray-200 dark:border-gray-700">${esc(hari)}, ${esc(tgl)}</td>
-                        <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${counts.sakit}</td>
-                        <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${counts.izin}</td>
-                        <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${counts.alpa}</td>
-                        <td class="p-3 text-sm text-center font-bold">${counts.hadir}</td>`;
-                    tanggalBody.appendChild(tr);
+            try {
+                await FB.addDoc(FB.collection(FB.db, 'mapels'), {
+                    name: namaMapel, ownerUid: currentUser.uid, createdAt: FB.serverTimestamp()
                 });
+                $('mapelForm').reset();
+                await loadMapels();
+                populateMapelDropdowns();
+                renderMapelTable();
+                toast(`Mata pelajaran "${namaMapel}" berhasil ditambahkan.`);
+            } catch (err) {
+                Swal.fire('Gagal', firebaseError(err), 'error');
+            }
+        }
+
+        async function editMapel(id) {
+            const m = allMapels.find(x => x.id === id);
+            if (!m) return;
+            const result = await Swal.fire({
+                title: 'Edit Mata Pelajaran',
+                input: 'text',
+                inputValue: m.name,
+                showCancelButton: true,
+                confirmButtonText: 'Simpan',
+                cancelButtonText: 'Batal',
+                inputValidator: (value) => {
+                    if (!value.trim()) return 'Nama mata pelajaran tidak boleh kosong!';
+                }
+            });
+            if (!result.isConfirmed) return;
+            const newName = result.value.trim();
+            if (newName.toLowerCase() === m.name.toLowerCase()) return;
+            
+            if (allMapels.some(x => x.id !== id && x.name.toLowerCase() === newName.toLowerCase())) {
+                Swal.fire('Duplikat', 'Nama mata pelajaran sudah ada.', 'warning');
+                return;
             }
 
-            // Per siswa
-            const siswaBody = $('rekapSiswaBody');
-            siswaBody.innerHTML = '';
-            if (!students.length) {
-                siswaBody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-sm text-gray-500">Belum ada siswa di kelas ini.</td></tr>`;
-            } else {
-                students.forEach((std, i) => {
-                    let sakit=0, izin=0, alpa=0, hadir=0;
-                    entries.forEach(entry => {
-                        const status = (entry.statuses || {})[std.id] || 'Hadir';
-                        if (status === 'Sakit') sakit++;
-                        else if (status === 'Izin') izin++;
-                        else if (status === 'Alpa') alpa++;
-                        else hadir++;
+            try {
+                await FB.updateDoc(FB.doc(FB.db, 'mapels', id), { name: newName });
+                await loadMapels();
+                populateMapelDropdowns();
+                renderMapelTable();
+                
+                // Note: We don't strictly cascade update journals' mapel names here
+                // as journals can act as a historical log. If needed, a batch update can be added.
+                toast('Nama mata pelajaran diperbarui');
+            } catch (err) {
+                Swal.fire('Gagal', firebaseError(err), 'error');
+            }
+        }
+
+        async function deleteMapel(id) {
+            const mapel = allMapels.find(m => m.id === id);
+            const result = await Swal.fire({
+                title:'Hapus mata pelajaran?', text:`${mapel?.name || ''} akan dihapus.`,
+                icon:'warning', showCancelButton:true, confirmButtonColor:'#ef4444',
+                confirmButtonText:'Hapus', cancelButtonText:'Batal'
+            });
+            if (!result.isConfirmed) return;
+            try {
+                await FB.deleteDoc(FB.doc(FB.db,'mapels',id));
+                await loadMapels();
+                populateMapelDropdowns();
+                renderMapelTable();
+                toast('Mata pelajaran dihapus');
+            } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
+        }
+
+        function downloadClassTemplate() {
+            try {
+                const rows = [
+                    ['Nama Kelas'],
+                    ['X IPA 1'],
+                    ['X IPA 2'],
+                    ['XI AKL 1']
+                ];
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                ws['!cols'] = [{ wch: 28 }];
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Data Kelas');
+                XLSX.writeFile(wb, 'Template_Tambah_Kelas.xlsx');
+                toast('Template kelas berhasil diunduh');
+            } catch (err) {
+                Swal.fire('Gagal', 'Template tidak dapat dibuat: ' + (err.message || err), 'error');
+            }
+        }
+
+        async function handleClassExcelUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!currentUser) {
+                Swal.fire('Belum login', 'Silakan login terlebih dahulu.', 'warning');
+                event.target.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                Swal.fire({ title: 'Mengimpor kelas...', text: 'Memproses file Excel.', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const wb = XLSX.read(data, { type: 'array' });
+                    const ws = wb.Sheets[wb.SheetNames[0]];
+                    const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+                    if (rows.length < 2) throw new Error('File Excel kosong atau tidak memiliki baris data.');
+
+                    const existing = new Set(allClasses.map(c => String(c.name || '').trim().toLowerCase()));
+                    const names = [];
+                    let skipped = 0;
+                    for (let i = 1; i < rows.length; i++) {
+                        const name = String((rows[i] || [])[0] ?? '').trim();
+                        if (!name || existing.has(name.toLowerCase()) || names.some(x => x.toLowerCase() === name.toLowerCase())) {
+                            skipped++;
+                            continue;
+                        }
+                        names.push(name);
+                    }
+                    if (!names.length) {
+                        Swal.fire('Tidak ada kelas baru', `Semua ${Math.max(0, rows.length - 1)} baris kosong atau sudah ada.`, 'info');
+                        return;
+                    }
+
+                    // Hemat Write: gunakan batch, maksimal 400 dokumen per commit.
+                    for (let i = 0; i < names.length; i += 400) {
+                        const batch = FB.writeBatch(FB.db);
+                        names.slice(i, i + 400).forEach(name => {
+                            const ref = FB.doc(FB.collection(FB.db, 'classes'));
+                            batch.set(ref, { name, ownerUid: currentUser.uid, createdAt: FB.serverTimestamp() });
+                        });
+                        await batch.commit();
+                    }
+
+                    await loadClasses(true);
+                    populateClassDropdowns();
+                    populateDataManagementDropdowns();
+                    renderClassTable();
+                    updateDashboardStats();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Upload Kelas Berhasil',
+                        html: `<b>${names.length}</b> kelas berhasil ditambahkan${skipped ? `<br><small>${skipped} baris dilewati.</small>` : '.'}`,
+                        confirmButtonText: 'OK', confirmButtonColor: '#2563eb'
                     });
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${i+1}</td>
-                        <td class="p-3 text-sm border-r border-gray-200 dark:border-gray-700">${esc(std.nis)}</td>
-                        <td class="p-3 text-sm font-medium border-r border-gray-200 dark:border-gray-700">${esc(std.name)}</td>
-                        <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${sakit}</td>
-                        <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${izin}</td>
-                        <td class="p-3 text-sm text-center border-r border-gray-200 dark:border-gray-700">${alpa}</td>
-                        <td class="p-3 text-sm text-center font-bold">${hadir}</td>`;
-                    siswaBody.appendChild(tr);
-                });
-            }
-        }
-
-        function printRekap() {
-            const classId = $('rekapClass')?.value || '';
-            if (!classId) {
-                Swal.fire('Pilih kelas', 'Silakan pilih kelas terlebih dahulu.', 'info');
-                return;
-            }
-            const cls = allClasses.find(c => c.id === classId);
-            const month = getSelectedRekapMonth();
-            const printDate = getSelectedRekapPrintDate();
-            const entries = getRekapAttendanceEntries(classId, month);
-
-            if (!entries.length) {
-                Swal.fire({
-                    icon:'info', title:'Tidak ada data',
-                    text:`Tidak ada data presensi untuk kelas ${cls?.name || ''} bulan ${formatMonthLong(month)}.`,
-                    confirmButtonText:'OK', confirmButtonColor:'#2563eb'
-                });
-                return;
-            }
-
-            const cloneTanggal = $('tabelRekapTanggal').cloneNode(true);
-            const cloneSiswa = $('tabelRekapSiswa').cloneNode(true);
-            const bulanStr = formatMonthLong(month);
-            const tanggalCetakStr = formatDateLong(printDate);
-
-            const kepsekNama = userProfileData.kepsekNama || '.............................................';
-            const kepsekNip = userProfileData.kepsekNip || '.............................................';
-            const guruNama = userProfileData.guruNama || '.............................................';
-            const guruNip = userProfileData.guruNip || '.............................................';
-
-            const win = window.open('', '_blank', 'height=800,width=1000');
-            win.document.write(`<!doctype html><html><head><title>Rekap Presensi - ${esc(cls?.name || '')} - ${esc(bulanStr)}</title>
-            <style>
-              @page{size:A4 portrait;margin:20mm}
-              body{font-family:"Times New Roman",serif;color:#000;margin:0;padding:0;font-size:11px}
-              .header{text-align:center;margin-bottom:10px}
-              .header h2{margin:2px 0;font-size:14px;text-transform:uppercase}
-              .metadata{font-size:12px;font-weight:bold;margin:10px 0 12px}
-              h3.section-title{font-size:12px;margin:18px 0 6px}
-              table{width:100%;border-collapse:collapse;font-size:9.5px;margin-bottom:6px}
-              th,td{border:1px solid #000;padding:5px 3px;text-align:center;vertical-align:middle}
-              table.signature-table{width:82%;margin-left:12%;border-collapse:collapse;margin-top:40px;font-size:11px}
-              table.signature-table td{text-align:left;vertical-align:top;padding:2px 5px;line-height:1.1;border:none}
-              table.signature-table td:first-child{width:65%}
-              table.signature-table td:last-child{width:35%}
-              .signature-table .sign-space{height:70px}
-              .signature-table .sign-name{font-weight:bold;text-decoration:underline}
-            </style></head><body>
-            <div class="header"><h2>REKAP PRESENSI BULANAN</h2>
-            <h2>TAHUN PELAJARAN 2026/2027</h2></div>
-            <div class="metadata">Kelas: ${esc(cls?.name || '-')}<br>Bulan: ${esc(bulanStr)}</div>
-            <h3 class="section-title">Rekap Per Tanggal Pertemuan</h3>
-            <table>${cloneTanggal.innerHTML}</table>
-            <h3 class="section-title">Rekap Per Siswa (Total Sebulan)</h3>
-            <table>${cloneSiswa.innerHTML}</table>
-            <table class="signature-table">
-              <tr><td></td><td>${esc(tanggalCetakStr)}</td></tr>
-              <tr><td>Mengetahui,</td><td></td></tr>
-              <tr><td>Kepala Sekolah,</td><td>Guru Mata Pelajaran,</td></tr>
-              <tr><td class="sign-space"></td><td class="sign-space"></td></tr>
-              <tr><td class="sign-name">${esc(kepsekNama)}</td><td class="sign-name">${esc(guruNama)}</td></tr>
-              <tr><td>NIP. ${esc(kepsekNip)}</td><td>NIP. ${esc(guruNip)}</td></tr>
-            </table>
-            </body></html>`);
-            win.document.close(); win.focus();
-            setTimeout(()=>{win.print();win.close()},500);
-        }
-
-        function exportRekapExcel() {
-            const classId = $('rekapClass')?.value || '';
-            if (!classId) {
-                Swal.fire('Pilih kelas', 'Silakan pilih kelas terlebih dahulu.', 'info');
-                return;
-            }
-            const cls = allClasses.find(c => c.id === classId);
-            const month = getSelectedRekapMonth();
-            const entries = getRekapAttendanceEntries(classId, month);
-            if (!entries.length) {
-                Swal.fire({
-                    icon:'info', title:'Tidak ada data',
-                    text:`Tidak ada data presensi untuk kelas ${cls?.name || ''} bulan ${formatMonthLong(month)}.`,
-                    confirmButtonText:'OK', confirmButtonColor:'#2563eb'
-                });
-                return;
-            }
-
-            const wb = XLSX.utils.book_new();
-            const wsTanggal = XLSX.utils.table_to_sheet($('tabelRekapTanggal'));
-            const wsSiswa = XLSX.utils.table_to_sheet($('tabelRekapSiswa'));
-            XLSX.utils.book_append_sheet(wb, wsTanggal, 'Per Tanggal');
-            XLSX.utils.book_append_sheet(wb, wsSiswa, 'Per Siswa');
-
-            const monthLabel = formatMonthLong(month).replace(/\s+/g,'_');
-            const safeClassName = (cls?.name || 'Kelas').replace(/[^\w\s-]/g,'').replace(/\s+/g,'_');
-            XLSX.writeFile(wb, `Rekap_Presensi_${safeClassName}_${monthLabel}.xlsx`);
+                } catch (err) {
+                    Swal.fire('Upload Gagal', err.message || firebaseError(err), 'error');
+                } finally {
+                    event.target.value = '';
+                }
+            };
+            reader.readAsArrayBuffer(file);
         }
 
         async function saveKelas(e) {
@@ -1884,11 +1507,8 @@
                     name: namaKelas, ownerUid: currentUser.uid, createdAt: FB.serverTimestamp()
                 });
                 $('kelasForm').reset();
-                dataLoadedAt.classes = 0;
-                await loadClasses(true);
+                await loadClasses();
                 populateClassDropdowns();
-                populateAttendanceClassChart();
-                initClassAttendanceChart();
                 renderClassTable();
                 updateDashboardStats();
                 toast(`Kelas "${namaKelas}" berhasil ditambahkan.`);
@@ -1922,17 +1542,14 @@
 
             try {
                 await FB.updateDoc(FB.doc(FB.db, 'classes', id), { name: newName });
-                dataLoadedAt.classes = 0;
-                await loadClasses(true);
+                await loadClasses();
                 populateClassDropdowns();
-                populateAttendanceClassChart();
-                initClassAttendanceChart();
                 renderClassTable();
                 
-                // Update class names in students collection matching this class id in background
+                // Update class names in students and journals collections matching this class id in background
                 allStudents.filter(s => s.classId === id).forEach(s => FB.updateDoc(FB.doc(FB.db, 'students', s.id), { className: newName }));
+                allJournals.filter(j => j.classId === id).forEach(j => FB.updateDoc(FB.doc(FB.db, 'journals', j.id), { className: newName }));
                 
-                renderRekap();
                 toast('Nama kelas diperbarui');
             } catch (err) {
                 Swal.fire('Gagal', firebaseError(err), 'error');
@@ -1950,14 +1567,10 @@
             if (!result.isConfirmed) return;
             try {
                 await FB.deleteDoc(FB.doc(FB.db,'classes',id));
-                dataLoadedAt.classes = 0;
-                await loadClasses(true);
+                await loadClasses();
                 populateClassDropdowns();
-                populateAttendanceClassChart();
-                initClassAttendanceChart();
                 renderClassTable();
                 updateDashboardStats();
-                renderRekap();
                 toast('Kelas dihapus');
             } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
         }
@@ -1979,14 +1592,14 @@
             }
 
             try {
-                await FB.addDoc(FB.collection(FB.db,'students'), {
+                const ref = await FB.addDoc(FB.collection(FB.db,'students'), {
                     nis, name:nama, classId, className:cls?.name || '',
                     ownerUid:currentUser.uid, createdAt:FB.serverTimestamp()
                 });
+                allStudents.push({ id: ref.id, nis, name:nama, classId, className:cls?.name || '', ownerUid:currentUser.uid });
+                allStudents.sort(compareNis);
                 $('siswaForm').reset();
-                dataLoadedAt.students = 0;
-                await fetchStudents(true);
-                renderStudentTable(); renderClassTable(); updateDashboardStats(); renderRekap();
+                renderStudentTable(); renderClassTable(); updateDashboardStats();
                 toast('Siswa berhasil ditambahkan');
             } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
         }
@@ -2011,8 +1624,7 @@
             const data=result.value, cls=allClasses.find(c=>c.id===data.classId);
             try {
                 await FB.updateDoc(FB.doc(FB.db,'students',id), {...data, className:cls?.name||'', updatedAt:FB.serverTimestamp()});
-                dataLoadedAt.students = 0;
-                await fetchStudents(true); renderStudentTable(); renderClassTable(); renderRekap();
+                await fetchStudents(); renderStudentTable(); renderClassTable();
                 toast('Data siswa diperbarui');
             } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
         }
@@ -2023,8 +1635,7 @@
             if(!result.isConfirmed) return;
             try {
                 await FB.deleteDoc(FB.doc(FB.db,'students',id));
-                dataLoadedAt.students = 0;
-                await fetchStudents(true); renderStudentTable(); renderClassTable(); updateDashboardStats(); renderRekap();
+                await fetchStudents(); renderStudentTable(); renderClassTable(); updateDashboardStats();
                 toast('Siswa dihapus');
             } catch(err) { Swal.fire('Gagal',firebaseError(err),'error'); }
         }
@@ -2073,10 +1684,6 @@
                     let added = 0, skipped = 0, fallbackClass = allClasses[0];
                     const duplicateNis = new Set(allStudents.map(s => String(s.nis).trim()));
 
-                    // Batch write: jauh lebih cepat daripada await addDoc satu per satu.
-                    let batch = FB.writeBatch(FB.db);
-                    let batchCount = 0;
-
                     for (let i = 1; i < rows.length; i++) {
                         const row = rows[i] || [];
                         const nis = String(row[0] ?? '').trim();
@@ -2085,31 +1692,20 @@
                         if (!nis || !name) { skipped++; continue; }
                         if (duplicateNis.has(nis)) { skipped++; continue; }
 
-                        const cls = allClasses.find(c =>
+                        let cls = allClasses.find(c =>
                             c.id === classText || c.name.toLowerCase() === classText.toLowerCase()
                         ) || fallbackClass;
 
-                        const ref = FB.doc(FB.collection(FB.db, 'students'));
-                        batch.set(ref, {
+                        await FB.addDoc(FB.collection(FB.db, 'students'), {
                             nis, name, classId: cls.id, className: cls.name,
                             ownerUid: currentUser.uid, createdAt: FB.serverTimestamp()
                         });
                         duplicateNis.add(nis);
                         added++;
-                        batchCount++;
-
-                        if (batchCount === 450) {
-                            await batch.commit();
-                            batch = FB.writeBatch(FB.db);
-                            batchCount = 0;
-                        }
                     }
 
-                    if (batchCount > 0) await batch.commit();
-
-                    dataLoadedAt.students = 0;
-                await fetchStudents(true);
-                    renderStudentTable(); renderClassTable(); populateClassDropdowns(); populateAttendanceClassChart(); updateDashboardStats(); renderRekap(); initClassAttendanceChart();
+                    await fetchStudents();
+                    renderStudentTable(); renderClassTable(); populateClassDropdowns(); updateDashboardStats();
                     Swal.fire({
                         icon: 'success', title: 'Upload Berhasil!',
                         html: `<b>${added}</b> siswa berhasil ditambahkan${skipped ? `<br><small>${skipped} baris dilewati.</small>` : '.'}`,
@@ -2128,7 +1724,6 @@
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
             if (myChart) initChart();
-            if (classAttendanceChart) initClassAttendanceChart();
         }
 
         function togglePassword() {
@@ -2146,10 +1741,18 @@
         }
 
         function navigate(viewName) {
-            // Guru dapat mengakses menu Presensi & Rekap Bulanan; menu lain tetap khusus admin.
-            if (currentUserRole !== 'admin' && !['presensi', 'rekap'].includes(viewName)) {
-                viewName = 'presensi';
+            // LAZY LOAD: jurnal/presensi hanya dibaca saat menu dibuka.
+            if (viewName === 'jurnal' && typeof loadJournals === 'function') {
+                loadJournals().then(() => {
+                    try { renderJournalTable(); updateDashboardStats(); } catch (e) {}
+                }).catch(e => console.warn('Load jurnal:', e));
             }
+            if (viewName === 'presensi' && typeof loadAttendance === 'function') {
+                loadAttendance().then(() => {
+                    try { updateDashboardStats(); initChart(); } catch (e) {}
+                }).catch(e => console.warn('Load presensi:', e));
+            }
+
             document.querySelectorAll('.view-section').forEach(el=>el.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(el=>{
                 el.classList.remove('bg-primary-50','dark:bg-dark-card','text-primary-600','dark:text-primary-400');
@@ -2162,11 +1765,9 @@
                 btn.classList.remove('text-gray-600','dark:text-gray-400');
                 btn.classList.add('bg-primary-50','dark:bg-dark-card','text-primary-600','dark:text-primary-400');
             }
-            const titles={dashboard:'Dashboard',presensi:'Presensi Kelas','belum-presensi':'Kelas Belum Presensi',rekap:'Rekap Bulanan',kelas:'Kelola Data Kelas',siswa:'Kelola Data Siswa', profil:'Pengaturan Profil','hapus-presensi':'Manajemen Hapus Presensi',backup:'Backup / Export Excel'};
+            const titles={dashboard:'Dashboard',presensi:'Presensi Kelas',jurnal:'Jurnal Mengajar',kelas:'Kelola Data Kelas',mapel:'Kelola Mata Pelajaran',siswa:'Kelola Data Siswa', profil:'Pengaturan Profil', backup:'Backup & Hapus Data'};
             $('pageTitle').innerText=titles[viewName]||'Dashboard';
             if(viewName==='presensi') loadStudents();
-            if(viewName==='belum-presensi') renderBelumPresensi();
-            if(viewName==='rekap') renderRekap();
             if(viewName==='dashboard') { renderDashboard(); initChart(); }
             if(window.innerWidth<768 && !$('sidebar').classList.contains('-translate-x-full')) toggleSidebar();
         }
@@ -2190,13 +1791,17 @@
                 return;
             }
             const key=`${date}__${clsId}`;
-            let existing=attendanceCache[key];
+            let existing=attendanceCache[key] || cacheGet('attendanceDetail',key);
+            if(existing) attendanceCache[key]=existing;
             if(!existing){
                 try {
                     const snap=await FB.getDoc(FB.doc(FB.db,'attendance',key));
-                    if(snap.exists()) existing={id:key,...snap.data()};
-                    if(existing) attendanceCache[key]=existing;
-                } catch(err) {}
+                    if(snap.exists()) {
+                        existing={id:key,...snap.data()};
+                        attendanceCache[key]=existing;
+                        cacheSave('attendanceDetail',existing,key);
+                    }
+                } catch(err) { console.warn('Presensi tidak dapat dibaca:',err); }
             }
             const statuses=existing?.statuses || {};
             const tbody=$('studentTableBody');
@@ -2256,20 +1861,222 @@
 
             try{
                 await FB.setDoc(FB.doc(FB.db,'attendance',key),{
-                    date, classId:clsId, statuses, ownerUid:currentUser.uid, updatedAt:FB.serverTimestamp()
+                    date, monthKey:date.slice(0,7), classId:clsId, statuses, ownerUid:currentUser.uid, updatedAt:FB.serverTimestamp()
                 },{merge:true});
-                attendanceCache[key]={id:key, date, classId:clsId, statuses, ownerUid:currentUser.uid};
-                loadedAttendanceMonths.add(date.slice(0,7));
+                const savedAttendance={id:key, date, monthKey:date.slice(0,7), classId:clsId, statuses, ownerUid:currentUser.uid};
+                attendanceCache[key]=savedAttendance;
+                cacheSave('attendanceDetail',savedAttendance,key);
+                // Perbarui cache bulan tanpa membaca Firebase lagi.
+                const month=date.slice(0,7);
+                const monthRows=Object.values(attendanceCache).filter(x=>String(x.monthKey||x.date?.slice(0,7)||'')===month);
+                cacheUpdateMonth('attendance',month,monthRows);
+                const counts=countAttendanceForClass(clsId,statuses);
+                const relatedJournals=allJournals.filter(j =>
+                    String(j.date || '') === String(date) && String(j.classId || '') === String(clsId)
+                );
+                if(relatedJournals.length){
+                    await Promise.all(relatedJournals.map(j =>
+                        FB.updateDoc(FB.doc(FB.db,'journals',j.id),{
+                            sakit:counts.sakit, izin:counts.izin, alpa:counts.alpa, hadir:counts.hadir, updatedAt:FB.serverTimestamp()
+                        })
+                    ));
+                    relatedJournals.forEach(j => Object.assign(j, counts));
+                    renderJournalTable();
+                }
                 $('studentListContainer').classList.add('hidden');
                 updateDashboardStats();
                 initChart();
-                if (classAttendanceChart) initClassAttendanceChart();
-                renderRekap();
-                renderBelumPresensi();
-                toast(isUpdate ? 'Presensi diperbarui' : 'Presensi disimpan');
+                toast(isUpdate ? 'Presensi diperbarui dan rekap jurnal disinkronkan' : 'Presensi disimpan dan rekap jurnal disinkronkan');
             }catch(err){
                 Swal.fire('Gagal menyimpan',firebaseError(err),'error');
             }
+        }
+
+        async function saveJurnal(e) {
+            e.preventDefault();
+
+            if (!currentUser) {
+                Swal.fire('Belum login', 'Sesi login belum tersedia. Silakan login kembali.', 'warning');
+                return;
+            }
+
+            const date = $('jurnalDateInput')?.value || todayISO();
+            const classId = $('jurnalClass')?.value || '';
+            const cls = allClasses.find(c => c.id === classId);
+            const mapel = $('jurnalMapel')?.value?.trim() || '';
+            const jam = $('jurnalJam')?.value?.trim() || '';
+            const materi = $('jurnalMateri')?.value?.trim() || '';
+            const catatan = $('jurnalCatatan')?.value?.trim() || '';
+
+            // Jangan diam-diam gagal ketika ada kolom wajib yang belum diisi.
+            if (!date || !classId || !mapel || !jam || !materi) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Data jurnal belum lengkap',
+                    text: 'Tanggal, kelas, mata pelajaran, jam ke-, dan materi wajib diisi.'
+                });
+                return;
+            }
+
+            if (!cls) {
+                Swal.fire('Kelas tidak ditemukan', 'Silakan pilih kembali kelas yang tersedia.', 'warning');
+                return;
+            }
+
+            const saveButton = $('jurnalForm')?.querySelector('button[type="submit"]');
+            const oldButtonHtml = saveButton?.innerHTML || '';
+
+            if (saveButton) {
+                saveButton.disabled = true;
+                saveButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+            }
+
+            try {
+                // Presensi hanya dipakai untuk mengisi rekap jumlah hadir.
+                // Tidak memengaruhi proses penyimpanan jurnal.
+                const pres = attendanceCache[`${date}__${classId}`]?.statuses || {};
+                const counts = countAttendanceForClass(classId, pres);
+
+                // Gunakan setDoc + ID Firestore baru agar proses simpan eksplisit dan stabil.
+                const journalRef = FB.doc(FB.collection(FB.db, 'journals'));
+
+                const journalData = {
+                    date,
+                    monthKey: date.slice(0, 7),
+                    classId,
+                    className: cls.name || '',
+                    mapel,
+                    jam,
+                    materi,
+                    catatan,
+                    sakit: counts.sakit,
+                    izin: counts.izin,
+                    alpa: counts.alpa,
+                    hadir: counts.hadir,
+                    ownerUid: currentUser.uid,
+                    createdAt: FB.serverTimestamp(),
+                    updatedAt: FB.serverTimestamp()
+                };
+
+                await FB.setDoc(journalRef, journalData);
+
+                // Tambahkan ke cache lokal sehingga langsung muncul tanpa read ulang.
+                allJournals.unshift({
+                    id: journalRef.id,
+                    ...journalData,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                });
+
+                allJournals.sort(compareJournals);
+                const journalMonth=date.slice(0,7);
+                cacheUpdateMonth('journals',journalMonth,allJournals.filter(x=>String(x.monthKey||x.date?.slice(0,7)||'')===journalMonth));
+                renderJournalTable();
+                updateDashboardStats();
+
+                $('jurnalForm').reset();
+                $('jurnalDateInput').value = date;
+                populateClassDropdowns();
+                populateMapelDropdowns();
+
+                toast('Jurnal berhasil disimpan ke Firebase.');
+            } catch (err) {
+                console.error('SAVE JURNAL ERROR:', err);
+                const code = err?.code || '';
+
+                let message = firebaseError(err);
+                if (code === 'permission-denied') {
+                    message = 'Firebase menolak penyimpanan jurnal. Periksa Firestore Security Rules untuk koleksi journals.';
+                } else if (code === 'unavailable') {
+                    message = 'Firebase sedang tidak tersedia. Periksa koneksi internet lalu coba lagi.';
+                }
+
+                Swal.fire('Jurnal gagal disimpan', message, 'error');
+            } finally {
+                if (saveButton) {
+                    saveButton.disabled = false;
+                    saveButton.innerHTML = oldButtonHtml || '<i class="fa-solid fa-paper-plane"></i> Simpan Jurnal';
+                }
+            }
+        }
+
+        async function editJurnal(id) {
+            const j = allJournals.find(x => x.id === id);
+            if (!j) return;
+            
+            const classOptions = allClasses.map(c =>
+                `<option value="${esc(c.id)}" ${c.id === j.classId ? 'selected' : ''}>${esc(c.name)}</option>`
+            ).join('');
+            
+            let mapelOptions = allMapels.map(m =>
+                `<option value="${esc(m.name)}" ${m.name === j.mapel ? 'selected' : ''}>${esc(m.name)}</option>`
+            ).join('');
+
+            // Include mapel if it was manually typed previously and doesn't exist in mapel list
+            if (j.mapel && !allMapels.some(m => m.name === j.mapel)) {
+                mapelOptions += `<option value="${esc(j.mapel)}" selected>${esc(j.mapel)} (Tidak terdaftar)</option>`;
+            }
+
+            const result = await Swal.fire({
+                title: 'Edit Jurnal',
+                html: `
+                  <div class="space-y-4 text-left">
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Tanggal</label><input type="date" id="swalJurnalDate" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white" value="${j.date || todayISO()}"></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Kelas</label><select id="swalJurnalClass" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white">${classOptions}</select></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Mata Pelajaran</label><select id="swalJurnalMapel" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white">${mapelOptions}</select></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Jam Ke-</label><input type="text" id="swalJurnalJam" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white" value="${esc(j.jam)}"></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Materi</label><input type="text" id="swalJurnalMateri" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white" value="${esc(j.materi)}"></div>
+                      <div><label class="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Catatan</label><textarea id="swalJurnalCatatan" class="w-full p-2.5 border rounded-lg dark:bg-dark-card dark:border-gray-600 dark:text-white">${esc(j.catatan || '')}</textarea></div>
+                  </div>`,
+                showCancelButton: true, confirmButtonText: 'Simpan', cancelButtonText: 'Batal',
+                preConfirm: () => {
+                    const date = document.getElementById('swalJurnalDate').value;
+                    const classId = document.getElementById('swalJurnalClass').value;
+                    const mapel = document.getElementById('swalJurnalMapel').value;
+                    const jam = document.getElementById('swalJurnalJam').value.trim();
+                    const materi = document.getElementById('swalJurnalMateri').value.trim();
+                    const catatan = document.getElementById('swalJurnalCatatan').value.trim();
+                    if (!date || !classId || !mapel || !jam || !materi) {
+                        Swal.showValidationMessage('Semua kolom wajib diisi (kecuali catatan)');
+                        return false;
+                    }
+                    return { date, classId, mapel, jam, materi, catatan };
+                }
+            });
+            if (!result.isConfirmed) return;
+            const data = result.value;
+            const cls = allClasses.find(c => c.id === data.classId);
+            const attKey = `${data.date}__${data.classId}`;
+            Swal.fire({ title: 'Menyimpan...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            
+            try {
+                let statuses = {};
+                const cachedAttendance = attendanceCache[attKey] || cacheGet('attendanceDetail',attKey);
+                if (cachedAttendance) {
+                    attendanceCache[attKey]=cachedAttendance;
+                    statuses = cachedAttendance.statuses || {};
+                } else {
+                    const snap = await FB.getDoc(FB.doc(FB.db, 'attendance', attKey));
+                    if (snap.exists()) {
+                        attendanceCache[attKey] = {id: attKey, ...snap.data()};
+                        cacheSave('attendanceDetail',attendanceCache[attKey],attKey);
+                        statuses = attendanceCache[attKey].statuses || {};
+                    }
+                }
+                const counts = countAttendanceForClass(data.classId, statuses);
+                await FB.updateDoc(FB.doc(FB.db, 'journals', id), {
+                    date: data.date, classId: data.classId, className: cls?.name || '',
+                    mapel: data.mapel, jam: data.jam, materi: data.materi, catatan: data.catatan,
+                    sakit: counts.sakit, izin: counts.izin, alpa: counts.alpa, hadir: counts.hadir, updatedAt: FB.serverTimestamp()
+                });
+                const updated={...j, date:data.date, monthKey:data.date.slice(0,7), classId:data.classId, className:cls?.name||'', mapel:data.mapel, jam:data.jam, materi:data.materi, catatan:data.catatan, ...counts};
+                const idx=allJournals.findIndex(x=>x.id===id); if(idx>=0) allJournals[idx]=updated;
+                cacheUpdateMonth('journals',String(j.date||'').slice(0,7),allJournals.filter(x=>String(x.monthKey||x.date?.slice(0,7)||'')===String(j.date||'').slice(0,7)));
+                cacheUpdateMonth('journals',data.date.slice(0,7),allJournals.filter(x=>String(x.monthKey||x.date?.slice(0,7)||'')===data.date.slice(0,7)));
+                renderJournalTable(); updateDashboardStats();
+                Swal.close();
+                toast('Data jurnal diperbarui');
+            } catch (err) { Swal.fire('Gagal', firebaseError(err), 'error'); }
         }
 
         function countAttendanceForClass(classId,statuses={}){
@@ -2282,10 +2089,135 @@
             return {sakit,izin,alpa,hadir};
         }
 
+        async function deleteJurnal(id){
+            const result=await Swal.fire({title:'Hapus jurnal?',icon:'warning',showCancelButton:true,confirmButtonColor:'#ef4444',confirmButtonText:'Hapus',cancelButtonText:'Batal'});
+            if(!result.isConfirmed) return;
+            try{
+                const deleted=allJournals.find(j=>j.id===id);
+                await FB.deleteDoc(FB.doc(FB.db,'journals',id));
+                allJournals=allJournals.filter(j=>j.id!==id);
+                const month=String(deleted?.monthKey||deleted?.date?.slice(0,7)||'');
+                if(month) cacheUpdateMonth('journals',month,allJournals.filter(x=>String(x.monthKey||x.date?.slice(0,7)||'')===month));
+                renderJournalTable(); updateDashboardStats();
+                toast('Jurnal dihapus');
+            }catch(err){ Swal.fire('Gagal',firebaseError(err),'error'); }
+        }
+
+        function printJurnal(){
+            const monthKey = getSelectedPrintMonth();
+            const printDateKey = getSelectedPrintDate();
+            const journalsToPrint = getFilteredJournalsByPrintMonth();
+
+            if (!journalsToPrint.length) {
+                Swal.fire({
+                    icon:'info', title:'Tidak ada jurnal',
+                    text:`Tidak ada data jurnal untuk bulan ${formatMonthLong(monthKey)}.`,
+                    confirmButtonText:'OK', confirmButtonColor:'#2563eb'
+                });
+                return;
+            }
+
+            const clone=$('tabelJurnalData').cloneNode(true);
+            clone.querySelectorAll('.no-print-export').forEach(el=>el.remove());
+            const bulanStr=formatMonthLong(monthKey);
+            const tanggalCetakStr=formatDateLong(printDateKey);
+            const tableContent=clone.innerHTML;
+            
+            const kepsekNama = userProfileData.kepsekNama || '.............................................';
+            const kepsekNip = userProfileData.kepsekNip || '.............................................';
+            const guruNama = userProfileData.guruNama || '.............................................';
+            const guruNip = userProfileData.guruNip || '.............................................';
+
+            const win=window.open('','_blank','height=800,width=1000');
+            win.document.write(`<!doctype html><html><head><title>Cetak Jurnal Tatap Muka - ${esc(bulanStr)}</title>
+            <style>
+              @page{size:A4 portrait;margin:20mm}
+              body{font-family:"Times New Roman",serif;color:#000;margin:0;padding:0;font-size:11px}
+              .header{text-align:center;margin-bottom:10px}
+              .header h2{margin:2px 0;font-size:14px;text-transform:uppercase}
+              .metadata{font-size:12px;font-weight:bold;margin:10px 0 12px;text-align:right}
+              .metadata .month-label{font-weight:bold}
+              table{width:100%;border-collapse:collapse;font-size:9.5px}
+              th,td{border:1px solid #000;padding:5px 3px;text-align:center;vertical-align:middle}
+              td:nth-child(5){text-align:left}
+              table.signature-table{width:82%;margin-left:12%;border-collapse:collapse;margin-top:40px;font-size:11px}
+              table.signature-table td{text-align:left;vertical-align:top;padding:2px 5px;line-height:1.1;border:none}
+              table.signature-table td:first-child{width:65%}
+              table.signature-table td:last-child{width:35%}
+              .signature-table .sign-space{height:70px}
+              .signature-table .sign-name{font-weight:bold;text-decoration:underline}
+            </style></head><body>
+            <div class="header"><h2>JURNAL TATAP MUKA PEMBELAJARAN (CATATAN KBM)</h2>
+            <h2>TAHUN PELAJARAN 2026/2027</h2></div>
+            <div class="metadata"><span class="month-label">Bulan Jurnal: ${esc(bulanStr)}</span></div>
+            <table>${tableContent}</table>
+            <table class="signature-table">
+              <tr><td></td><td>Nusawungu, ${esc(tanggalCetakStr)}</td></tr>
+              <tr><td>Mengetahui,</td><td></td></tr>
+              <tr><td>Kepala Sekolah,</td><td>Guru Mata Pelajaran,</td></tr>
+              <tr><td class="sign-space"></td><td class="sign-space"></td></tr>
+              <tr><td class="sign-name">${esc(kepsekNama)}</td><td class="sign-name">${esc(guruNama)}</td></tr>
+              <tr><td>NIP. ${esc(kepsekNip)}</td><td>NIP. ${esc(guruNip)}</td></tr>
+            </table>
+            
+
+</body></html>`);
+            win.document.close(); win.focus();
+            setTimeout(()=>{win.print();win.close()},500);
+        }
+
+        function exportJurnalExcel(){
+            const table=$('tabelJurnalData');
+            const clone=table.cloneNode(true);
+            clone.querySelectorAll('.no-print-export').forEach(el=>el.remove());
+            clone.querySelectorAll('th,td').forEach(c=>c.innerHTML=c.innerHTML.replace(/<br\s*[\/]?>/gi,' '));
+            const wb=XLSX.utils.table_to_book(clone,{sheet:'Jurnal KBM'});
+            const month=new Date().toLocaleDateString('id-ID',{month:'long'}).toUpperCase();
+            const year=new Date().getFullYear();
+            const safeName=($('profileName').textContent||'Guru').replace(/[^\w\s-]/g,'').replace(/\s+/g,' ');
+            XLSX.writeFile(wb,`BULAN ${month} Jurnal Tatap Muka - Catatan KBM ${year} ${safeName}.xlsx`);
+        }
+
+        async function monthDataAsync(collectionName, month){
+            return await getMonthRecords(collectionName,month,false);
+        }
+        function downloadWorkbook(sheetName, rows, fileName){
+            if(!rows.length){Swal.fire('Data kosong','Tidak ada data untuk diproses.','info');return;}
+            const ws=XLSX.utils.json_to_sheet(rows); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,sheetName); XLSX.writeFile(wb,fileName);
+        }
+        async function backupJurnalByMonth(){
+            const m=$('backupJournalMonth').value; if(!m)return;
+            Swal.fire({title:'Menyiapkan backup...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+            try{const data=await monthDataAsync('journals',m); const rows=data.map(j=>({Tanggal:j.date,Kelas:allClasses.find(c=>c.id===j.classId)?.name||j.className||'',Mapel:j.mapel||'',Jam:j.jam||'',Materi:j.materi||'',Catatan:j.catatan||'',Sakit:j.sakit||0,Izin:j.izin||0,Alpa:j.alpa||0,Hadir:j.hadir||0})); Swal.close(); downloadWorkbook('Jurnal',rows,`BACKUP_JURNAL_${m}.xlsx`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
+        }
+        async function backupPresensiByMonth(){
+            const m=$('backupAttendanceMonth').value; if(!m)return;
+            Swal.fire({title:'Menyiapkan backup...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+            try{const data=await monthDataAsync('attendance',m); const rows=[];data.forEach(a=>{const cls=allClasses.find(c=>c.id===a.classId)?.name||a.className||'';Object.entries(a.statuses||{}).forEach(([sid,status])=>{const st=allStudents.find(x=>x.id===sid)||{};rows.push({Tanggal:a.date,Kelas:cls,NIS:st.nis||sid,Nama:st.name||'',Status:status});});});Swal.close();downloadWorkbook('Presensi',rows,`BACKUP_PRESENSI_${m}.xlsx`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
+        }
+        function backupStudentsByClass(){const id=$('backupStudentClass').value;const rows=allStudents.filter(s=>!id||s.classId===id).map(s=>({NIS:s.nis,Nama:s.name,Kelas:allClasses.find(c=>c.id===s.classId)?.name||s.className||''}));downloadWorkbook('Daftar Siswa',rows,`BACKUP_SISWA_${id?($('backupStudentClass').selectedOptions[0].textContent):'SEMUA_KELAS'}.xlsx`);}
+        async function deleteByMonth(collectionName,month,label){
+            const items=await monthDataAsync(collectionName,month);
+            if(!items.length){Swal.fire('Data kosong',`Tidak ada ${label} bulan ${formatMonthLong(month)}.`,'info');return;}
+            const r=await Swal.fire({title:`Hapus ${label}?`,html:`Bulan <b>${formatMonthLong(month)}</b><br><b>${items.length}</b> data akan dihapus permanen dari Firebase.`,icon:'warning',showCancelButton:true,confirmButtonColor:'#dc2626',confirmButtonText:'Ya, Hapus Permanen',cancelButtonText:'Batal'});if(!r.isConfirmed)return;
+            Swal.fire({title:'Menghapus...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
+            try{for(let i=0;i<items.length;i+=400){const b=FB.writeBatch(FB.db);items.slice(i,i+400).forEach(x=>b.delete(FB.doc(FB.db,collectionName,x.id)));await b.commit();}
+                if(collectionName==='journals') allJournals=allJournals.filter(x=>!items.some(d=>d.id===x.id)); else items.forEach(x=>delete attendanceCache[x.id]);
+                renderJournalTable(); updateDashboardStats(); Swal.close();toast(`${items.length} ${label} berhasil dihapus`);
+            }catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
+        }
+        function deleteJournalsByMonth(){const m=$('deleteJournalMonth').value;if(m)deleteByMonth('journals',m,'jurnal');}
+        function deleteAttendanceByMonth(){const m=$('deleteAttendanceMonth').value;if(m)deleteByMonth('attendance',m,'data presensi');}
+
         function updateDashboardStats(){
-            $('statClasses').textContent=allClasses.length;
-            $('statStudents').textContent=allStudents.length;
-            $('statJournals').textContent=Object.keys(attendanceCache).length;
+            // Jumlah Kelas dan Siswa hanya berasal dari koleksi masing-masing.
+            // Menghapus presensi/jurnal tidak boleh mengubah kedua angka ini.
+            const classCount = Array.isArray(allClasses) ? allClasses.length : 0;
+            const studentCount = Array.isArray(allStudents) ? allStudents.length : 0;
+            const journalCount = Array.isArray(allJournals) ? allJournals.length : 0;
+            $('statClasses').textContent=String(classCount);
+            $('statStudents').textContent=String(studentCount);
+            $('statJournals').textContent=String(journalCount);
 
             let hadir=0,total=0;
             Object.values(attendanceCache).forEach(a=>{
@@ -2293,7 +2225,6 @@
                 statuses.forEach(s=>{total++; if(s==='Hadir') hadir++;});
             });
             $('statAttendance').textContent=total?`${((hadir/total)*100).toFixed(1)}%`:'0%';
-            updateSidebarBelumPresensi();
         }
 
         function renderDashboard(){
@@ -2301,230 +2232,81 @@
             const list=document.querySelector('#view-dashboard .space-y-4');
             if(!list) return;
             list.innerHTML='';
-            const items=Object.values(attendanceCache)
-                .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')))
-                .slice(0,3);
+            const items=allJournals.slice(0,3);
             if(!items.length){
-                list.innerHTML='<div class="p-4 text-sm text-gray-500">Belum ada presensi tercatat.</div>';
+                list.innerHTML='<div class="p-4 text-sm text-gray-500">Belum ada jurnal hari ini.</div>';
                 return;
             }
-            items.forEach(a=>{
-                const cls=allClasses.find(c=>c.id===a.classId);
-                const d=a.date?new Date(`${a.date}T00:00:00`):new Date();
+            items.forEach(j=>{
+                const cls=allClasses.find(c=>c.id===j.classId);
+                const d=j.date?new Date(`${j.date}T00:00:00`):new Date();
                 const tgl=d.toLocaleDateString('id-ID',{day:'numeric',month:'short'});
-                const counts=countAttendanceForClass(a.classId,a.statuses||{});
                 const div=document.createElement('div');
                 div.className='p-3 rounded-xl bg-gray-50 dark:bg-dark-card border border-gray-100 dark:border-gray-700 flex gap-4 items-center';
                 div.innerHTML=`<div class="bg-primary-100 dark:bg-primary-900/40 text-primary-600 dark:text-primary-400 px-3 py-2 rounded-lg text-center min-w-[70px]">
-                  <p class="text-xs font-bold">${esc(tgl)}</p></div>
-                  <div><p class="font-bold text-sm dark:text-white">${esc(cls?.name||a.className||'-')}</p>
-                  <p class="text-xs text-gray-500">Hadir ${counts.hadir} · S ${counts.sakit} · I ${counts.izin} · A ${counts.alpa}</p></div>
-                  <div class="ml-auto"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Presensi</span></div>`;
+                  <p class="text-xs font-bold">${esc(tgl)}</p><p class="text-xs">${esc(j.jam||'-')}</p></div>
+                  <div><p class="font-bold text-sm dark:text-white">${esc(cls?.name||j.className||'-')}</p>
+                  <p class="text-xs text-gray-500">${esc(j.mapel||'')}</p></div>
+                  <div class="ml-auto"><span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-700">Jurnal</span></div>`;
                 list.appendChild(div);
             });
-        }
-
-        function getWeeklyChartDates() {
-            const dates = [];
-            const today = new Date();
-            today.setHours(0,0,0,0);
-
-            // 7 hari terakhir, termasuk hari ini
-            for(let i=6;i>=0;i--){
-                const d = new Date(today);
-                d.setDate(today.getDate()-i);
-                dates.push(d.toISOString().slice(0,10));
-            }
-            return dates;
-        }
-
-        function getStatusCountsForDate(date, classId = '') {
-            let hadir=0, sakit=0, izin=0, alpa=0;
-
-            Object.values(attendanceCache).forEach(a=>{
-                if(a.date !== date) return;
-                if(classId && a.classId !== classId) return;
-
-                Object.values(a.statuses || {}).forEach(status=>{
-                    if(status === 'Sakit') sakit++;
-                    else if(status === 'Izin') izin++;
-                    else if(status === 'Alpa') alpa++;
-                    else hadir++;
-                });
-            });
-
-            return {hadir, sakit, izin, alpa};
-        }
-
-        function chartColors(){
-            return {
-                hadir: '#22c55e',
-                sakit: '#eab308',
-                izin: '#3b82f6',
-                alpa: '#ef4444'
-            };
-        }
-
-        function chartTextColor(){
-            return document.documentElement.classList.contains('dark') ? '#cbd5e1' : '#475569';
-        }
-
-        function chartGridColor(){
-            return document.documentElement.classList.contains('dark') ? '#334155' : '#e2e8f0';
-        }
-
-        function chartLabels(dates){
-            return dates.map(d=>new Date(`${d}T00:00:00`).toLocaleDateString('id-ID',{
-                weekday:'short',
-                day:'numeric',
-                month:'short'
-            }));
-        }
-
-        function buildAttendanceDatasets(dates, classId='') {
-            const colors = chartColors();
-            const counts = dates.map(date=>getStatusCountsForDate(date,classId));
-
-            return [
-                {label:'Hadir', data:counts.map(x=>x.hadir), backgroundColor:colors.hadir, borderRadius:5},
-                {label:'Sakit', data:counts.map(x=>x.sakit), backgroundColor:colors.sakit, borderRadius:5},
-                {label:'Izin', data:counts.map(x=>x.izin), backgroundColor:colors.izin, borderRadius:5},
-                {label:'Alpa', data:counts.map(x=>x.alpa), backgroundColor:colors.alpa, borderRadius:5}
-            ];
         }
 
         function initChart(){
             const ctx=$('attendanceChart');
             if(!ctx) return;
             if(myChart) myChart.destroy();
-
-            const dates=getWeeklyChartDates();
-            const textColor=chartTextColor();
-            const gridColor=chartGridColor();
-
+            const dates=[], days=[];
+            const now=new Date();
+            for(let i=4;i>=0;i--){
+                const d=new Date(now); d.setDate(now.getDate()-i);
+                dates.push(d.toISOString().slice(0,10));
+            }
+            const hadir=dates.map(date=>{
+                let sum=0;
+                Object.values(attendanceCache).forEach(a=>{
+                    if(a.date===date) sum+=Object.values(a.statuses||{}).filter(s=>s==='Hadir').length;
+                });
+                return sum;
+            });
+            const tidak=dates.map((date,i)=>{
+                let total=0;
+                Object.values(attendanceCache).forEach(a=>{
+                    if(a.date===date) total+=Object.keys(a.statuses||{}).length;
+                });
+                return Math.max(total-hadir[i],0);
+            });
+            const labels=dates.map(d=>new Date(`${d}T00:00:00`).toLocaleDateString('id-ID',{weekday:'short'}));
+            const dark=document.documentElement.classList.contains('dark');
             myChart=new Chart(ctx,{
                 type:'bar',
-                data:{
-                    labels:chartLabels(dates),
-                    datasets:buildAttendanceDatasets(dates)
-                },
-                options:{
-                    responsive:true,
-                    maintainAspectRatio:false,
-                    interaction:{mode:'index',intersect:false},
-                    plugins:{
-                        legend:{labels:{color:textColor}},
-                        tooltip:{
-                            callbacks:{
-                                label:(context)=>`${context.dataset.label}: ${context.parsed.y} siswa`
-                            }
-                        }
-                    },
-                    scales:{
-                        y:{
-                            stacked:true,
-                            beginAtZero:true,
-                            ticks:{color:textColor,precision:0,stepSize:1},
-                            grid:{color:gridColor},
-                            title:{display:true,text:'Jumlah Siswa',color:textColor}
-                        },
-                        x:{
-                            stacked:true,
-                            ticks:{color:textColor},
-                            grid:{display:false}
-                        }
-                    }
-                }
+                data:{labels,datasets:[
+                    {label:'Hadir',data:hadir,backgroundColor:'#3b82f6',borderRadius:6},
+                    {label:'Tidak Hadir',data:tidak,backgroundColor:'#ef4444',borderRadius:6}
+                ]},
+                options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:dark?'#cbd5e1':'#475569'}}},
+                scales:{y:{stacked:true,beginAtZero:true,grid:{color:dark?'#334155':'#e2e8f0'},ticks:{color:dark?'#cbd5e1':'#475569'}},
+                        x:{stacked:true,grid:{display:false},ticks:{color:dark?'#cbd5e1':'#475569'}}}}
             });
         }
+    
+        // Login handler eksplisit: tidak bergantung pada inline onsubmit.
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = $('loginForm');
+            if (!form || form.dataset.bound === '1') return;
+            form.dataset.bound = '1';
 
-        function populateAttendanceClassChart(){
-            const select=$('attendanceClassChart');
-            if(!select) return;
-
-            const old=select.value;
-            select.innerHTML='<option value="">-- Pilih Kelas --</option>';
-
-            allClasses.forEach(c=>{
-                const opt=document.createElement('option');
-                opt.value=c.id;
-                opt.textContent=c.name;
-                select.appendChild(opt);
+            form.addEventListener('submit', (e) => {
+                handleLogin(e);
             });
 
-            if(old && allClasses.some(c=>c.id===old)){
-                select.value=old;
-            }else if(allClasses.length){
-                select.value=allClasses[0].id;
-            }
-        }
+            const button = form.querySelector('button[type="submit"]');
+            if (button) button.disabled = false;
+        });
 
-        function initClassAttendanceChart(){
-            const ctx=$('classAttendanceChart');
-            const select=$('attendanceClassChart');
-            const empty=$('classChartEmpty');
-            if(!ctx || !select) return;
 
-            if(classAttendanceChart) classAttendanceChart.destroy();
+</script>
 
-            if(!allClasses.length){
-                if(empty) empty.classList.remove('hidden');
-                ctx.parentElement.classList.add('hidden');
-                return;
-            }
 
-            const classId=select.value || allClasses[0].id;
-            if(!select.value) select.value=classId;
-            if(empty) empty.classList.add('hidden');
-            ctx.parentElement.classList.remove('hidden');
-
-            const cls=allClasses.find(c=>c.id===classId);
-            const dates=getWeeklyChartDates();
-            const textColor=chartTextColor();
-            const gridColor=chartGridColor();
-
-            classAttendanceChart=new Chart(ctx,{
-                type:'bar',
-                data:{
-                    labels:chartLabels(dates),
-                    datasets:buildAttendanceDatasets(dates,classId)
-                },
-                options:{
-                    responsive:true,
-                    maintainAspectRatio:false,
-                    interaction:{mode:'index',intersect:false},
-                    plugins:{
-                        title:{
-                            display:true,
-                            text:`Kehadiran ${cls?.name || ''}`,
-                            color:textColor,
-                            font:{size:14,weight:'bold'},
-                            padding:{bottom:10}
-                        },
-                        legend:{labels:{color:textColor}},
-                        tooltip:{
-                            callbacks:{
-                                label:(context)=>`${context.dataset.label}: ${context.parsed.y} siswa`
-                            }
-                        }
-                    },
-                    scales:{
-                        y:{
-                            stacked:true,
-                            beginAtZero:true,
-                            ticks:{color:textColor,precision:0,stepSize:1},
-                            grid:{color:gridColor},
-                            title:{display:true,text:'Jumlah Siswa',color:textColor}
-                        },
-                        x:{
-                            stacked:true,
-                            ticks:{color:textColor},
-                            grid:{display:false}
-                        }
-                    }
-                }
-            });
-        }
-    </script>
 </body>
 </html>
