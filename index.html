@@ -185,7 +185,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-regular fa-envelope text-gray-400"></i>
                         </div>
-                        <input type="email" id="email" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white placeholder-gray-400" placeholder="slamet@gamil.com" value="slamet@gamil.com">
+                        <input type="email" id="email" required class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white placeholder-gray-400" placeholder="slamet@gamil.com" >
                     </div>
                 </div>
                 <div>
@@ -194,7 +194,7 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-solid fa-lock text-gray-400"></i>
                         </div>
-                        <input type="password" id="password" required class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white" placeholder="••••••••" value="123456">
+                        <input type="password" id="password" required class="w-full pl-10 pr-10 py-2.5 rounded-lg border border-gray-300 dark:border-dark-border bg-white/50 dark:bg-dark-card/50 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white" placeholder="••••••••" >
                         <button type="button" onclick="togglePassword()" class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-primary-500">
                             <i class="fa-regular fa-eye" id="eyeIcon"></i>
                         </button>
@@ -729,7 +729,7 @@
       window.GEM_FIREBASE = {
         auth, db, setPersistence, browserLocalPersistence, browserSessionPersistence,
         signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail,
-        collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, writeBatch, writeBatch
+        collection, addDoc, setDoc, getDoc, updateDoc, deleteDoc, doc, getDocs, query, where, serverTimestamp, writeBatch
       };
     </script>
 
@@ -759,14 +759,15 @@
         // FIREBASE SUPER HEMAT READ
         // Cache RAM + LocalStorage per akun
         // ============================================
-        const CACHE_VERSION = 'v4';
+        const CACHE_VERSION = 'v5-owner-secure';
+        const OWNER_UID = 'ndkhdKs0l8UZvTkcAv26IKoZ2PX2';
         const CACHE_TTL = {
-            profile: 24 * 60 * 60 * 1000,
-            classes: 24 * 60 * 60 * 1000,
-            mapels: 24 * 60 * 60 * 1000,
-            students: 6 * 60 * 60 * 1000,
-            journals: 12 * 60 * 60 * 1000,
-            attendance: 12 * 60 * 60 * 1000
+            profile: 7 * 24 * 60 * 60 * 1000,
+            classes: 7 * 24 * 60 * 60 * 1000,
+            mapels: 30 * 24 * 60 * 60 * 1000,
+            students: 24 * 60 * 60 * 1000,
+            journals: 24 * 60 * 60 * 1000,
+            attendance: 24 * 60 * 60 * 1000
         };
 
         function cacheKey(type, extra='') {
@@ -794,6 +795,40 @@
         function cacheClearMemory() {
             allClasses=[]; allMapels=[]; allStudents=[]; allJournals=[]; attendanceCache={};
             Object.keys(dataLoaded).forEach(k=>dataLoaded[k]=false);
+        }
+
+        // ============================================
+        // KEAMANAN PEMILIK APLIKASI
+        // ============================================
+        function isOwnerSession() {
+            return !!currentUser && currentUser.uid === OWNER_UID;
+        }
+
+        async function blockUnauthorizedUser() {
+            try { await FB.signOut(FB.auth); } catch (e) {}
+            currentUser = null;
+            cacheClearMemory();
+            Swal.fire({
+                icon: 'error',
+                title: 'Akses Ditolak',
+                text: 'Aplikasi ini hanya dapat digunakan oleh pemilik yang terdaftar.'
+            });
+        }
+
+        function requireOwner() {
+            if (isOwnerSession()) return true;
+            blockUnauthorizedUser();
+            return false;
+        }
+
+        function clearOwnerCache() {
+            try {
+                const prefix = `jurnalGuru_${CACHE_VERSION}_`;
+                Object.keys(localStorage).forEach(k => {
+                    if (k.startsWith(prefix)) localStorage.removeItem(k);
+                });
+            } catch (e) {}
+            cacheClearMemory();
         }
 
         let userProfileData = {
@@ -1047,6 +1082,7 @@
         }
 
         async function loadClasses(force = false) {
+            if (!requireOwner()) return;
             if (dataLoaded.classes && !force) return;
             const cached = !force ? cacheGet('classes') : null;
             if (cached) { allClasses=cached; dataLoaded.classes=true; return; }
@@ -1057,6 +1093,7 @@
         }
 
         async function loadMapels(force = false) {
+            if (!requireOwner()) return;
             if (dataLoaded.mapels && !force) return;
             const cached = !force ? cacheGet('mapels') : null;
             if (cached) { allMapels=cached; dataLoaded.mapels=true; return; }
@@ -1067,6 +1104,7 @@
         }
 
         async function fetchStudents(force = false) {
+            if (!requireOwner()) return;
             if (dataLoaded.students && !force) return;
             const cached = !force ? cacheGet('students') : null;
             if (cached) { allStudents=cached; dataLoaded.students=true; return; }
@@ -1076,13 +1114,34 @@
             cacheSave('students',allStudents); dataLoaded.students=true;
         }
 
+        // Refresh manual: gunakan hanya saat benar-benar ingin mengambil data terbaru dari Firebase.
+        async function forceRefreshFirebase() {
+            if (!requireOwner()) return;
+            const ok = await Swal.fire({
+                icon: 'question', title: 'Refresh data dari Firebase?',
+                text: 'Tindakan ini akan melakukan pembacaan data terbaru.',
+                showCancelButton: true, confirmButtonText: 'Ya, Refresh', cancelButtonText: 'Batal'
+            });
+            if (!ok.isConfirmed) return;
+            clearOwnerCache();
+            try {
+                await Promise.all([loadClasses(true), loadMapels(true), fetchStudents(true)]);
+                const month = currentMonthKey();
+                await Promise.all([getMonthRecords('journals', month, true), getMonthRecords('attendance', month, true)]);
+                try { renderAllTables(); updateDashboardStats(); } catch(e) {}
+                toast('Data terbaru berhasil dimuat.');
+            } catch (err) {
+                Swal.fire('Refresh gagal', firebaseError(err), 'error');
+            }
+        }
+
         // FIREBASE HEMAT READ: jurnal/presensi hanya dimuat untuk bulan yang diperlukan.
         // Query memakai rentang tanggal sehingga data lama tetap kompatibel tanpa migrasi.
         const monthRange = (month) => ({ start: `${month}-01`, end: (() => { const [y,m]=month.split('-').map(Number); const d=new Date(y,m,1); return d.toISOString().slice(0,10); })() });
         const currentMonthKey = () => todayISO().slice(0,7);
 
         async function getMonthRecords(collectionName, month, force=false) {
-            if (!currentUser || !month) return [];
+            if (!requireOwner() || !month) return [];
             const cacheType = collectionName === 'journals' ? 'journals' : 'attendance';
             if(!force){
                 const cached=cacheGet(cacheType,month);
@@ -1894,6 +1953,7 @@
 
         async function saveJurnal(e) {
             e.preventDefault();
+            if (!requireOwner()) return;
 
             if (!currentUser) {
                 Swal.fire('Belum login', 'Sesi login belum tersedia. Silakan login kembali.', 'warning');
