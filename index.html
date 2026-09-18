@@ -657,7 +657,33 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-3 dark:text-white">Backup Jurnal Guru</h4><p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh jurnal dalam Excel.</p><div class="flex gap-2"><input type="month" id="backupJournalMonth" class="flex-1 p-2 rounded-lg border"><button onclick="backupJurnalByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup</button></div></div>
-                            <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-3 dark:text-white">Backup Presensi Siswa</h4><p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh seluruh presensi dalam Excel.</p><div class="flex gap-2"><input type="month" id="backupAttendanceMonth" class="flex-1 p-2 rounded-lg border"><button onclick="backupPresensiByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup</button></div></div>
+                            <div class="glass glass-panel p-6 rounded-2xl">
+    <h4 class="font-bold mb-3 dark:text-white">Backup Presensi Siswa</h4>
+    <p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh seluruh presensi dalam Excel.</p>
+    <div class="flex gap-2">
+        <input type="month" id="backupAttendanceMonth" class="flex-1 p-2 rounded-lg border">
+        <button onclick="backupPresensiByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg">
+            <i class="fa-solid fa-file-excel"></i> Backup
+        </button>
+    </div>
+</div>
+
+<div class="glass glass-panel p-6 rounded-2xl">
+    <h4 class="font-bold mb-3 dark:text-white">
+        <i class="fa-solid fa-user-xmark text-red-600 mr-2"></i>
+        Backup Presensi Tidak Hadir
+    </h4>
+    <p class="text-sm text-gray-500 mb-4">
+        Pilih bulan lalu unduh hanya siswa yang tidak hadir
+        (Sakit, Izin, dan Alpa) dalam Excel.
+    </p>
+    <div class="flex gap-2">
+        <input type="month" id="backupAbsentMonth" class="flex-1 p-2 rounded-lg border">
+        <button onclick="backupPresensiTidakHadirByMonth()" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg">
+            <i class="fa-solid fa-file-excel"></i> Backup Tidak Hadir
+        </button>
+    </div>
+</div>
                         </div>
                         <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-4 text-red-600"><i class="fa-solid fa-triangle-exclamation"></i> Hapus Data Bulanan</h4><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><label class="text-sm font-medium">Hapus Jurnal Guru per Bulan</label><div class="flex gap-2 mt-2"><input type="month" id="deleteJournalMonth" class="flex-1 p-2 rounded-lg border"><button onclick="deleteJournalsByMonth()" class="px-4 py-2 bg-red-600 text-white rounded-lg">Hapus</button></div></div><div><label class="text-sm font-medium">Hapus Presensi Siswa per Bulan</label><div class="flex gap-2 mt-2"><input type="month" id="deleteAttendanceMonth" class="flex-1 p-2 rounded-lg border"><button onclick="deleteAttendanceByMonth()" class="px-4 py-2 bg-red-600 text-white rounded-lg">Hapus</button></div></div></div></div>
                         <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-2 dark:text-white">Backup Daftar Siswa</h4><p class="text-sm text-gray-500 mb-4">Unduh daftar siswa berdasarkan kelas atau seluruh kelas.</p><div class="flex flex-col sm:flex-row gap-2"><select id="backupStudentClass" class="flex-1 p-2 rounded-lg border"><option value="">Semua Kelas</option></select><button onclick="backupStudentsByClass()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup Siswa</button></div></div>
@@ -1213,7 +1239,7 @@
                 if(old) el.value=old;
             });
             const month=todayISO().slice(0,7);
-            ['backupJournalMonth','backupAttendanceMonth','deleteJournalMonth','deleteAttendanceMonth'].forEach(id=>{if($(id)&&!$(id).value) $(id).value=month;});
+            ['backupJournalMonth','backupAttendanceMonth','backupAbsentMonth','deleteJournalMonth','deleteAttendanceMonth'].forEach(id=>{if($(id)&&!$(id).value) $(id).value=month;});
         }
 
         function populateMapelDropdowns() {
@@ -2389,6 +2415,189 @@
             const m=$('backupAttendanceMonth').value; if(!m)return;
             Swal.fire({title:'Menyiapkan backup...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
             try{const data=await monthDataAsync('attendance',m); const rows=[];data.forEach(a=>{const cls=allClasses.find(c=>c.id===a.classId)?.name||a.className||'';Object.entries(a.statuses||{}).forEach(([sid,status])=>{const st=allStudents.find(x=>x.id===sid)||{};rows.push({Tanggal:a.date,Kelas:cls,NIS:st.nis||sid,Nama:st.name||'',Status:status});});});Swal.close();downloadWorkbook('Presensi',rows,`BACKUP_PRESENSI_${m}.xlsx`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
+        }
+
+        // Backup khusus siswa yang tidak hadir.
+        // Status Hadir tidak dimasukkan. Yang dibackup hanya Sakit, Izin, dan Alpa.
+        async function backupPresensiTidakHadirByMonth(){
+            const m = $('backupAbsentMonth').value;
+
+            if(!m){
+                Swal.fire('Pilih Bulan','Silakan pilih bulan yang akan dibackup.','warning');
+                return;
+            }
+
+            Swal.fire({
+                title:'Menyiapkan backup...',
+                text:'Mengambil data siswa yang tidak hadir.',
+                allowOutsideClick:false,
+                didOpen:()=>Swal.showLoading()
+            });
+
+            try{
+                const data = await monthDataAsync('attendance',m);
+                const rows = [];
+
+                data.forEach(a=>{
+                    const cls =
+                        allClasses.find(c=>c.id===a.classId)?.name ||
+                        a.className ||
+                        '';
+
+                    Object.entries(a.statuses || {}).forEach(([sid,status])=>{
+                        const normalized = String(status || '').trim().toLowerCase();
+
+                        // Hanya status tidak hadir.
+                        if(normalized !== 'sakit' &&
+                           normalized !== 'izin' &&
+                           normalized !== 'alpa'){
+                            return;
+                        }
+
+                        const st = allStudents.find(x=>x.id===sid) || {};
+
+                        rows.push({
+                            Tanggal: a.date || '',
+                            Kelas: cls,
+                            NIS: st.nis || sid,
+                            Nama: st.name || '',
+                            Status: status
+                        });
+                    });
+                });
+
+                Swal.close();
+
+                if(!rows.length){
+                    Swal.fire(
+                        'Data Tidak Ada',
+                        `Tidak ditemukan siswa yang tidak hadir pada bulan ${m}.`,
+                        'info'
+                    );
+                    return;
+                }
+
+                // Urutkan berdasarkan tanggal, kelas, kemudian nama.
+                // Urut berdasarkan NAMA SISWA terlebih dahulu,
+                // kemudian TANGGAL, lalu KELAS.
+                rows.sort((a, b) => {
+                    const nama = String(a.Nama || '').localeCompare(
+                        String(b.Nama || ''),
+                        'id',
+                        { sensitivity: 'base' }
+                    );
+                    if (nama !== 0) return nama;
+
+                    const tanggal = String(a.Tanggal || '').localeCompare(
+                        String(b.Tanggal || '')
+                    );
+                    if (tanggal !== 0) return tanggal;
+
+                    return String(a.Kelas || '').localeCompare(
+                        String(b.Kelas || ''),
+                        'id',
+                        { sensitivity: 'base' }
+                    );
+                });
+
+                // Buat workbook khusus agar backup lebih mudah dilacak.
+                // Sheet 1: Detail Tidak Hadir (Nama -> Tanggal -> Kelas)
+                // Sheet 2: Rekap per Siswa (jumlah Sakit/Izin/Alpa)
+                const wb = XLSX.utils.book_new();
+
+                const detailRows = rows.map((r, i) => ({
+                    No: i + 1,
+                    Nama: r.Nama,
+                    NIS: r.NIS,
+                    Kelas: r.Kelas,
+                    Tanggal: r.Tanggal,
+                    Status: r.Status
+                }));
+
+                const wsDetail = XLSX.utils.json_to_sheet(detailRows);
+                wsDetail['!cols'] = [
+                    { wch: 6 },
+                    { wch: 28 },
+                    { wch: 14 },
+                    { wch: 16 },
+                    { wch: 15 },
+                    { wch: 12 }
+                ];
+                XLSX.utils.book_append_sheet(wb, wsDetail, 'Detail Tidak Hadir');
+
+                // Rekap berdasarkan nama siswa.
+                const recapMap = {};
+                rows.forEach(r => {
+                    const key = `${r.NIS}||${r.Nama}||${r.Kelas}`;
+
+                    if (!recapMap[key]) {
+                        recapMap[key] = {
+                            Nama: r.Nama,
+                            NIS: r.NIS,
+                            Kelas: r.Kelas,
+                            Sakit: 0,
+                            Izin: 0,
+                            Alpa: 0,
+                            'Total Tidak Hadir': 0
+                        };
+                    }
+
+                    const status = String(r.Status || '').trim().toLowerCase();
+
+                    if (status === 'sakit') recapMap[key].Sakit++;
+                    else if (status === 'izin') recapMap[key].Izin++;
+                    else if (status === 'alpa') recapMap[key].Alpa++;
+
+                    recapMap[key]['Total Tidak Hadir']++;
+                });
+
+                const recapRows = Object.values(recapMap);
+
+                recapRows.sort((a, b) => {
+                    const nama = String(a.Nama || '').localeCompare(
+                        String(b.Nama || ''),
+                        'id',
+                        { sensitivity: 'base' }
+                    );
+                    if (nama !== 0) return nama;
+
+                    return String(a.Kelas || '').localeCompare(
+                        String(b.Kelas || ''),
+                        'id',
+                        { sensitivity: 'base' }
+                    );
+                });
+
+                const wsRecap = XLSX.utils.json_to_sheet(
+                    recapRows.map((r, i) => ({
+                        No: i + 1,
+                        ...r
+                    }))
+                );
+
+                wsRecap['!cols'] = [
+                    { wch: 6 },
+                    { wch: 28 },
+                    { wch: 14 },
+                    { wch: 16 },
+                    { wch: 10 },
+                    { wch: 10 },
+                    { wch: 10 },
+                    { wch: 20 }
+                ];
+
+                XLSX.utils.book_append_sheet(wb, wsRecap, 'Rekap per Siswa');
+
+                XLSX.writeFile(
+                    wb,
+                    `BACKUP_PRESENSI_TIDAK_HADIR_${m}.xlsx`
+                );
+
+                toast(`Backup berhasil: ${rows.length} data tidak hadir, ${recapRows.length} siswa`);
+            }catch(e){
+                Swal.close();
+                Swal.fire('Gagal',firebaseError(e),'error');
+            }
         }
         function backupStudentsByClass(){const id=$('backupStudentClass').value;const rows=allStudents.filter(s=>!id||s.classId===id).map(s=>({NIS:s.nis,Nama:s.name,Kelas:allClasses.find(c=>c.id===s.classId)?.name||s.className||''}));downloadWorkbook('Daftar Siswa',rows,`BACKUP_SISWA_${id?($('backupStudentClass').selectedOptions[0].textContent):'SEMUA_KELAS'}.xlsx`);}
         async function deleteByMonth(collectionName,month,label){
