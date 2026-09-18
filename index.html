@@ -1348,7 +1348,17 @@
             return d.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
         }
 
-        function applyJournalPrintFilter() { renderJournalTable(); }
+        async function applyJournalPrintFilter() {
+            const month = getSelectedPrintMonth();
+            try {
+                await getMonthRecords('journals', month, false);
+                renderJournalTable();
+                updateDashboardStats();
+            } catch (err) {
+                console.error('Gagal memuat jurnal bulan terpilih:', err);
+                Swal.fire('Gagal', firebaseError(err), 'error');
+            }
+        }
 
         function getFilteredJournalsByPrintMonth() {
             const month = getSelectedPrintMonth();
@@ -2163,12 +2173,20 @@
             }catch(err){ Swal.fire('Gagal',firebaseError(err),'error'); }
         }
 
-        function printJurnal(){
-            const monthKey = getSelectedPrintMonth();
-            const printDateKey = getSelectedPrintDate();
-            const journalsToPrint = getFilteredJournalsByPrintMonth();
+        async function printJurnal(){
+             const monthKey = getSelectedPrintMonth();
+             const printDateKey = getSelectedPrintDate();
 
-            if (!journalsToPrint.length) {
+             try {
+                 await getMonthRecords('journals', monthKey, false);
+             } catch (err) {
+                 Swal.fire('Gagal memuat jurnal', firebaseError(err), 'error');
+                 return;
+             }
+
+             const journalsToPrint = getFilteredJournalsByPrintMonth();
+
+             if (!journalsToPrint.length) {
                 Swal.fire({
                     icon:'info', title:'Tidak ada jurnal',
                     text:`Tidak ada data jurnal untuk bulan ${formatMonthLong(monthKey)}.`,
@@ -2200,10 +2218,19 @@
               table{width:100%;border-collapse:collapse;font-size:12px}
               th,td{border:1px solid #000;padding:5px 3px;text-align:center;vertical-align:middle}
               td:nth-child(5){text-align:left}
-              table.signature-table{width:82%;margin-left:12%;border-collapse:collapse;margin-top:40px;font-size:11px}
-              table.signature-table td{text-align:left;vertical-align:top;padding:2px 5px;line-height:1.1;border:none}
-              table.signature-table td:first-child{width:65%}
-              table.signature-table td:last-child{width:35%}
+              table.signature-table{width:82%;margin-left:12%;border-collapse:collapse;margin-top:40px;font-size:12pt}
+              table.signature-table td,
+              table.signature-table .sign-name,
+              table.signature-table .sign-nip{
+                font-size:12pt !important;
+                text-align:left;
+                vertical-align:top;
+                padding:2px 5px;
+                line-height:1.1;
+                border:none;
+              }
+              table.signature-table td:first-child{width:63%}
+              table.signature-table td:last-child{width:37%}
               .signature-table .sign-space{height:70px}
               .signature-table .sign-name{font-weight:bold;text-decoration:underline}
             </style></head><body>
@@ -2218,7 +2245,7 @@
               <tr><td>Kepala Sekolah,</td><td>Guru Mata Pelajaran,</td></tr>
               <tr><td class="sign-space"></td><td class="sign-space"></td></tr>
               <tr><td class="sign-name">${esc(kepsekNama)}</td><td class="sign-name">${esc(guruNama)}</td></tr>
-              <tr><td>NIP. ${esc(kepsekNip)}</td><td>NIP. ${esc(guruNip)}</td></tr>
+              <tr><td class="sign-nip">NIP. ${esc(kepsekNip)}</td><td class="sign-nip">NIP. ${esc(guruNip)}</td></tr>
             </table>
             
 
@@ -2227,16 +2254,123 @@
             setTimeout(()=>{win.print();win.close()},500);
         }
 
-        function exportJurnalExcel(){
-            const table=$('tabelJurnalData');
-            const clone=table.cloneNode(true);
-            clone.querySelectorAll('.no-print-export').forEach(el=>el.remove());
-            clone.querySelectorAll('th,td').forEach(c=>c.innerHTML=c.innerHTML.replace(/<br\s*[\/]?>/gi,' '));
-            const wb=XLSX.utils.table_to_book(clone,{sheet:'Jurnal KBM'});
-            const month=new Date().toLocaleDateString('id-ID',{month:'long'}).toUpperCase();
-            const year=new Date().getFullYear();
-            const safeName=($('profileName').textContent||'Guru').replace(/[^\w\s-]/g,'').replace(/\s+/g,' ');
-            XLSX.writeFile(wb,`BULAN ${month} Jurnal Tatap Muka - Catatan KBM ${year} ${safeName}.xlsx`);
+        function parseDateSafe(value) {
+            if (!value) return null;
+            const s = String(value).trim();
+
+            // Format YYYY-MM-DD dari input date / Firestore.
+            if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+                const [y,m,d] = s.split('-').map(Number);
+                const dt = new Date(y, m - 1, d);
+                return isNaN(dt.getTime()) ? null : dt;
+            }
+
+            // Format DD/MM/YYYY.
+            const m1 = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+            if (m1) {
+                const dt = new Date(Number(m1[3]), Number(m1[2]) - 1, Number(m1[1]));
+                return isNaN(dt.getTime()) ? null : dt;
+            }
+
+            const dt = new Date(s);
+            return isNaN(dt.getTime()) ? null : dt;
+        }
+
+        async function exportJurnalExcel(){
+            const monthKey = getSelectedPrintMonth();
+            const printDateKey = getSelectedPrintDate();
+
+            try {
+                await getMonthRecords('journals', monthKey, false);
+            } catch (err) {
+                Swal.fire('Gagal memuat jurnal', firebaseError(err), 'error');
+                return;
+            }
+
+            const journalsToExport = getFilteredJournalsByPrintMonth();
+            if (!journalsToExport.length) {
+                Swal.fire({
+                    icon:'info',
+                    title:'Tidak ada jurnal',
+                    text:`Tidak ada data jurnal untuk bulan ${formatMonthLong(monthKey)}.`
+                });
+                return;
+            }
+
+            try {
+                const bulanStr = formatMonthLong(monthKey);
+                const tanggalCetakStr = formatDateLong(printDateKey);
+                const kepsekNama = userProfileData.kepsekNama || '.............................................';
+                const kepsekNip = userProfileData.kepsekNip || '.............................................';
+                const guruNama = userProfileData.guruNama || '.............................................';
+                const guruNip = userProfileData.guruNip || '.............................................';
+
+                const rows = [
+                    ['JURNAL TATAP MUKA PEMBELAJARAN (CATATAN KBM)'],
+                    ['SMK NEGERI NUSAWUNGU'],
+                    ['TAHUN PELAJARAN 2026/2027'],
+                    [`Bulan Jurnal: ${bulanStr}`],
+                    [],
+                    ['NO.','Hari, Tanggal','Kelas','Mata Pelajaran',
+                     'Ringkasan Materi (Kegiatan Belajar Mengajar)',
+                     'S','I','A','jmh hadir']
+                ];
+
+                journalsToExport.forEach((j, index) => {
+                    const d = parseDateSafe(j.date);
+                    const hari = d ? d.toLocaleDateString('id-ID',{weekday:'long'}) : '';
+                    const tanggal = d ? d.toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric'}) : (j.date || '');
+                    rows.push([
+                        index + 1,
+                        `${hari}, ${tanggal}`,
+                        j.className || allClasses.find(c=>c.id===j.classId)?.name || '',
+                        j.mapel || '',
+                        j.materi || '',
+                        j.sakit || 0,
+                        j.izin || 0,
+                        j.alpa || 0,
+                        j.hadir || 0
+                    ]);
+                });
+
+                // Bagian bawah tabel / tanda tangan ikut diekspor.
+                rows.push([]);
+                rows.push(['','','','','','','','','Nusawungu, ' + tanggalCetakStr]);
+                rows.push(['Mengetahui,','','','','','','','','']);
+                rows.push(['Kepala Sekolah,','','','','','','','','Guru Mata Pelajaran,']);
+                rows.push(['','','','','','','','','']);
+                rows.push([kepsekNama,'','','','','','','',guruNama]);
+                rows.push(['NIP. ' + kepsekNip,'','','','','','','','NIP. ' + guruNip]);
+
+                const ws = XLSX.utils.aoa_to_sheet(rows);
+                ws['!merges'] = [
+                    {s:{r:0,c:0},e:{r:0,c:8}},
+                    {s:{r:1,c:0},e:{r:1,c:8}},
+                    {s:{r:2,c:0},e:{r:2,c:8}},
+                    {s:{r:3,c:0},e:{r:3,c:8}}
+                ];
+                ws['!cols'] = [
+                    {wch:7},{wch:20},{wch:12},{wch:20},
+                    {wch:42},{wch:8},{wch:8},{wch:8},{wch:12}
+                ];
+
+                for (let c=0; c<=8; c++) {
+                    const cell = ws[XLSX.utils.encode_cell({r:5,c})];
+                    if (cell) cell.s = {font:{bold:true}};
+                }
+
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'Jurnal KBM');
+
+                const safeName = ($('profileName')?.textContent || 'Guru')
+                    .replace(/[^\w\s-]/g,'').replace(/\s+/g,' ').trim();
+
+                XLSX.writeFile(wb, `JURNAL TATAP MUKA - ${monthKey} - ${safeName || 'Guru'}.xlsx`);
+                toast('Export berhasil: header, tabel, dan bagian bawah/tanda tangan lengkap.');
+            } catch (err) {
+                console.error('EXPORT JURNAL ERROR:', err);
+                Swal.fire('Gagal Export', err.message || String(err), 'error');
+            }
         }
 
         async function monthDataAsync(collectionName, month){
