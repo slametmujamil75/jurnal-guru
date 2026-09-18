@@ -2478,9 +2478,16 @@
                 }
 
                 // Urutkan berdasarkan tanggal, kelas, kemudian nama.
-                // Urut berdasarkan NAMA SISWA terlebih dahulu,
-                // kemudian TANGGAL, lalu KELAS.
+                // Urut berdasarkan KELAS terlebih dahulu,
+                // kemudian NAMA SISWA, lalu TANGGAL.
                 rows.sort((a, b) => {
+                    const kelas = String(a.Kelas || '').localeCompare(
+                        String(b.Kelas || ''),
+                        'id',
+                        { sensitivity: 'base', numeric: true }
+                    );
+                    if (kelas !== 0) return kelas;
+
                     const nama = String(a.Nama || '').localeCompare(
                         String(b.Nama || ''),
                         'id',
@@ -2488,20 +2495,13 @@
                     );
                     if (nama !== 0) return nama;
 
-                    const tanggal = String(a.Tanggal || '').localeCompare(
+                    return String(a.Tanggal || '').localeCompare(
                         String(b.Tanggal || '')
-                    );
-                    if (tanggal !== 0) return tanggal;
-
-                    return String(a.Kelas || '').localeCompare(
-                        String(b.Kelas || ''),
-                        'id',
-                        { sensitivity: 'base' }
                     );
                 });
 
                 // Buat workbook khusus agar backup lebih mudah dilacak.
-                // Sheet 1: Detail Tidak Hadir (Nama -> Tanggal -> Kelas)
+                // Sheet 1: Detail Tidak Hadir (Kelas -> Nama -> Tanggal)
                 // Sheet 2: Rekap per Siswa (jumlah Sakit/Izin/Alpa)
                 const wb = XLSX.utils.book_new();
 
@@ -2554,15 +2554,15 @@
                 const recapRows = Object.values(recapMap);
 
                 recapRows.sort((a, b) => {
-                    const nama = String(a.Nama || '').localeCompare(
-                        String(b.Nama || ''),
-                        'id',
-                        { sensitivity: 'base' }
-                    );
-                    if (nama !== 0) return nama;
-
-                    return String(a.Kelas || '').localeCompare(
+                    const kelas = String(a.Kelas || '').localeCompare(
                         String(b.Kelas || ''),
+                        'id',
+                        { sensitivity: 'base', numeric: true }
+                    );
+                    if (kelas !== 0) return kelas;
+
+                    return String(a.Nama || '').localeCompare(
+                        String(b.Nama || ''),
                         'id',
                         { sensitivity: 'base' }
                     );
