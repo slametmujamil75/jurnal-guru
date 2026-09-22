@@ -657,17 +657,6 @@
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div class="glass glass-panel p-6 rounded-2xl"><h4 class="font-bold mb-3 dark:text-white">Backup Jurnal Guru</h4><p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh jurnal dalam Excel.</p><div class="flex gap-2"><input type="month" id="backupJournalMonth" class="flex-1 p-2 rounded-lg border"><button onclick="backupJurnalByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg"><i class="fa-solid fa-file-excel"></i> Backup</button></div></div>
-                            <div class="glass glass-panel p-6 rounded-2xl">
-    <h4 class="font-bold mb-3 dark:text-white">Backup Presensi Siswa</h4>
-    <p class="text-sm text-gray-500 mb-4">Pilih bulan lalu unduh seluruh presensi dalam Excel.</p>
-    <div class="flex gap-2">
-        <input type="month" id="backupAttendanceMonth" class="flex-1 p-2 rounded-lg border">
-        <button onclick="backupPresensiByMonth()" class="px-4 py-2 bg-green-600 text-white rounded-lg">
-            <i class="fa-solid fa-file-excel"></i> Backup
-        </button>
-    </div>
-</div>
-
 <div class="glass glass-panel p-6 rounded-2xl">
     <h4 class="font-bold mb-3 dark:text-white">
         <i class="fa-solid fa-user-xmark text-red-600 mr-2"></i>
@@ -1239,7 +1228,7 @@
                 if(old) el.value=old;
             });
             const month=todayISO().slice(0,7);
-            ['backupJournalMonth','backupAttendanceMonth','backupAbsentMonth','deleteJournalMonth','deleteAttendanceMonth'].forEach(id=>{if($(id)&&!$(id).value) $(id).value=month;});
+            ['backupJournalMonth','backupAbsentMonth','deleteJournalMonth','deleteAttendanceMonth'].forEach(id=>{if($(id)&&!$(id).value) $(id).value=month;});
         }
 
         function populateMapelDropdowns() {
@@ -1943,45 +1932,117 @@
 
         async function savePresensi() {
             if(!currentUser) return;
-            const clsId=$('presensiClass').value, date=$('presensiDate').value;
+
+            const clsId = $('presensiClass').value;
+            const date = $('presensiDate').value;
+
             if(!clsId || !date) return;
-            const students=allStudents.filter(s=>s.classId===clsId);
-            const statuses={};
-            students.forEach(std=>{
-                const radio=document.querySelector(`input[name="att_${CSS.escape(std.id)}"]:checked`);
-                statuses[std.id]=radio?.value || 'Hadir';
+
+            const students = allStudents.filter(s => s.classId === clsId);
+
+            // HANYA simpan siswa yang TIDAK HADIR.
+            // Status Hadir tidak disimpan ke Firestore agar data lebih hemat.
+            const statuses = {};
+
+            students.forEach(std => {
+                const radio = document.querySelector(
+                    `input[name="att_${CSS.escape(std.id)}"]:checked`
+                );
+
+                const status = radio?.value || 'Hadir';
+
+                if(status !== 'Hadir') {
+                    statuses[std.id] = status;
+                }
             });
-            const key=`${date}__${clsId}`;
-            const isUpdate=!!attendanceCache[key];
+
+            const key = `${date}__${clsId}`;
+            const isUpdate = !!attendanceCache[key];
+            const hasAbsent = Object.keys(statuses).length > 0;
 
             try{
-                await FB.setDoc(FB.doc(FB.db,'attendance',key),{
-                    date, monthKey:date.slice(0,7), classId:clsId, statuses, ownerUid:currentUser.uid, updatedAt:FB.serverTimestamp()
-                },{merge:true});
-                const savedAttendance={id:key, date, monthKey:date.slice(0,7), classId:clsId, statuses, ownerUid:currentUser.uid};
-                attendanceCache[key]=savedAttendance;
-                cacheSave('attendanceDetail',savedAttendance,key);
+                if(hasAbsent){
+                    // Tulis ulang dokumen attendance.
+                    // Tanpa {merge:true}, status Hadir lama yang mungkin
+                    // pernah tersimpan akan ikut dibersihkan dari dokumen.
+                    await FB.setDoc(FB.doc(FB.db,'attendance',key),{
+                        date,
+                        monthKey:date.slice(0,7),
+                        classId:clsId,
+                        statuses,
+                        ownerUid:currentUser.uid,
+                        updatedAt:FB.serverTimestamp()
+                    });
+
+                    const savedAttendance = {
+                        id:key,
+                        date,
+                        monthKey:date.slice(0,7),
+                        classId:clsId,
+                        statuses,
+                        ownerUid:currentUser.uid
+                    };
+
+                    attendanceCache[key] = savedAttendance;
+                    cacheSave('attendanceDetail',savedAttendance,key);
+                } else {
+                    // Semua siswa Hadir.
+                    // Tidak perlu menyimpan dokumen attendance.
+                    // Jika sebelumnya ada data tidak hadir, hapus dokumen lama.
+                    if(isUpdate){
+                        await FB.deleteDoc(FB.doc(FB.db,'attendance',key));
+                    }
+
+                    delete attendanceCache[key];
+                    cacheRemove('attendanceDetail',key);
+                }
+
                 // Perbarui cache bulan tanpa membaca Firebase lagi.
-                const month=date.slice(0,7);
-                const monthRows=Object.values(attendanceCache).filter(x=>String(x.monthKey||x.date?.slice(0,7)||'')===month);
-                cacheUpdateMonth('attendance',month,monthRows);
-                const counts=countAttendanceForClass(clsId,statuses);
-                const relatedJournals=allJournals.filter(j =>
-                    String(j.date || '') === String(date) && String(j.classId || '') === String(clsId)
+                const month = date.slice(0,7);
+                const monthRows = Object.values(attendanceCache).filter(
+                    x => String(x.monthKey || x.date?.slice(0,7) || '') === month
                 );
+                cacheUpdateMonth('attendance',month,monthRows);
+
+                // Siswa yang tidak ada di statuses dianggap Hadir untuk rekap jurnal.
+                const counts = countAttendanceForClass(clsId,statuses);
+
+                const relatedJournals = allJournals.filter(j =>
+                    String(j.date || '') === String(date) &&
+                    String(j.classId || '') === String(clsId)
+                );
+
                 if(relatedJournals.length){
-                    await Promise.all(relatedJournals.map(j =>
-                        FB.updateDoc(FB.doc(FB.db,'journals',j.id),{
-                            sakit:counts.sakit, izin:counts.izin, alpa:counts.alpa, hadir:counts.hadir, updatedAt:FB.serverTimestamp()
-                        })
-                    ));
+                    await Promise.all(
+                        relatedJournals.map(j =>
+                            FB.updateDoc(FB.doc(FB.db,'journals',j.id),{
+                                sakit:counts.sakit,
+                                izin:counts.izin,
+                                alpa:counts.alpa,
+                                hadir:counts.hadir,
+                                updatedAt:FB.serverTimestamp()
+                            })
+                        )
+                    );
+
                     relatedJournals.forEach(j => Object.assign(j, counts));
                     renderJournalTable();
                 }
+
                 $('studentListContainer').classList.add('hidden');
                 updateDashboardStats();
                 initChart();
-                toast(isUpdate ? 'Presensi diperbarui dan rekap jurnal disinkronkan' : 'Presensi disimpan dan rekap jurnal disinkronkan');
+
+                if(hasAbsent){
+                    toast(
+                        isUpdate
+                            ? 'Presensi diperbarui. Hanya siswa tidak hadir yang disimpan.'
+                            : 'Presensi disimpan. Hanya siswa tidak hadir yang disimpan.'
+                    );
+                } else {
+                    toast('Semua siswa hadir. Tidak ada data presensi yang disimpan.');
+                }
+
             }catch(err){
                 Swal.fire('Gagal menyimpan',firebaseError(err),'error');
             }
@@ -2411,13 +2472,7 @@
             Swal.fire({title:'Menyiapkan backup...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
             try{const data=await monthDataAsync('journals',m); const rows=data.map(j=>({Tanggal:j.date,Kelas:allClasses.find(c=>c.id===j.classId)?.name||j.className||'',Mapel:j.mapel||'',Jam:j.jam||'',Materi:j.materi||'',Catatan:j.catatan||'',Sakit:j.sakit||0,Izin:j.izin||0,Alpa:j.alpa||0,Hadir:j.hadir||0})); Swal.close(); downloadWorkbook('Jurnal',rows,`BACKUP_JURNAL_${m}.xlsx`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
         }
-        async function backupPresensiByMonth(){
-            const m=$('backupAttendanceMonth').value; if(!m)return;
-            Swal.fire({title:'Menyiapkan backup...',allowOutsideClick:false,didOpen:()=>Swal.showLoading()});
-            try{const data=await monthDataAsync('attendance',m); const rows=[];data.forEach(a=>{const cls=allClasses.find(c=>c.id===a.classId)?.name||a.className||'';Object.entries(a.statuses||{}).forEach(([sid,status])=>{const st=allStudents.find(x=>x.id===sid)||{};rows.push({Tanggal:a.date,Kelas:cls,NIS:st.nis||sid,Nama:st.name||'',Status:status});});});Swal.close();downloadWorkbook('Presensi',rows,`BACKUP_PRESENSI_${m}.xlsx`);}catch(e){Swal.fire('Gagal',firebaseError(e),'error');}
-        }
-
-        // Backup khusus siswa yang tidak hadir.
+// Backup khusus siswa yang tidak hadir.
         // Status Hadir tidak dimasukkan. Yang dibackup hanya Sakit, Izin, dan Alpa.
         async function backupPresensiTidakHadirByMonth(){
             const m = $('backupAbsentMonth').value;
