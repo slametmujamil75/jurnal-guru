@@ -161,6 +161,94 @@
         .swal2-popup { max-width: calc(100vw - 24px) !important; }
         .swal2-input, .swal2-select, .swal2-textarea { margin: 0.5em 0 !important; }
     </style>
+
+<style id="sidebar-mobile-video-fix">
+/* PERBAIKAN SIDEBAR HP - kompatibel dengan Tailwind dan Android */
+@media (max-width: 767px) {
+  #mainApp {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    overflow: hidden !important;
+  }
+
+  #sidebar {
+    display: flex !important;
+    flex-direction: column !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    bottom: 0 !important;
+    width: min(86vw, 320px) !important;
+    max-width: 320px !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    z-index: 2147483647 !important;
+    box-sizing: border-box !important;
+    transition: transform .25s ease-in-out !important;
+  }
+
+  #sidebar > div:first-child {
+    flex: 0 0 64px !important;
+    min-height: 64px !important;
+  }
+
+  #sidebar > div:nth-child(2) {
+    display: block !important;
+    flex: 1 1 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding-bottom: 28px !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  #sidebar > div:last-child {
+    flex: 0 0 auto !important;
+    min-height: 72px !important;
+    background: #ffffff !important;
+  }
+
+  #sidebar nav {
+    display: block !important;
+    padding-bottom: 8px !important;
+  }
+
+  #sidebar nav button {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 44px !important;
+    touch-action: manipulation !important;
+  }
+
+  #sidebarOverlay {
+    position: fixed !important;
+    inset: 0 !important;
+    display: none;
+    z-index: 2147483646 !important;
+  }
+
+  #sidebarOverlay:not(.hidden) {
+    display: block !important;
+  }
+
+  html.dark #sidebar,
+  html.dark #sidebar > div:last-child,
+  .dark #sidebar,
+  .dark #sidebar > div:last-child {
+    background: #111827 !important;
+  }
+}
+</style>
+
 </head>
 <body class="bg-white dark:bg-black text-gray-800 dark:text-gray-200 transition-colors duration-300 font-sans antialiased selection:bg-primary-500 selection:text-white">
 
@@ -1819,9 +1907,39 @@
             }
         }
 
-        function toggleSidebar() {
-            $('sidebar').classList.toggle('-translate-x-full');
-            $('sidebarOverlay').classList.toggle('hidden');
+        function toggleSidebar(forceState) {
+            const sidebar = $('sidebar');
+            const overlay = $('sidebarOverlay');
+            if (!sidebar || !overlay) return;
+
+            const isClosed = sidebar.classList.contains('-translate-x-full');
+            const shouldOpen = typeof forceState === 'boolean' ? forceState : isClosed;
+
+            sidebar.classList.toggle('-translate-x-full', !shouldOpen);
+            overlay.classList.toggle('hidden', !shouldOpen);
+            sidebar.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+
+            if (window.innerWidth < 768) {
+                sidebar.style.setProperty('position', 'fixed', 'important');
+                sidebar.style.setProperty('top', '0', 'important');
+                sidebar.style.setProperty('left', '0', 'important');
+                sidebar.style.setProperty('bottom', '0', 'important');
+                sidebar.style.setProperty('width', 'min(86vw, 320px)', 'important');
+                sidebar.style.setProperty('height', '100dvh', 'important');
+                sidebar.style.setProperty('z-index', '2147483647', 'important');
+                sidebar.style.setProperty('display', 'flex', 'important');
+                sidebar.style.setProperty('visibility', shouldOpen ? 'visible' : 'hidden', 'important');
+                sidebar.style.setProperty('pointer-events', shouldOpen ? 'auto' : 'none', 'important');
+                sidebar.style.setProperty('transform', shouldOpen ? 'translate3d(0,0,0)' : 'translate3d(-105%,0,0)', 'important');
+
+                overlay.style.setProperty('position', 'fixed', 'important');
+                overlay.style.setProperty('inset', '0', 'important');
+                overlay.style.setProperty('z-index', '2147483646', 'important');
+                overlay.style.setProperty('display', shouldOpen ? 'block' : 'none', 'important');
+
+                document.documentElement.style.overflow = shouldOpen ? 'hidden' : '';
+                document.body.style.overflow = shouldOpen ? 'hidden' : '';
+            }
         }
 
         function navigate(viewName) {
